@@ -4,7 +4,8 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class ShooterConstants {
-    public static Pose GOAL_POS = new Pose(65, 70, 0);
+    public static Pose GOAL_POS_RED = new Pose(65, 70, 0);
+    public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 9.5);
     public static double FLYWHEEL_OFF = 0; //ticks per second
