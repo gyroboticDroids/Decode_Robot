@@ -7,6 +7,9 @@ public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(65, 70, 0);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
 
+    public static Pose GOAL_POS = (TransferConstants.allianceColor == 0)?
+            ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
+
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 9.5);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_REJECT = 500; //ticks per second

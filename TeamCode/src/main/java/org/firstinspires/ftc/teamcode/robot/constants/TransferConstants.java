@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
 public class TransferConstants {
-    public static int allianceColor = 2;
+    public static int allianceColor = 0;
 }
