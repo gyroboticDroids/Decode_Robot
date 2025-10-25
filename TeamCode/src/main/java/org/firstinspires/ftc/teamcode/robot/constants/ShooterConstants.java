@@ -9,6 +9,7 @@ public class ShooterConstants {
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 9.5);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_REJECT = 500; //ticks per second
+    public static double FLYWHEEL_ACCURACY = 100; //ticks per second
 
     public static double TURRET_P_GAIN = 0.01;
 

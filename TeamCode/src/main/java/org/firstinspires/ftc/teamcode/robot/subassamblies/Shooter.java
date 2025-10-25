@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
@@ -45,22 +46,25 @@ public class Shooter {
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
-                isBusy = false;
+                if (MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(), ShooterConstants.flywheelSpeed(goalDist),
+                        ShooterConstants.FLYWHEEL_ACCURACY))
+                    isBusy = false;
                 break;
 
             case LAUNCH:
                 hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
 
-                if (timer.getElapsedTimeSeconds() > 1.5) {
+                if (timer.getElapsedTimeSeconds() > 1) {
                     hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
                     isBusy = false;
                 }
-                else
+                else {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+                }
 
                 if (timer.getElapsedTimeSeconds() > 1.5)
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                else if(timer.getElapsedTimeSeconds() > 0.5)
+                else
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 break;
 
