@@ -11,14 +11,14 @@ public class Shooter {
         SLEEP, READY, LAUNCH, REJECT, PARK
     }
 
-    private Hardware hardware;
+    private final Hardware hardware;
 
     private State state;
-    private Timer timer;
+    private final Timer timer;
 
     private double goalDist = 0;
 
-    private boolean ons = false;
+    private boolean isBusy = false;
 
     public Shooter(Hardware hardware) {
         this.hardware = hardware;
@@ -31,28 +31,69 @@ public class Shooter {
 
         switch (state) {
             case SLEEP:
+                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
+
+                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+
+                isBusy = false;
                 break;
 
             case READY:
+                hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
+
+                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+
+                isBusy = false;
                 break;
 
             case LAUNCH:
+                hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
+
+                if (timer.getElapsedTimeSeconds() > 1.5) {
+                    hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                    isBusy = false;
+                }
+                else
+                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+
+                if (timer.getElapsedTimeSeconds() > 1.5)
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                else if(timer.getElapsedTimeSeconds() > 0.5)
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 break;
 
             case REJECT:
+                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_REJECT);
+
+                if (timer.getElapsedTimeSeconds() > 1.5) {
+                    hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                    isBusy = false;
+                }
+                else
+                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+
+                if (timer.getElapsedTimeSeconds() > 1.5)
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                else if(timer.getElapsedTimeSeconds() > 0.5)
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 break;
 
             case PARK:
+                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
+
+                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+
+                isBusy = false;
                 break;
         }
-
-        ons = false;
     }
 
     public void setState(State s) {
         state = s;
-
-        ons = true;
+        isBusy = true;
         timer.resetTimer();
     }
 
@@ -64,5 +105,9 @@ public class Shooter {
 
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
                 / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading();
+
+        //p gain for turret
+
+        hardware.hood.setPosition(ShooterConstants.hoodAngle(goalDist));
     }
 }
