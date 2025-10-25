@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
 import com.pedropathing.localization.PoseTracker;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -40,6 +41,11 @@ public class Hardware {
     public Servo launcher;
     public Servo door;
 
+    public RevColorSensorV3 ball1;
+    public RevColorSensorV3 ball2;
+    public RevColorSensorV3 ball3;
+
+
     //vision
     public Limelight3A limelight;
 
@@ -77,6 +83,10 @@ public class Hardware {
         hood = hmap.get(Servo.class, "hood");
         launcher =  hmap.get(Servo.class, "launcher");
         door = hmap.get(Servo.class, "door");
+
+        ball1 = hmap.get(RevColorSensorV3.class, "ball1");
+        ball2 = hmap.get(RevColorSensorV3.class, "ball2");
+        ball3 = hmap.get(RevColorSensorV3.class, "ball3");
 
         //vision
         limelight = hmap.get(Limelight3A.class, "limelight");
