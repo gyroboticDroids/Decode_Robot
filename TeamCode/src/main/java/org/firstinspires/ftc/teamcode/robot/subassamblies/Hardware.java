@@ -56,20 +56,27 @@ public class Hardware {
 
         //intake
         intake = hmap.get(DcMotor.class, "intake");
-
-        intakePivotLeft = hmap.get(Servo.class, "intakeLeft");
-        intakePivotRight = hmap.get(Servo.class, "intakeRight");
-
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        intakePivotLeft = hmap.get(Servo.class, "intakeLeft");
+        intakePivotRight = hmap.get(Servo.class, "intakeRight");
+
         //shooter
-        flywheel = hardwareMap.get(DcMotorEx.class, "shooter");
+        flywheel = hmap.get(DcMotorEx.class, "shooter");
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.PIDF);
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
+        turret = hmap.get(DcMotor.class, "turret");
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        hood = hmap.get(Servo.class, "hood");
+        launcher =  hmap.get(Servo.class, "launcher");
+        door = hmap.get(Servo.class, "door");
 
         //vision
         limelight = hmap.get(Limelight3A.class, "limelight");
