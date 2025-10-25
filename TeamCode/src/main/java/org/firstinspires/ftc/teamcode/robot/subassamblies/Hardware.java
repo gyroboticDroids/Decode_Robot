@@ -4,6 +4,7 @@ import com.pedropathing.localization.PoseTracker;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware {
     HardwareMap hmap;
@@ -14,7 +15,16 @@ public class Hardware {
     public DcMotor rightFront;
     public DcMotor rightRear;
 
+    public Servo parkLeft;
+    public Servo parkRight;
+
     public PoseTracker poseTracker;
+
+    //intake
+    public DcMotor intake;
+
+    public Servo intakePivotLeft;
+    public Servo intakePivotRight;
 
     //vision
     public Limelight3A limelight;
