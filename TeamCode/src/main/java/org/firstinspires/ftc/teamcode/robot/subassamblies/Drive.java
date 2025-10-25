@@ -18,44 +18,52 @@ public class Drive {
     private double y;
     private double rx;
 
+    private double speedMultiplier = 1;
+
     public boolean headingLock = false;
     private boolean resetHeading = false;
 
-    public Drive(Hardware hardware, Gamepad gamepad){
+    private boolean park = false;
+
+    public Drive(Hardware hardware, Gamepad gamepad) {
         this.hardware = hardware;
         this.gamepad = gamepad;
 
         poseTracker = hardware.poseTracker;
     }
 
-    public void update(){
+    public void update() {
         poseTracker.update();
         robotPos = poseTracker.getPose();
 
         input();
 
-        if(!headingLock)
+        if (!headingLock)
             autoTurn();
 
+        park();
         movement();
     }
 
-    private void input(){
-        y = -gamepad.left_stick_y;
-        x = gamepad.left_stick_x;
-        rx = (headingLock)? 0 : gamepad.right_stick_x;
+    private void input() {
+        y = -gamepad.left_stick_y * speedMultiplier;
+        x = gamepad.left_stick_x * speedMultiplier;
+        rx = (headingLock) ? 0 : gamepad.right_stick_x;
+
+        if (gamepad.dpad_down)
+            park = true;
+        else if (gamepad.dpad_up)
+            park = false;
 
         resetHeading = gamepad.share;
     }
 
-    private void autoTurn(){
+    private void autoTurn() {
         double error = DriveConstants.PARK_HEADING - Math.toDegrees(robotPos.getHeading());
 
-        if(error > 180)
-        {
+        if (error > 180) {
             error -= 360;
-        }
-        else if (error < -180) {
+        } else if (error < -180) {
             error += 360;
         }
 
@@ -63,10 +71,9 @@ public class Drive {
         rx = Math.min(Math.max(rx, -0.4), 0.4);
     }
 
-    private void movement(){
-        if (resetHeading)
-        {
-            poseTracker.setPose(new Pose(0,0,0));
+    private void movement() {
+        if (resetHeading) {
+            poseTracker.setPose(new Pose(0, 0, 0));
         }
 
         double botHeading = robotPos.getHeading();
@@ -92,7 +99,25 @@ public class Drive {
         hardware.rightFront.setPower(rightRearPower);
     }
 
-    public Pose getRobotPos(){
+    private void park() {
+        if(park) {
+            hardware.parkLeft.setPosition(DriveConstants.PARK_LEFT_DOWN_POS);
+            hardware.parkRight.setPosition(DriveConstants.PARK_RIGHT_DOWN_POS);
+
+            speedMultiplier = DriveConstants.PARK_SPEED;
+        } else {
+            hardware.parkLeft.setPosition(DriveConstants.PARK_LEFT_UP_POS);
+            hardware.parkRight.setPosition(DriveConstants.PARK_RIGHT_UP_POS);
+
+            speedMultiplier = DriveConstants.DRIVE_SPEED;
+        }
+    }
+
+    public Pose getRobotPos() {
         return poseTracker.getPose();
+    }
+
+    public boolean isPark() {
+        return park;
     }
 }
