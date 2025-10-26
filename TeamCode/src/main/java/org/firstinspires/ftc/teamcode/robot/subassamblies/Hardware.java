@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subassamblies;
 import com.pedropathing.localization.PoseTracker;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,7 +36,7 @@ public class Hardware {
 
     //shooter
     public DcMotorEx flywheel;
-    public DcMotor turret;
+    public DcMotorEx turret;
 
     public Servo hood;
     public Servo launcher;
@@ -44,6 +45,8 @@ public class Hardware {
     public RevColorSensorV3 ball1;
     public RevColorSensorV3 ball2;
     public RevColorSensorV3 ball3;
+
+    public RevTouchSensor shooterReset;
 
 
     //vision
@@ -75,9 +78,8 @@ public class Hardware {
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
-        turret = hmap.get(DcMotor.class, "turret");
+        turret = hmap.get(DcMotorEx.class, "turret");
         turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
         hood = hmap.get(Servo.class, "hood");
@@ -87,6 +89,8 @@ public class Hardware {
         ball1 = hmap.get(RevColorSensorV3.class, "ball1");
         ball2 = hmap.get(RevColorSensorV3.class, "ball2");
         ball3 = hmap.get(RevColorSensorV3.class, "ball3");
+
+        shooterReset = hmap.get(RevTouchSensor.class, "limit");
 
         //vision
         limelight = hmap.get(Limelight3A.class, "limelight");

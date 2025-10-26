@@ -4,12 +4,13 @@ package org.firstinspires.ftc.teamcode.robot.subassamblies;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
 public class Shooter {
     public enum State {
-        SLEEP, READY, LAUNCH, REJECT, PARK
+        SLEEP, READY, LAUNCH, REJECT, PARK, RESET
     }
 
     private final Hardware hardware;
@@ -20,6 +21,8 @@ public class Shooter {
     private double goalDist = 0;
 
     private boolean isBusy = false;
+
+    private double turretOffset;
 
     public Shooter(Hardware hardware) {
         this.hardware = hardware;
@@ -92,6 +95,21 @@ public class Shooter {
 
                 isBusy = false;
                 break;
+
+            case RESET:
+                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
+
+                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+
+                hardware.turret.setPower(0.5);
+
+                if (hardware.shooterReset.isPressed()) {
+                    hardware.turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
+
+                isBusy = false;
+                break;
         }
     }
 
@@ -108,10 +126,20 @@ public class Shooter {
                 + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
 
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
-                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading();
+                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() - turretOffset;
 
-        //p gain for turret
+        if (angle > 180) {
+            angle -= 360;
+        } else if (angle < -180) {
+            angle += 360;
+        }
+
+        hardware.turret.setTargetPosition((int)(angle * ShooterConstants.TURRET_TICKS_PER_DEGREE));
 
         hardware.hood.setPosition(ShooterConstants.hoodAngle(goalDist));
+    }
+
+    public void turretOffset(double offset) {
+        turretOffset = offset;
     }
 }

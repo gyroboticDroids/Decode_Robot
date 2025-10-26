@@ -15,7 +15,7 @@ public class ShooterConstants {
     public static double FLYWHEEL_REJECT = 500; //ticks per second
     public static double FLYWHEEL_ACCURACY = 100; //ticks per second
 
-    public static double TURRET_P_GAIN = 0.01;
+    public static double TURRET_TICKS_PER_DEGREE = 100;
 
     public static double LAUNCHER_UP = 0;
     public static double LAUNCHER_DOWN = 0;
