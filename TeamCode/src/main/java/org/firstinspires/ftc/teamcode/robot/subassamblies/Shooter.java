@@ -23,6 +23,7 @@ public class Shooter {
     private boolean isBusy = false;
 
     private double turretOffset;
+    private double turretReset = 0;
 
     public Shooter(Hardware hardware) {
         this.hardware = hardware;
@@ -105,7 +106,7 @@ public class Shooter {
                 hardware.turret.setPower(0.5);
 
                 if (hardware.shooterReset.isPressed()) {
-                    hardware.turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    turretReset = ShooterConstants.TURRET_RESET_POS - hardware.turret.getCurrentPosition();
                 }
 
                 isBusy = false;
@@ -126,7 +127,7 @@ public class Shooter {
                 + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
 
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
-                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() - turretOffset;
+                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() + turretOffset;
 
         if (angle > 180) {
             angle -= 360;
@@ -134,7 +135,7 @@ public class Shooter {
             angle += 360;
         }
 
-        hardware.turret.setTargetPosition((int)(angle * ShooterConstants.TURRET_TICKS_PER_DEGREE));
+        hardware.turret.setTargetPosition((int)(angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset));
 
         hardware.hood.setPosition(ShooterConstants.hoodAngle(goalDist));
     }
