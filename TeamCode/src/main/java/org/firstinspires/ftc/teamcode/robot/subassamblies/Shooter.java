@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.robot.subassamblies;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
@@ -32,8 +31,6 @@ public class Shooter {
     }
 
     public void update() {
-        targetGoal();
-
         switch (state) {
             case SLEEP:
                 hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
@@ -91,6 +88,8 @@ public class Shooter {
             case PARK:
                 hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
 
+                hardware.turret.setTargetPosition((int)-turretReset);
+
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
@@ -105,12 +104,16 @@ public class Shooter {
 
                 hardware.turret.setPower(0.5);
 
-                if (hardware.shooterReset.isPressed()) {
+                if (hardware.shooterReset.isPressed() || timer.getElapsedTimeSeconds() > 1) {
+                    hardware.turret.setPower(0);
                     turretReset = ShooterConstants.TURRET_RESET_POS - hardware.turret.getCurrentPosition();
+                    isBusy = false;
                 }
-
-                isBusy = false;
                 break;
+        }
+
+        if (state != State.PARK) {
+            targetGoal();
         }
     }
 
@@ -118,6 +121,10 @@ public class Shooter {
         state = s;
         isBusy = true;
         timer.resetTimer();
+    }
+
+    public State getState() {
+        return state;
     }
 
     private void targetGoal() {
@@ -129,18 +136,28 @@ public class Shooter {
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
                 / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() + turretOffset;
 
-        if (angle > 180) {
-            angle -= 360;
-        } else if (angle < -180) {
-            angle += 360;
+        while (Math.abs(angle) >= 180) {
+            if (angle > 180) {
+                angle -= 360;
+            } else if (angle < -180) {
+                angle += 360;
+            }
         }
 
         hardware.turret.setTargetPosition((int)(angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset));
 
-        hardware.hood.setPosition(ShooterConstants.hoodAngle(goalDist));
+        hardware.hood.setPosition(MathFunctions.clamp(ShooterConstants.hoodAngle(goalDist), 0, 1));
+    }
+
+    public boolean isBusy() {
+        return isBusy;
     }
 
     public void turretOffset(double offset) {
-        turretOffset = offset;
+        turretOffset += offset;
+    }
+
+    public double getGoalDist() {
+        return goalDist;
     }
 }

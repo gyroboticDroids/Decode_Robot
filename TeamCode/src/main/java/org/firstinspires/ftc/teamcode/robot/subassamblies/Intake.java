@@ -48,7 +48,12 @@ public class Intake {
         state = s;
         isBusy = true;
     }
+
     public boolean isBusy() {
         return isBusy;
+    }
+
+    public State getState() {
+        return state;
     }
 }
