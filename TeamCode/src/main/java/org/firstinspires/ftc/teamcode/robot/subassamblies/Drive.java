@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
 
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.PoseTracker;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
+import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 
 public class Drive {
-    Hardware hardware;
-    Gamepad gamepad;
-    PoseTracker poseTracker;
+    private final Hardware hardware;
+    private final Gamepad gamepad;
+    private final PoseTracker poseTracker;
+    private final Vision vision;
 
     Pose robotPos;
 
@@ -29,10 +32,19 @@ public class Drive {
         this.hardware = hardware;
         this.gamepad = gamepad;
 
+        vision = new Vision(hardware);
+
         poseTracker = hardware.poseTracker;
+        poseTracker.setStartingPose(TransferConstants.endPose);
     }
 
     public void update() {
+        Pose updatedPose = vision.getRobotPosFromTarget();
+
+        if (updatedPose != null) {
+            poseTracker.setPose(updatedPose.getAsCoordinateSystem(PedroCoordinates.INSTANCE));
+        }
+
         poseTracker.update();
         robotPos = poseTracker.getPose();
 
@@ -100,7 +112,7 @@ public class Drive {
     }
 
     private void park() {
-        if(park) {
+        if (park) {
             hardware.parkLeft.setPosition(DriveConstants.PARK_LEFT_DOWN_POS);
             hardware.parkRight.setPosition(DriveConstants.PARK_RIGHT_DOWN_POS);
 

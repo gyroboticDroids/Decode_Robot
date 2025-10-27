@@ -104,7 +104,7 @@ public class Shooter {
 
                 hardware.turret.setPower(0.5);
 
-                if (hardware.shooterReset.isPressed() || timer.getElapsedTimeSeconds() > 1) {
+                if (timer.getElapsedTimeSeconds() > 1 || hardware.turret.getVelocity() < 10) {
                     hardware.turret.setPower(0);
                     turretReset = ShooterConstants.TURRET_RESET_POS - hardware.turret.getCurrentPosition();
                     isBusy = false;
@@ -112,7 +112,7 @@ public class Shooter {
                 break;
         }
 
-        if (state != State.PARK) {
+        if (state != State.PARK && state != State.RESET) {
             targetGoal();
         }
     }
@@ -132,6 +132,10 @@ public class Shooter {
 
         goalDist = Math.sqrt(Math.pow(robotPos.getX() - ShooterConstants.GOAL_POS.getX(), 2)
                 + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
+
+        if (velComp) {
+
+        }
 
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
                 / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() + turretOffset;
@@ -159,5 +163,9 @@ public class Shooter {
 
     public double getGoalDist() {
         return goalDist;
+    }
+
+    public double getTurretOffset() {
+        return turretOffset;
     }
 }
