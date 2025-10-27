@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
-
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
+import com.pedropathing.math.Vector;
 import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
@@ -20,6 +20,8 @@ public class Shooter {
     private double goalDist = 0;
 
     private boolean isBusy = false;
+
+    public boolean velComp = true;
 
     private double turretOffset;
     private double turretReset = 0;
@@ -58,8 +60,7 @@ public class Shooter {
                 if (timer.getElapsedTimeSeconds() > 1) {
                     hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
                     isBusy = false;
-                }
-                else {
+                } else {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                 }
 
@@ -75,20 +76,19 @@ public class Shooter {
                 if (timer.getElapsedTimeSeconds() > 1.5) {
                     hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
                     isBusy = false;
-                }
-                else
+                } else
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
 
                 if (timer.getElapsedTimeSeconds() > 1.5)
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                else if(timer.getElapsedTimeSeconds() > 0.5)
+                else if (timer.getElapsedTimeSeconds() > 0.5)
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 break;
 
             case PARK:
                 hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
 
-                hardware.turret.setTargetPosition((int)-turretReset);
+                hardware.turret.setTargetPosition((int) -turretReset);
 
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
@@ -134,7 +134,11 @@ public class Shooter {
                 + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
 
         if (velComp) {
+            Vector velocity = hardware.poseTracker.getVelocity();
+            Vector ballDist = new Vector(velocity.getMagnitude() * ShooterConstants.launchTime(goalDist),
+                    velocity.getTheta());
 
+            robotPos.getAsVector().plus(ballDist);
         }
 
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
@@ -148,7 +152,7 @@ public class Shooter {
             }
         }
 
-        hardware.turret.setTargetPosition((int)(angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset));
+        hardware.turret.setTargetPosition((int) (angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset));
 
         hardware.hood.setPosition(MathFunctions.clamp(ShooterConstants.hoodAngle(goalDist), 0, 1));
     }

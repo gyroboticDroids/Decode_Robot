@@ -47,6 +47,9 @@ public class MasterTeleop extends OpMode {
 
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
+
+        gamepad1.setLedColor(0, 0, 0, -1);
+        gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
     }
 
     @Override
@@ -87,6 +90,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
         telemetry.addData("hood angle", hardware.hood.getPosition());
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
+        telemetry.addData("velocity compensation", shooter.velComp);
         telemetry.update();
     }
 
@@ -128,6 +132,14 @@ public class MasterTeleop extends OpMode {
                 shooter.setState(Shooter.State.SLEEP);
             }
         }
+
+        if (gamepad2.touchpad && shooter.velComp) {
+            shooter.velComp = false;
+        } else if (gamepad2.touchpad && !shooter.velComp) {
+            shooter.velComp = true;
+        }
+
+        gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
 
         shooter.turretOffset(gamepad2.left_stick_x * ShooterConstants.TURRET_TRIM_SPEED);
 
