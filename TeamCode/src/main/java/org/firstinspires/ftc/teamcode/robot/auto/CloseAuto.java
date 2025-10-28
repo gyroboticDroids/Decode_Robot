@@ -1,0 +1,78 @@
+package org.firstinspires.ftc.teamcode.robot.auto;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
+import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
+import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
+import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
+
+@Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
+public class CloseAuto extends OpMode {
+    private Follower follower;
+    private Timer pathTimer;
+
+    private Hardware hardware;
+    private Intake intake;
+    private Shooter shooter;
+
+    int pathState = -1;
+    int allianceColor = 0;
+
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+
+        intake = new Intake(hardware);
+        shooter = new Shooter(hardware);
+
+        intake.setState(Intake.State.INTAKE_SLEEP);
+        shooter.setState(Shooter.State.SLEEP);
+
+        follower = Constants.createFollower(hardwareMap);
+        buildPaths();
+        follower.setStartingPose();
+    }
+
+    @Override
+    public void init_loop() {
+
+    }
+
+    @Override
+    public void start() {
+        setPathState(0);
+    }
+
+    @Override
+    public void loop() {
+        follower.update();
+        autonomousPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.update();
+    }
+
+    private void autonomousPathUpdate() {
+
+    }
+
+    public void setPathState(int p) {
+        pathState = p;
+        pathTimer.resetTimer();
+    }
+
+    @Override
+    public void stop() {
+        TransferConstants.endPose = follower.getPose();
+        TransferConstants.allianceColor = allianceColor;
+        TransferConstants.endTurretPos = hardware.turret.getCurrentPosition();
+    }
+}

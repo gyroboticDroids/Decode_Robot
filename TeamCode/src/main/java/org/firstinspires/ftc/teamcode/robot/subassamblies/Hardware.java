@@ -78,7 +78,8 @@ public class Hardware {
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
         turret = hmap.get(DcMotorEx.class, "turret");
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
         hood = hmap.get(Servo.class, "hood");
@@ -114,7 +115,7 @@ public class Hardware {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Localizer localizer = new PinpointLocalizer(hmap, Constants);
+        Localizer localizer = new PinpointLocalizer(hmap, Constants.localizerConstants);
         poseTracker = new PoseTracker(localizer);
     }
 }

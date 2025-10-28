@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.robot.teleop;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Drive;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 
 import java.util.List;
 
+@TeleOp(name = "Master Tele-op", group = "teleop")
 public class MasterTeleop extends OpMode {
     private Hardware hardware;
 
@@ -43,13 +46,18 @@ public class MasterTeleop extends OpMode {
     @Override
     public void start() {
         intake.setState(Intake.State.INTAKE);
-        shooter.setState(Shooter.State.SLEEP);
+        shooter.setState(Shooter.State.OFF);
 
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
 
         gamepad1.setLedColor(0, 0, 0, -1);
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
+    }
+
+    @Override
+    public void stop() {
+        TransferConstants.resetConstants();
     }
 
     @Override
@@ -119,17 +127,17 @@ public class MasterTeleop extends OpMode {
     private void shooterUpdate() {
         if (!shooter.isBusy()) {
             if (drive.isPark()) {
-                shooter.setState(Shooter.State.PARK);
-            } else if (prevShooterState == Shooter.State.LAUNCH) {
+                shooter.setState(Shooter.State.OFF);
+            } else if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed())
+                    && prevShooterState != Shooter.State.READY || prevShooterState == Shooter.State.LAUNCH
+                    || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF) {
                 shooter.setState(Shooter.State.READY);
-            } else if (gamepad1.right_bumper && gamepad2.right_bumper) {
+            } else if ((gamepad1.right_bumper || gamepad2.right_bumper) && prevShooterState == Shooter.State.READY) {
                 shooter.setState(Shooter.State.LAUNCH);
             } else if (gamepad2.triangle) {
                 shooter.setState(Shooter.State.REJECT);
             } else if (gamepad2.share) {
                 shooter.setState(Shooter.State.RESET);
-            } else if (gamepad2.square) {
-                shooter.setState(Shooter.State.SLEEP);
             }
         }
 

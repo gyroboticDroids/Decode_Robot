@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
 public class Shooter {
     public enum State {
-        SLEEP, READY, LAUNCH, REJECT, PARK, RESET
+        READY, LAUNCH, REJECT, OFF, RESET
     }
 
     private final Hardware hardware;
@@ -24,7 +24,7 @@ public class Shooter {
     public boolean velComp = true;
 
     private double turretOffset;
-    private double turretReset = 0;
+    private int turretReset = 0;
 
     public Shooter(Hardware hardware) {
         this.hardware = hardware;
@@ -34,15 +34,6 @@ public class Shooter {
 
     public void update() {
         switch (state) {
-            case SLEEP:
-                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
-
-                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
-
-                isBusy = false;
-                break;
-
             case READY:
                 hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
 
@@ -50,7 +41,7 @@ public class Shooter {
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
                 if (MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(), ShooterConstants.flywheelSpeed(goalDist),
-                        ShooterConstants.FLYWHEEL_ACCURACY))
+                        ShooterConstants.FLYWHEEL_ACCURACY) || timer.getElapsedTimeSeconds() > 1)
                     isBusy = false;
                 break;
 
@@ -85,10 +76,10 @@ public class Shooter {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 break;
 
-            case PARK:
+            case OFF:
                 hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
 
-                hardware.turret.setTargetPosition((int) -turretReset);
+                hardware.turret.setTargetPosition(-turretReset);
 
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
@@ -112,7 +103,7 @@ public class Shooter {
                 break;
         }
 
-        if (state != State.PARK && state != State.RESET) {
+        if (state != State.OFF && state != State.RESET) {
             targetGoal();
         }
     }

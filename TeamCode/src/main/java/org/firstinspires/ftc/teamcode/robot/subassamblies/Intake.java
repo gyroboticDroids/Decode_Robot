@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.IntakeConstants;
 
 public class Intake {
     public enum State{
-        INTAKE, CLEAR, INTAKE_UP
+        INTAKE, CLEAR, INTAKE_UP, INTAKE_SLEEP
     }
 
     Hardware hardware;
@@ -39,6 +39,14 @@ public class Intake {
                 hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
 
                 hardware.intake.setPower(IntakeConstants.INTAKE_SLOW);
+                isBusy = false;
+                break;
+
+            case INTAKE_SLEEP:
+                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_LEFT_UP);
+                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
+
+                hardware.intake.setPower(0);
                 isBusy = false;
                 break;
         }

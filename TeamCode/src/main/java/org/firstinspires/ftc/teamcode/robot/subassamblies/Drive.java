@@ -34,6 +34,8 @@ public class Drive {
 
         vision = new Vision(hardware);
 
+        this.hardware.configureTeleop();
+
         poseTracker = hardware.poseTracker;
         poseTracker.setStartingPose(TransferConstants.endPose);
     }
