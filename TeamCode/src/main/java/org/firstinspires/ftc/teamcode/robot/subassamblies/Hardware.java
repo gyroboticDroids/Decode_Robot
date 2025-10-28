@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
+import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.localization.Localizer;
 import com.pedropathing.localization.PoseTracker;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
@@ -109,6 +114,7 @@ public class Hardware {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        poseTracker = new PoseTracker();
+        Localizer localizer = new PinpointLocalizer(hmap, Constants);
+        poseTracker = new PoseTracker(localizer);
     }
 }
