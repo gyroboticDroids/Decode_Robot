@@ -79,7 +79,7 @@ public class Shooter {
             case OFF:
                 hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
 
-                hardware.turret.setTargetPosition(-turretReset);
+                turretMoveTo(0);
 
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
@@ -135,7 +135,7 @@ public class Shooter {
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
                 / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() + turretOffset;
 
-        while (Math.abs(angle) >= 180) {
+        while (Math.abs(angle) > 180) {
             if (angle > 180) {
                 angle -= 360;
             } else if (angle < -180) {
@@ -143,9 +143,19 @@ public class Shooter {
             }
         }
 
-        hardware.turret.setTargetPosition((int) (angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset));
+        turretMoveTo(angle);
 
         hardware.hood.setPosition(MathFunctions.clamp(ShooterConstants.hoodAngle(goalDist), 0, 1));
+    }
+
+    private void turretMoveTo(double angle) {
+        double targetPos = angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset;
+
+        double error = targetPos - hardware.turret.getCurrentPosition();
+
+        double motorPower = MathFunctions.clamp(error * ShooterConstants.TURRET_P_GAIN, -1, 1);
+
+        hardware.turret.setPower(motorPower);
     }
 
     public boolean isBusy() {
@@ -162,5 +172,9 @@ public class Shooter {
 
     public double getTurretOffset() {
         return turretOffset;
+    }
+
+    public double getTurretReset() {
+        return turretReset;
     }
 }

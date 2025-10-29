@@ -26,16 +26,18 @@ public class CloseAuto extends OpMode {
     @Override
     public void init() {
         pathTimer = new Timer();
+        follower = Constants.createFollower(hardwareMap);
+        buildPaths();
+        follower.setStartingPose();
+
+        hardware = new Hardware(hardwareMap);
+        hardware.setPoseTrackerInAuto(follower.poseTracker);
 
         intake = new Intake(hardware);
         shooter = new Shooter(hardware);
 
         intake.setState(Intake.State.INTAKE_SLEEP);
-        shooter.setState(Shooter.State.SLEEP);
-
-        follower = Constants.createFollower(hardwareMap);
-        buildPaths();
-        follower.setStartingPose();
+        shooter.setState(Shooter.State.OFF);
     }
 
     @Override
@@ -61,6 +63,10 @@ public class CloseAuto extends OpMode {
     }
 
     private void autonomousPathUpdate() {
+
+    }
+
+    private void buildPaths() {
 
     }
 

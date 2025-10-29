@@ -93,6 +93,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("state", shooter.getState());
         telemetry.addData("is busy", shooter.isBusy());
         telemetry.addData("goal dist", shooter.getGoalDist());
+        telemetry.addData("turret reset offset", shooter.getTurretReset());
         telemetry.addData("turret pos (degrees)", hardware.turret.getCurrentPosition()
                 / ShooterConstants.TURRET_TICKS_PER_DEGREE);
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
