@@ -127,10 +127,6 @@ public class Drive {
         }
     }
 
-    public Pose getRobotPos() {
-        return poseTracker.getPose();
-    }
-
     public boolean isPark() {
         return park;
     }

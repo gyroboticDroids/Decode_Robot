@@ -84,7 +84,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("hood offset", ShooterConstants.getHoodOffset());
         telemetry.addData("flywheel offset", ShooterConstants.getFlywheelOffset());
         telemetry.addLine("----------drive--------------");
-        telemetry.addData("robot position", drive.getRobotPos());
+        telemetry.addData("robot position", hardware.poseTracker.getPose());
         telemetry.addData("is heading lock", drive.headingLock);
         telemetry.addLine("----------intake-------------");
         telemetry.addData("state", intake.getState());
