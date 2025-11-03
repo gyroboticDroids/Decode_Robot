@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -11,15 +10,8 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 
-import java.util.EnumMap;
-
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
-public class CloseAuto extends OpMode {
-    private enum PoseName{
-        START, SCORE_PRELOAD, SPIKE_MARK_1
-    }
-    EnumMap<PoseName, Pose> poses = new EnumMap<>(PoseName.class);
-
+public class Autonomous extends OpMode {
     private Follower follower;
     private Timer pathTimer;
 
@@ -27,18 +19,15 @@ public class CloseAuto extends OpMode {
     private Intake intake;
     private Shooter shooter;
 
-    private int pathState = -1;
-    private boolean allianceColorRed = true;
-
+    int pathState = -1;
+    boolean allianceColorRed = true;
 
     @Override
     public void init() {
-        setUpPoses();
-
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(poses.get(PoseName.START));
+        follower.setStartingPose();
 
         hardware = new Hardware(hardwareMap);
         hardware.setPoseTrackerInAuto(follower.poseTracker);
@@ -52,7 +41,7 @@ public class CloseAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        if (gamepad1.crossWasPressed());
+
     }
 
     @Override
@@ -78,18 +67,6 @@ public class CloseAuto extends OpMode {
 
     private void buildPaths() {
 
-    }
-
-    private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(0, 0, 0));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(0, 0, 0));
-        poses.put(PoseName.SPIKE_MARK_1, new Pose(0, 0, 0));
-    }
-
-    private void mirrorPoses() {
-        for (Pose pose : poses.values()) {
-            pose.mirror();
-        }
     }
 
     public void setPathState(int p) {
