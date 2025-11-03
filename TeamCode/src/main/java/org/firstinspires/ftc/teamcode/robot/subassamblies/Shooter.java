@@ -4,7 +4,9 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
 public class Shooter {
@@ -22,6 +24,7 @@ public class Shooter {
     private boolean isBusy = false;
 
     public boolean velComp = true;
+    public boolean timerReset = true;
 
     private double turretOffset;
     private int turretReset = 0;
@@ -48,17 +51,24 @@ public class Shooter {
             case LAUNCH:
                 hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
 
-                if (timer.getElapsedTimeSeconds() > 1) {
-                    hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
-                    isBusy = false;
-                } else {
+                boolean ballDetection = isBallClear();
+
+                if (!ballDetection) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 }
 
-                if (timer.getElapsedTimeSeconds() > 1.5)
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                else
+                if (ballDetection) {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
+                    timer.resetTimer();
+                    timerReset = true;
+                }
+
+                if (timerReset && timer.getElapsedTimeSeconds() > 0.5) {
+                    hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                    isBusy = false;
+                }
                 break;
 
             case REJECT:
@@ -111,6 +121,7 @@ public class Shooter {
     public void setState(State s) {
         state = s;
         isBusy = true;
+        timerReset = false;
         timer.resetTimer();
     }
 
@@ -156,6 +167,16 @@ public class Shooter {
         double motorPower = MathFunctions.clamp(error * ShooterConstants.TURRET_P_GAIN, -1, 1);
 
         hardware.turret.setPower(motorPower);
+    }
+
+    public boolean isBallClear() {
+        return isNoBallDetected(hardware.ball1) && isNoBallDetected(hardware.ball2);
+    }
+
+    private boolean isNoBallDetected(RevColorSensorV3 colorSensor) {
+        boolean isDetected = colorSensor.getDistance(DistanceUnit.INCH) < 1;
+
+        return !isDetected;
     }
 
     public boolean isBusy() {
