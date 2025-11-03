@@ -255,6 +255,15 @@ public class CloseAuto extends OpMode {
 
         collectBalls2 = new Path(new BezierLine(poses.get(PoseName.GATE), poses.get(PoseName.SPIKE_MARK_2)));
         collectBalls2.setConstantHeadingInterpolation(270);
+
+        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_2), poses.get(PoseName.SCORE)));
+        scoreBalls2.setConstantHeadingInterpolation(270);
+
+        collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3)));
+        collectBalls3.setConstantHeadingInterpolation(270);
+
+        scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
+        scoreBalls3.setConstantHeadingInterpolation(270);
     }
 
     private void mirrorPoses() {
