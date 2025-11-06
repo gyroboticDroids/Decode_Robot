@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
@@ -39,35 +40,36 @@ public class FarAuto extends OpMode {
     private boolean allianceColorRed = true;
 
     private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.SPIKE_MARK_3, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.SCORE, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.HUMAN_PLAYER_SPIKE_MARK, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.GATE_BALLS, new Pose(0, 0, Math.toRadians(90)));
+        poses.put(PoseName.START, new Pose(54.06, 4.58));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(64, 22));
+        poses.put(PoseName.SPIKE_MARK_3, new Pose(24, 36));
+        poses.put(PoseName.SCORE, new Pose(64, 22));
+        poses.put(PoseName.HUMAN_PLAYER_SPIKE_MARK, new Pose(12, 8));
+        poses.put(PoseName.GATE_BALLS, new Pose(12, 10));
     }
 
     private void buildPaths() {
         scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
         scorePreload.setConstantHeadingInterpolation(90);
 
-        collectBalls1 = new Path(new BezierLine(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK)));
-        collectBalls1.setConstantHeadingInterpolation(90);
+        collectBalls1 = new Path(new BezierCurve(poses.get(PoseName.SCORE_PRELOAD), new Pose(64, 36),
+                poses.get(PoseName.SPIKE_MARK_3)));
+        collectBalls1.setLinearHeadingInterpolation(90, 180, 0.7);
 
-        scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK), poses.get(PoseName.SCORE)));
-        scoreBalls1.setConstantHeadingInterpolation(90);
+        scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
+        scoreBalls1.setConstantHeadingInterpolation(180);
 
-        collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3)));
-        collectBalls2.setConstantHeadingInterpolation(90);
+        collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK)));
+        collectBalls2.setConstantHeadingInterpolation(180);
 
-        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
-        scoreBalls2.setConstantHeadingInterpolation(90);
+        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK), poses.get(PoseName.SCORE)));
+        scoreBalls2.setConstantHeadingInterpolation(180);
 
         collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.GATE_BALLS)));
-        collectBalls3.setConstantHeadingInterpolation(90);
+        collectBalls3.setConstantHeadingInterpolation(180);
 
         scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.GATE_BALLS), poses.get(PoseName.SCORE)));
-        scoreBalls3.setConstantHeadingInterpolation(90);
+        scoreBalls3.setConstantHeadingInterpolation(180);
     }
 
     @Override
