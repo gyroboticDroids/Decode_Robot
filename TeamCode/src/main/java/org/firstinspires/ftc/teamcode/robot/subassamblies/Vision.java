@@ -17,8 +17,12 @@ public class Vision {
         if (result != null && result.isValid()) {
             Pose3D robotPos = result.getBotpose();
 
-            return new Pose(robotPos.getPosition().y / 0.0254, -robotPos.getPosition().x / 0.0254,
-                    -robotPos.getOrientation().getYaw());
+            double angle = robotPos.getOrientation().getYaw() - 90;
+
+            if (angle < 0)
+                angle += 360;
+
+            return new Pose(-robotPos.getPosition().x / 0.0254 + 72, robotPos.getPosition().y / 0.0254 + 72, angle);
         }
 
         return null;

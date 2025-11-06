@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 
 import java.util.EnumMap;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "far auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class FarAuto extends OpMode {
     private enum PoseName{
         START, SCORE_PRELOAD, SPIKE_MARK_3, SCORE, HUMAN_PLAYER_SPIKE_MARK, GATE_BALLS

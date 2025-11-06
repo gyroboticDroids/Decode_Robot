@@ -44,7 +44,7 @@ public class Drive {
         Pose updatedPose = vision.getRobotPosFromTarget();
 
         if (updatedPose != null) {
-            poseTracker.setPose(updatedPose.getAsCoordinateSystem(PedroCoordinates.INSTANCE));
+            poseTracker.setPose(updatedPose);
         }
 
         poseTracker.update();

@@ -29,6 +29,8 @@ public class ShooterConstants {
     public static double DOOR_OPEN = 0;
     public static double DOOR_CLOSED = 0;
 
+    public static double BALL_DETECTION_TIME = 0.5;
+
     private static double flywheelOffset = 0;
     private static double hoodOffset = 0;
 

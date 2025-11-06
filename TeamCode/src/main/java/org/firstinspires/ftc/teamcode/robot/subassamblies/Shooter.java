@@ -4,7 +4,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
@@ -29,10 +28,28 @@ public class Shooter {
     private double turretOffset;
     private int turretReset = 0;
 
+    //Ball detection
+    boolean ball1 = false;
+    boolean ball2 = false;
+    boolean ball3 = false;
+
+    Timer ball1Timer;
+    Timer ball2Timer;
+    Timer ball3Timer;
+
     public Shooter(Hardware hardware) {
         this.hardware = hardware;
 
         timer = new Timer();
+
+        //Ball detection
+        ball1Timer = new Timer();
+        ball2Timer = new Timer();
+        ball3Timer = new Timer();
+
+        ball1Timer.resetTimer();
+        ball2Timer.resetTimer();
+        ball3Timer.resetTimer();
     }
 
     public void update() {
@@ -51,7 +68,7 @@ public class Shooter {
             case LAUNCH:
                 hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
 
-                boolean ballDetection = isBallClear();
+                boolean ballDetection = areBallsClear();
 
                 if (!ballDetection) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
@@ -59,7 +76,7 @@ public class Shooter {
                 }
 
                 if (ballDetection) {
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                     timer.resetTimer();
                     timerReset = true;
                 }
@@ -116,6 +133,8 @@ public class Shooter {
         if (state != State.OFF && state != State.RESET) {
             targetGoal();
         }
+
+        ballDetectionUpdate();
     }
 
     public void setState(State s) {
@@ -169,14 +188,26 @@ public class Shooter {
         hardware.turret.setPower(motorPower);
     }
 
-    public boolean isBallClear() {
-        return isNoBallDetected(hardware.ball1) && isNoBallDetected(hardware.ball2);
+    private void ballDetectionUpdate() {
+        if (hardware.ball1.getDistance(DistanceUnit.INCH) < 1)
+            ball1Timer.resetTimer();
+        ball1 = ball1Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
+
+        if (hardware.ball2.getDistance(DistanceUnit.INCH) < 1)
+            ball2Timer.resetTimer();
+        ball2 = ball2Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
+
+        if (hardware.ball3.getDistance(DistanceUnit.INCH) < 1)
+            ball3Timer.resetTimer();
+        ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
     }
 
-    private boolean isNoBallDetected(RevColorSensorV3 colorSensor) {
-        boolean isDetected = colorSensor.getDistance(DistanceUnit.INCH) < 1;
+    public boolean areBallsClear() {
+        return !ball1 && !ball2 && !ball3;
+    }
 
-        return !isDetected;
+    public boolean areBallsCollected() {
+        return ball1 && ball2 && ball3;
     }
 
     public boolean isBusy() {
