@@ -17,7 +17,7 @@ import java.util.EnumMap;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "far auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class FarAuto extends OpMode {
-    private enum PoseName{
+    private enum PoseName {
         START, SCORE_PRELOAD, SPIKE_MARK_3, SCORE, HUMAN_PLAYER_SPIKE_MARK, GATE_BALLS
     }
 
@@ -38,6 +38,37 @@ public class FarAuto extends OpMode {
     private int pathState = -1;
     private boolean allianceColorRed = true;
 
+    private void setUpPoses() {
+        poses.put(PoseName.START, new Pose(0, 0, Math.toRadians(90)));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(0, 0, Math.toRadians(90)));
+        poses.put(PoseName.SPIKE_MARK_3, new Pose(0, 0, Math.toRadians(90)));
+        poses.put(PoseName.SCORE, new Pose(0, 0, Math.toRadians(90)));
+        poses.put(PoseName.HUMAN_PLAYER_SPIKE_MARK, new Pose(0, 0, Math.toRadians(90)));
+        poses.put(PoseName.GATE_BALLS, new Pose(0, 0, Math.toRadians(90)));
+    }
+
+    private void buildPaths() {
+        scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
+        scorePreload.setConstantHeadingInterpolation(90);
+
+        collectBalls1 = new Path(new BezierLine(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK)));
+        collectBalls1.setConstantHeadingInterpolation(90);
+
+        scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK), poses.get(PoseName.SCORE)));
+        scoreBalls1.setConstantHeadingInterpolation(90);
+
+        collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3)));
+        collectBalls2.setConstantHeadingInterpolation(90);
+
+        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
+        scoreBalls2.setConstantHeadingInterpolation(90);
+
+        collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.GATE_BALLS)));
+        collectBalls3.setConstantHeadingInterpolation(90);
+
+        scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.GATE_BALLS), poses.get(PoseName.SCORE)));
+        scoreBalls3.setConstantHeadingInterpolation(90);
+    }
 
     @Override
     public void init() {
@@ -61,6 +92,11 @@ public class FarAuto extends OpMode {
     public void init_loop() {
         if (gamepad1.crossWasPressed())
             allianceColorRed = !allianceColorRed;
+
+        if (shooter.getState() != Shooter.State.RESET && !shooter.isBusy()) {
+            shooter.setState(Shooter.State.OFF);
+            telemetry.addLine("READY!");
+        }
 
         telemetry.addLine("alliance " + (allianceColorRed ? "RED" : "BLUE"));
         telemetry.update();
@@ -218,38 +254,6 @@ public class FarAuto extends OpMode {
                 }
                 break;
         }
-    }
-
-    private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.SPIKE_MARK_3, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.SCORE, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.HUMAN_PLAYER_SPIKE_MARK, new Pose(0, 0, Math.toRadians(90)));
-        poses.put(PoseName.GATE_BALLS, new Pose(0, 0, Math.toRadians(90)));
-    }
-
-    private void buildPaths() {
-        scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
-        scorePreload.setConstantHeadingInterpolation(90);
-
-        collectBalls1 = new Path(new BezierLine(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK)));
-        collectBalls1.setConstantHeadingInterpolation(90);
-
-        scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK), poses.get(PoseName.SCORE)));
-        scoreBalls1.setConstantHeadingInterpolation(90);
-
-        collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3)));
-        collectBalls2.setConstantHeadingInterpolation(90);
-
-        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
-        scoreBalls2.setConstantHeadingInterpolation(90);
-
-        collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.GATE_BALLS)));
-        collectBalls3.setConstantHeadingInterpolation(90);
-
-        scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.GATE_BALLS), poses.get(PoseName.SCORE)));
-        scoreBalls3.setConstantHeadingInterpolation(90);
     }
 
     private void mirrorPoses() {

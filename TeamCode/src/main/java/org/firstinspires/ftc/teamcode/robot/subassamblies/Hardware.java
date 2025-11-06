@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 import com.pedropathing.localization.PoseTracker;
-import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
 public class Hardware {
-    HardwareMap hmap;
+    HardwareMap hardwareMap;
 
     //drive
     public DcMotor leftFront;
@@ -53,45 +51,45 @@ public class Hardware {
     public Limelight3A limelight;
 
     public Hardware(HardwareMap hardwareMap) {
-        hmap = hardwareMap;
+        this.hardwareMap = hardwareMap;
 
         //drive
-        parkLeft = hmap.get(Servo.class, "parkLeft");
-        parkRight = hmap.get(Servo.class, "parkRight");
+        parkLeft = this.hardwareMap.get(Servo.class, "parkLeft");
+        parkRight = this.hardwareMap.get(Servo.class, "parkRight");
 
         parkLeft.setPosition(DriveConstants.PARK_LEFT_UP_POS);
         parkRight.setPosition(DriveConstants.PARK_RIGHT_UP_POS);
 
         //intake
-        intake = hmap.get(DcMotor.class, "intake");
+        intake = this.hardwareMap.get(DcMotor.class, "intake");
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        intakePivotLeft = hmap.get(Servo.class, "intakeLeft");
-        intakePivotRight = hmap.get(Servo.class, "intakeRight");
+        intakePivotLeft = this.hardwareMap.get(Servo.class, "intakeLeft");
+        intakePivotRight = this.hardwareMap.get(Servo.class, "intakeRight");
 
         //shooter
-        flywheel = hmap.get(DcMotorEx.class, "shooter");
+        flywheel = this.hardwareMap.get(DcMotorEx.class, "shooter");
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
-        turret = hmap.get(DcMotorEx.class, "turret");
+        turret = this.hardwareMap.get(DcMotorEx.class, "turret");
         //turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        hood = hmap.get(Servo.class, "hood");
-        launcher = hmap.get(Servo.class, "launcher");
-        door = hmap.get(Servo.class, "door");
+        hood = this.hardwareMap.get(Servo.class, "hood");
+        launcher = this.hardwareMap.get(Servo.class, "launcher");
+        door = this.hardwareMap.get(Servo.class, "door");
 
-        ball1 = hmap.get(RevColorSensorV3.class, "ball1");
-        ball2 = hmap.get(RevColorSensorV3.class, "ball2");
-        ball3 = hmap.get(RevColorSensorV3.class, "ball3");
+        ball1 = this.hardwareMap.get(RevColorSensorV3.class, "ball1");
+        ball2 = this.hardwareMap.get(RevColorSensorV3.class, "ball2");
+        ball3 = this.hardwareMap.get(RevColorSensorV3.class, "ball3");
 
         //vision
-        limelight = hmap.get(Limelight3A.class, "limelight");
+        limelight = this.hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
 
@@ -100,10 +98,10 @@ public class Hardware {
 
     public void configureTeleop() {
         //drive
-        leftFront = hmap.get(DcMotor.class, "lf");
-        leftRear = hmap.get(DcMotor.class, "lr");
-        rightFront = hmap.get(DcMotor.class, "rf");
-        rightRear = hmap.get(DcMotor.class, "rr");
+        leftFront = hardwareMap.get(DcMotor.class, "lf");
+        leftRear = hardwareMap.get(DcMotor.class, "lr");
+        rightFront = hardwareMap.get(DcMotor.class, "rf");
+        rightRear = hardwareMap.get(DcMotor.class, "rr");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftRear.setDirection(DcMotor.Direction.FORWARD);
@@ -115,7 +113,7 @@ public class Hardware {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Localizer localizer = new PinpointLocalizer(hmap, Constants.localizerConstants);
+        Localizer localizer = new PinpointLocalizer(hardwareMap, Constants.localizerConstants);
         poseTracker = new PoseTracker(localizer);
     }
 
