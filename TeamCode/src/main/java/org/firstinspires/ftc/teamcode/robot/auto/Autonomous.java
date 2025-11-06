@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class Autonomous extends OpMode {
     private Follower follower;
@@ -27,7 +29,7 @@ public class Autonomous extends OpMode {
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose();
+        //follower.setStartingPose();
 
         hardware = new Hardware(hardwareMap);
         hardware.setPoseTrackerInAuto(follower.poseTracker);

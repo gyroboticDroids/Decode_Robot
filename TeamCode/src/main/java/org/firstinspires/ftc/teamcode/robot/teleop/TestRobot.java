@@ -16,7 +16,6 @@ public class TestRobot extends OpMode {
     private double rightPivot = 0.5;
 
     private double flywheelSpeed = 0;
-    private int turret = 0;
     private double launcher = 0.5;
     private double hood = 0.5;
     private double door = 0.5;
@@ -99,10 +98,9 @@ public class TestRobot extends OpMode {
                 telemetry.addLine("----------Shooter---------");
 
                 flywheelSpeed += gamepad1.left_stick_y * 1;
-                turret += ((gamepad1.dpad_left ? 1 : 0) - (gamepad1.dpad_right ? 1 : 0)) * 2;
 
                 hardware.flywheel.setVelocity(flywheelSpeed);
-                hardware.turret.setTargetPosition(turret);
+                hardware.turret.setPower(((gamepad1.dpad_left ? 1 : 0) - (gamepad1.dpad_right ? 1 : 0)) * 0.2);
 
                 launcher += gamepad1.right_stick_y * 0.001;
                 hood += gamepad2.left_stick_y * 0.001;
