@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.teleop;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 
 public class TestRobot extends OpMode {
@@ -23,11 +24,12 @@ public class TestRobot extends OpMode {
     @Override
     public void init() {
         hardware = new Hardware(hardwareMap);
+        hardware.configureTeleop();
 
         hardware.parkLeft.setPosition(0.5);
         hardware.parkRight.setPosition(0.5);
 
-        hardware.intakePivotLeft.setPosition(0.5);
+        //hardware.intakePivotLeft.setPosition(0.5);
         hardware.intakePivotRight.setPosition(0.5);
 
         hardware.door.setPosition(0.5);
@@ -85,12 +87,12 @@ public class TestRobot extends OpMode {
                 leftPivot = MathFunctions.clamp(leftPivot, 0, 1);
                 rightPivot = MathFunctions.clamp(rightPivot, 0, 1);
 
-                hardware.intakePivotLeft.setPosition(leftPivot);
+                //hardware.intakePivotLeft.setPosition(leftPivot);
                 hardware.intakePivotRight.setPosition(rightPivot);
 
                 telemetry.addData("intake (g1 left stick y)", hardware.intake.getPower());
 
-                telemetry.addData("left pivot (g2 left stick y)", hardware.intakePivotLeft.getPosition());
+                //telemetry.addData("left pivot (g2 left stick y)", hardware.intakePivotLeft.getPosition());
                 telemetry.addData("right pivot (g2 right stick y)", hardware.intakePivotRight.getPosition());
                 break;
 
@@ -120,6 +122,10 @@ public class TestRobot extends OpMode {
                 telemetry.addData("launcher (g1 right stick y)", hardware.launcher.getPosition());
                 telemetry.addData("hood (g2 left stick y)", hardware.hood.getPosition());
                 telemetry.addData("door (g2 right stick y)", hardware.door.getPosition());
+
+                telemetry.addData("color 1 inches", hardware.ball1.getDistance(DistanceUnit.INCH));
+                telemetry.addData("color 2 inches", hardware.ball2.getDistance(DistanceUnit.INCH));
+                telemetry.addData("color 3 inches", hardware.ball3.getDistance(DistanceUnit.INCH));
                 break;
         }
 
