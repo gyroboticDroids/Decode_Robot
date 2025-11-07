@@ -19,32 +19,32 @@ public class Intake {
     public void update(){
         switch (state){
             case INTAKE:
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_LEFT_DOWN);
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                //hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
 
                 hardware.intake.setPower(IntakeConstants.INTAKE_FORWARD);
                 isBusy = false;
                 break;
 
             case CLEAR:
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_LEFT_DOWN);
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                //hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
 
                 hardware.intake.setPower(IntakeConstants.INTAKE_BACKWARD);
                 isBusy = false;
                 break;
 
             case INTAKE_UP:
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_LEFT_UP);
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
+                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
+                //hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
 
                 hardware.intake.setPower(IntakeConstants.INTAKE_SLOW);
                 isBusy = false;
                 break;
 
             case INTAKE_SLEEP:
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_LEFT_UP);
-                hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
+                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
+                //hardware.intakePivotLeft.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
 
                 hardware.intake.setPower(0);
                 isBusy = false;

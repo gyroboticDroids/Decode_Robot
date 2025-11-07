@@ -32,7 +32,7 @@ public class Hardware {
     //intake
     public DcMotor intake;
 
-    public Servo intakePivotLeft;
+    //public Servo intakePivotLeft;
     public Servo intakePivotRight;
 
     //shooter
@@ -66,7 +66,7 @@ public class Hardware {
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        intakePivotLeft = this.hardwareMap.get(Servo.class, "intakeLeft");
+        //intakePivotLeft = this.hardwareMap.get(Servo.class, "intakeLeft");
         intakePivotRight = this.hardwareMap.get(Servo.class, "intakeRight");
 
         //shooter
@@ -76,7 +76,7 @@ public class Hardware {
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
         turret = this.hardwareMap.get(DcMotorEx.class, "turret");
-        //turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
