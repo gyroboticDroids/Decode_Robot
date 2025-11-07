@@ -50,26 +50,26 @@ public class FarAuto extends OpMode {
 
     private void buildPaths() {
         scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
-        scorePreload.setConstantHeadingInterpolation(90);
+        scorePreload.setConstantHeadingInterpolation(Math.toRadians(90));
 
         collectBalls1 = new Path(new BezierCurve(poses.get(PoseName.SCORE_PRELOAD), new Pose(64, 36),
                 poses.get(PoseName.SPIKE_MARK_3)));
-        collectBalls1.setLinearHeadingInterpolation(90, 180, 0.7);
+        collectBalls1.setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180), 0.7);
 
         scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
-        scoreBalls1.setConstantHeadingInterpolation(180);
+        scoreBalls1.setConstantHeadingInterpolation(Math.toRadians(180));
 
         collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK)));
-        collectBalls2.setConstantHeadingInterpolation(180);
+        collectBalls2.setConstantHeadingInterpolation(Math.toRadians(180));
 
         scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK), poses.get(PoseName.SCORE)));
-        scoreBalls2.setConstantHeadingInterpolation(180);
+        scoreBalls2.setConstantHeadingInterpolation(Math.toRadians(180));
 
         collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.GATE_BALLS)));
-        collectBalls3.setConstantHeadingInterpolation(180);
+        collectBalls3.setConstantHeadingInterpolation(Math.toRadians(180));
 
         scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.GATE_BALLS), poses.get(PoseName.SCORE)));
-        scoreBalls3.setConstantHeadingInterpolation(180);
+        scoreBalls3.setConstantHeadingInterpolation(Math.toRadians(180));
     }
 
     @Override
