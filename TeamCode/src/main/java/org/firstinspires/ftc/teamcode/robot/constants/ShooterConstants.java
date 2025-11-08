@@ -18,8 +18,10 @@ public class ShooterConstants {
 
     public static double TURRET_P_GAIN = 0.005;
     public static double TURRET_TICKS_PER_DEGREE = 100;
-    public static int TURRET_RESET_POS = 1000;//ticks
+    public static int TURRET_RESET_POS = 180 * (int)TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.001;
+    public static double TURRET_MIN_ANGLE = -170;
+    public static double TURRET_MAX_ANGLE = 180;
 
     public static double HOOD_TRIM_SPEED = 0.001;
 

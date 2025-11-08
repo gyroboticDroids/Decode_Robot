@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.robot.teleop;
 
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
+import org.firstinspires.ftc.teamcode.robot.subassamblies.Vision;
 
+@TeleOp(name = "test robot", group = "testing")
 public class TestRobot extends OpMode {
     private Hardware hardware;
+    private Vision vision;
     private int state = 0;
 
     private double parkLeftPos = 0.5;
@@ -24,6 +28,7 @@ public class TestRobot extends OpMode {
     @Override
     public void init() {
         hardware = new Hardware(hardwareMap);
+        vision = new Vision(hardware);
         hardware.configureTeleop();
 
         hardware.parkLeft.setPosition(0.5);
@@ -131,6 +136,8 @@ public class TestRobot extends OpMode {
                 telemetry.addData("color 3 inches", hardware.ball3.getDistance(DistanceUnit.INCH));
                 break;
         }
+
+        telemetry.addData("robot pos from camera", vision.getRobotPosFromTarget());
 
         telemetry.update();
     }

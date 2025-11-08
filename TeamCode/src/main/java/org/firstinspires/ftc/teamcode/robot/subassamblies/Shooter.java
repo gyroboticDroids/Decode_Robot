@@ -165,12 +165,10 @@ public class Shooter {
         double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
                 / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() + turretOffset;
 
-        while (Math.abs(angle) > 180) {
-            if (angle > 180) {
-                angle -= 360;
-            } else if (angle < -180) {
-                angle += 360;
-            }
+        if (angle > 180) {
+            angle -= 360;
+        } else if (angle < -180) {
+            angle += 360;
         }
 
         turretMoveTo(angle);
@@ -179,7 +177,8 @@ public class Shooter {
     }
 
     private void turretMoveTo(double angle) {
-        double targetPos = angle * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset;
+        double targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
+                * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset;
 
         double error = targetPos - hardware.turret.getCurrentPosition();
 
@@ -216,6 +215,7 @@ public class Shooter {
 
     public void turretOffset(double offset) {
         turretOffset += offset;
+        turretOffset = MathFunctions.clamp(turretOffset, -180, 180);
     }
 
     public double getGoalDist() {
