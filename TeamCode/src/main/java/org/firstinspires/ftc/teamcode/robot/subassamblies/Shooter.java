@@ -68,15 +68,15 @@ public class Shooter {
             case LAUNCH:
                 hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
 
-                boolean ballDetection = areBallsClear();
+                boolean lastBall = isLastBall();
 
-                if (!ballDetection) {
+                if (!lastBall) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 }
 
-                if (ballDetection) {
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
+                if (lastBall) {
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                     timer.resetTimer();
                     timerReset = true;
                 }
@@ -201,8 +201,8 @@ public class Shooter {
         ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
     }
 
-    public boolean areBallsClear() {
-        return !ball1 && !ball2 && !ball3;
+    public boolean isLastBall() {
+        return !ball1 && !ball2;
     }
 
     public boolean areBallsCollected() {
