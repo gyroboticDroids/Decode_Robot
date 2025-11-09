@@ -32,7 +32,6 @@ public class Hardware {
     //intake
     public DcMotor intake;
 
-    //public Servo intakePivotLeft;
     public Servo intakePivotRight;
 
     //shooter
@@ -66,7 +65,6 @@ public class Hardware {
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        //intakePivotLeft = this.hardwareMap.get(Servo.class, "intakeLeft");
         intakePivotRight = this.hardwareMap.get(Servo.class, "intakeRight");
 
         //shooter
