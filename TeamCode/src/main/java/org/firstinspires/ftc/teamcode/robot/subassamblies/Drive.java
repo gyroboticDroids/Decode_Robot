@@ -50,7 +50,7 @@ public class Drive {
 
         input();
 
-        if (!headingLock)
+        if (headingLock)
             autoTurn();
 
         park();
@@ -85,7 +85,7 @@ public class Drive {
 
     private void movement() {
         if (resetHeading) {
-            poseTracker.setPose(new Pose(0, 0, 0));
+            poseTracker.setPose(new Pose(72, 72, 0));
         }
 
         double botHeading = robotPos.getHeading();
@@ -108,7 +108,7 @@ public class Drive {
         hardware.leftFront.setPower(leftFrontPower);
         hardware.leftRear.setPower(leftRearPower);
         hardware.rightFront.setPower(rightFrontPower);
-        hardware.rightFront.setPower(rightRearPower);
+        hardware.rightRear.setPower(rightRearPower);
     }
 
     private void park() {
