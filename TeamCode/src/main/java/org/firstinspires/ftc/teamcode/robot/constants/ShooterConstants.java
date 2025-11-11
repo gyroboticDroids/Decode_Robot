@@ -29,8 +29,8 @@ public class ShooterConstants {
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
 
-    public static double DOOR_OPEN = 0.127;//
-    public static double DOOR_CLOSED = 0.603;//
+    public static double DOOR_OPEN = 0.125;//
+    public static double DOOR_CLOSED = 0.601;//
 
     public static double BALL_DETECTION_TIME = 0.25;
 
