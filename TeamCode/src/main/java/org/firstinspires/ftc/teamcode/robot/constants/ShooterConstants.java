@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class ShooterConstants {
-    public static Pose GOAL_POS_RED = new Pose(65, 70, 0);
+    public static Pose GOAL_POS_RED = new Pose(139, 140);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
 
     public static Pose GOAL_POS = (TransferConstants.isAllianceColorRed) ?
@@ -12,7 +13,7 @@ public class ShooterConstants {
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 9.5);
     public static double FLYWHEEL_OFF = 0; //ticks per second
-    public static double FLYWHEEL_REJECT = 500; //ticks per second
+    public static double FLYWHEEL_REJECT = 300; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
@@ -23,7 +24,7 @@ public class ShooterConstants {
     public static double TURRET_MIN_ANGLE = -170;
     public static double TURRET_MAX_ANGLE = 180;
 
-    public static double HOOD_TRIM_SPEED = 1;
+    public static double HOOD_TRIM_SPEED = 0.001;
 
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
@@ -31,21 +32,22 @@ public class ShooterConstants {
     public static double DOOR_OPEN = 0.127;//
     public static double DOOR_CLOSED = 0.603;//
 
-    public static double BALL_DETECTION_TIME = 0.5;
+    public static double BALL_DETECTION_TIME = 0.25;
 
     private static double flywheelOffset = 0;
     private static double hoodOffset = 0;
 
     public static double flywheelSpeed(double goalDist) {
-        return goalDist + flywheelOffset;
+        return MathFunctions.clamp(539.1203 * Math.pow(1.00531, goalDist) + flywheelOffset, 0, 1300);
     }
 
     public static double hoodAngle(double goalDist) {
-        return 1 / goalDist + hoodOffset;
+        return MathFunctions.clamp(-(0.24037 * Math.pow(10, -7)) * Math.pow(goalDist, 3) +
+                0.000267701 * Math.pow(goalDist, 2) - 0.0281248 * goalDist + 1.28255 + hoodOffset, 0.02, 0.78);
     }
 
     public static double launchTime(double goalDist) {
-        return goalDist;
+        return MathFunctions.clamp(0.00356061 * goalDist + 0.419091, 0, 1.5);
     }
 
     public static void flywheelOffset(double f) {
