@@ -18,7 +18,7 @@ public class ShooterConstants {
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
     public static double TURRET_P_GAIN = 0.005;
-    public static double TURRET_TICKS_PER_DEGREE = 100;
+    public static double TURRET_TICKS_PER_DEGREE = 1.55556;
     public static int TURRET_RESET_POS = 180 * (int)TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.001;
     public static double TURRET_MIN_ANGLE = -170;
