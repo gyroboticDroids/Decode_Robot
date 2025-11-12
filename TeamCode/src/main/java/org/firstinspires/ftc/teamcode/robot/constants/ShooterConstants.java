@@ -11,13 +11,13 @@ public class ShooterConstants {
     public static Pose GOAL_POS = (TransferConstants.isAllianceColorRed) ?
             ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
 
-    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 9.5);
+    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 10);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_REJECT = 300; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
-    public static double TURRET_P_GAIN = 0.01;
+    public static double TURRET_P_GAIN = 0.017;
     public static double TURRET_TICKS_PER_DEGREE = 1.55556;
     public static int TURRET_RESET_POS = 180 * (int)TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.1;

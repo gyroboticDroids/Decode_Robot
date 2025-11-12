@@ -107,6 +107,7 @@ public class MasterTeleop extends OpMode {
         drive.headingLock = gamepad1.cross;
     }
 
+    private boolean intakeOns = false;
     private void intakeUpdate() {
         if (!intake.isBusy()) {
             if (drive.isPark()) {
@@ -115,15 +116,16 @@ public class MasterTeleop extends OpMode {
                 intake.setState(Intake.State.CLEAR);
             } else if (gamepad2.crossWasReleased()) {
                 intake.setState(Intake.State.INTAKE);
-            } else if ((gamepad1.circleWasPressed() || gamepad2.circleWasPressed() ||
+            } else if (((gamepad1.circle || gamepad2.circle) && !intakeOns ||
                     shooter.getState() == Shooter.State.LAUNCH) && prevIntakeState != Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE);
-            } else if ((gamepad1.circleWasPressed() || gamepad2.circleWasPressed() || shooter.areBallsCollected()
+            } else if (((gamepad1.circle || gamepad2.circle) && !intakeOns || shooter.areBallsCollected()
                     && shooter.getState() != Shooter.State.LAUNCH) && prevIntakeState == Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE_UP);
             }
         }
 
+        intakeOns = gamepad1.circle || gamepad2.circle;
         prevIntakeState = intake.getState();
     }
 
