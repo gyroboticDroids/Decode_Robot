@@ -22,7 +22,7 @@ public class Shooter {
 
     private boolean isBusy = false;
 
-    public boolean velComp = true;
+    public boolean velComp = false;
     public boolean timerReset = true;
 
     private double turretOffset;
@@ -77,6 +77,7 @@ public class Shooter {
 
                 if (lastBall || (!timerReset && timer.getElapsedTimeSeconds() > 2)) {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
+                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     timer.resetTimer();
                     timerReset = true;
                 }
@@ -162,8 +163,8 @@ public class Shooter {
             robotPos.getAsVector().plus(ballDist);
         }
 
-        double angle = Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
-                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading() + turretOffset;
+        double angle = -Math.toDegrees(Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
+                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading()) + turretOffset;
 
         if (angle > 180) {
             angle -= 360;

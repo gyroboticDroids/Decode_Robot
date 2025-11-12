@@ -60,7 +60,7 @@ public class Drive {
     private void input() {
         y = -gamepad.left_stick_y * speedMultiplier;
         x = gamepad.left_stick_x * speedMultiplier;
-        rx = (headingLock) ? 0 : gamepad.right_stick_x;
+        rx = (headingLock) ? 0 : -gamepad.right_stick_x;
 
         if (gamepad.dpad_down)
             park = true;

@@ -51,7 +51,7 @@ public class MasterTeleop extends OpMode {
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
 
-        gamepad1.setLedColor(0, 0, 0, -1);
+        gamepad1.setLedColor(128.0/255, 0, 1, -1);
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
     }
 
@@ -131,15 +131,15 @@ public class MasterTeleop extends OpMode {
         if (!shooter.isBusy()) {
             if (drive.isPark()) {
                 shooter.setState(Shooter.State.OFF);
-            } else if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed())
-                    && prevShooterState != Shooter.State.READY || prevShooterState == Shooter.State.LAUNCH
-                    || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF) {
+            } else if (gamepad2.triangle) {
+                shooter.setState(Shooter.State.REJECT);
+            }else if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed() || prevShooterState == Shooter.State.LAUNCH
+                    || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF
+                    || prevShooterState == Shooter.State.REJECT) && prevShooterState != Shooter.State.READY) {
                 shooter.setState(Shooter.State.READY);
             } else if ((gamepad1.right_bumper || gamepad2.right_bumper) && prevShooterState == Shooter.State.READY) {
                 shooter.setState(Shooter.State.LAUNCH);
-            } else if (gamepad2.triangle) {
-                shooter.setState(Shooter.State.REJECT);
-            } else if (gamepad2.share) {
+            }  else if (gamepad2.share) {
                 shooter.setState(Shooter.State.RESET);
             }
         }
