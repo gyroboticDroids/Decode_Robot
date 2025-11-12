@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 
 public class Shooter {
     public enum State {
-        READY, LAUNCH, REJECT, OFF, RESET
+        READY, LAUNCH, OFF, RESET
     }
 
     private final Hardware hardware;
@@ -55,19 +55,13 @@ public class Shooter {
     public void update() {
         switch (state) {
             case READY:
-                hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
-
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
-                if (MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(), ShooterConstants.flywheelSpeed(goalDist),
-                        ShooterConstants.FLYWHEEL_ACCURACY) || timer.getElapsedTimeSeconds() > 1)
-                    isBusy = false;
+                isBusy = false;
                 break;
 
             case LAUNCH:
-                hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
-
                 boolean lastBall = isLastBall();
 
                 if (!lastBall) {
@@ -89,24 +83,7 @@ public class Shooter {
                 }
                 break;
 
-            case REJECT:
-                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_REJECT);
-
-                if (timer.getElapsedTimeSeconds() > 1.5) {
-                    hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
-                    isBusy = false;
-                } else
-                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
-
-                if (timer.getElapsedTimeSeconds() > 1.5)
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                else if (timer.getElapsedTimeSeconds() > 0.5)
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
-                break;
-
             case OFF:
-                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
-
                 turretMoveTo(0);
 
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
@@ -116,8 +93,6 @@ public class Shooter {
                 break;
 
             case RESET:
-                hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
-
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
@@ -133,6 +108,8 @@ public class Shooter {
 
         if (state != State.OFF && state != State.RESET) {
             targetGoal();
+        } else {
+            hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
         }
 
         ballDetectionUpdate();
@@ -152,15 +129,17 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        goalDist = Math.sqrt(Math.pow(robotPos.getX() - ShooterConstants.GOAL_POS.getX(), 2)
-                + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
+        goalDist = updateGoalDist(robotPos);
 
         if (velComp) {
             Vector velocity = hardware.poseTracker.getVelocity();
             Vector ballDist = new Vector(velocity.getMagnitude() * ShooterConstants.launchTime(goalDist),
                     velocity.getTheta());
 
-            robotPos.getAsVector().plus(ballDist);
+            robotPos = new Pose(robotPos.getX() + ballDist.getXComponent(),
+                    robotPos.getY() + ballDist.getYComponent(), robotPos.getHeading());
+
+            goalDist = updateGoalDist(robotPos);
         }
 
         double robotHeading = Math.toDegrees(robotPos.getHeading());
@@ -172,15 +151,21 @@ public class Shooter {
         double angle = -Math.toDegrees(Math.atan((robotPos.getY() - ShooterConstants.GOAL_POS.getY())
                 / (robotPos.getX() - ShooterConstants.GOAL_POS.getX()))) + robotHeading + turretOffset;
 
-        if (angle > 180) {
+        if (angle > 185) {
             angle -= 360;
-        } else if (angle < -180) {
+        } else if (angle < -185) {
             angle += 360;
         }
 
         turretMoveTo(angle);
 
         hardware.hood.setPosition(MathFunctions.clamp(ShooterConstants.hoodAngle(goalDist), 0, 1));
+        hardware.flywheel.setVelocity(ShooterConstants.flywheelSpeed(goalDist));
+    }
+
+    private double updateGoalDist(Pose robotPos) {
+        return Math.sqrt(Math.pow(robotPos.getX() - ShooterConstants.GOAL_POS.getX(), 2)
+                + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
     }
 
     private void turretMoveTo(double angle) {
@@ -189,7 +174,8 @@ public class Shooter {
 
         double error = targetPos - hardware.turret.getCurrentPosition();
 
-        double motorPower = MathFunctions.clamp(error * ShooterConstants.TURRET_P_GAIN, -1, 1);
+        double motorPower = MathFunctions.clamp(error * ShooterConstants.TURRET_P_GAIN,
+                -ShooterConstants.TURRET_MAX_SPEED, ShooterConstants.TURRET_MAX_SPEED);
 
         hardware.turret.setPower(motorPower);
     }
@@ -214,6 +200,11 @@ public class Shooter {
 
     public boolean areBallsCollected() {
         return ball1 && ball2 && ball3;
+    }
+
+    public boolean flywheelUpToSpeed() {
+        return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(), ShooterConstants.flywheelSpeed(goalDist),
+                ShooterConstants.FLYWHEEL_ACCURACY);
     }
 
     public boolean isBusy() {

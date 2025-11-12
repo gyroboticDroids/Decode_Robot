@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class Vision {
@@ -17,7 +19,7 @@ public class Vision {
         if (result != null && result.isValid()) {
             Pose3D robotPos = result.getBotpose();
 
-            double angle = robotPos.getOrientation().getYaw() - 90;
+            double angle = robotPos.getOrientation().getYaw(AngleUnit.DEGREES) - 90;
 
             if (angle < 0)
                 angle += 360;

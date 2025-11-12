@@ -99,6 +99,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
         telemetry.addData("hood angle", hardware.hood.getPosition());
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
+        telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
         telemetry.addData("velocity compensation", shooter.velComp);
         telemetry.update();
     }
@@ -133,13 +134,12 @@ public class MasterTeleop extends OpMode {
         if (!shooter.isBusy()) {
             if (drive.isPark()) {
                 shooter.setState(Shooter.State.OFF);
-            } else if (gamepad2.triangle) {
-                shooter.setState(Shooter.State.REJECT);
             }else if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed() || prevShooterState == Shooter.State.LAUNCH
-                    || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF
-                    || prevShooterState == Shooter.State.REJECT) && prevShooterState != Shooter.State.READY) {
+                    || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF)
+                    && prevShooterState != Shooter.State.READY) {
                 shooter.setState(Shooter.State.READY);
-            } else if ((gamepad1.right_bumper || gamepad2.right_bumper) && prevShooterState == Shooter.State.READY) {
+            } else if ((gamepad1.right_bumper || gamepad2.right_bumper) && prevShooterState == Shooter.State.READY
+                    && shooter.flywheelUpToSpeed()) {
                 shooter.setState(Shooter.State.LAUNCH);
             }  else if (gamepad2.share) {
                 shooter.setState(Shooter.State.RESET);
