@@ -75,7 +75,7 @@ public class Shooter {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 }
 
-                if (lastBall || (!timerReset && timer.getElapsedTimeSeconds() > 2)) {
+                if (!timerReset && (lastBall || timer.getElapsedTimeSeconds() > 2)) {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     timer.resetTimer();
@@ -163,8 +163,14 @@ public class Shooter {
             robotPos.getAsVector().plus(ballDist);
         }
 
-        double angle = -Math.toDegrees(Math.atan((robotPos.getX() - ShooterConstants.GOAL_POS.getX())
-                / (robotPos.getY() - ShooterConstants.GOAL_POS.getY())) - robotPos.getHeading()) + turretOffset;
+        double robotHeading = Math.toDegrees(robotPos.getHeading());
+
+        if (robotHeading > 180) {
+            robotHeading -= 360;
+        }
+
+        double angle = -Math.toDegrees(Math.atan((robotPos.getY() - ShooterConstants.GOAL_POS.getY())
+                / (robotPos.getX() - ShooterConstants.GOAL_POS.getX()))) + robotHeading + turretOffset;
 
         if (angle > 180) {
             angle -= 360;

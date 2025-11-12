@@ -115,11 +115,11 @@ public class MasterTeleop extends OpMode {
                 intake.setState(Intake.State.CLEAR);
             } else if (gamepad2.crossWasReleased()) {
                 intake.setState(Intake.State.INTAKE);
-            }else if ((gamepad1.circleWasPressed() || gamepad2.circleWasPressed() ||
+            } else if ((gamepad1.circleWasPressed() || gamepad2.circleWasPressed() ||
                     shooter.getState() == Shooter.State.LAUNCH) && prevIntakeState != Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE);
-            } else if ((gamepad1.circleWasPressed() || gamepad2.circleWasPressed() || shooter.areBallsCollected())
-                    && prevIntakeState == Intake.State.INTAKE) {
+            } else if ((gamepad1.circleWasPressed() || gamepad2.circleWasPressed() || shooter.areBallsCollected()
+                    && shooter.getState() != Shooter.State.LAUNCH) && prevIntakeState == Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE_UP);
             }
         }

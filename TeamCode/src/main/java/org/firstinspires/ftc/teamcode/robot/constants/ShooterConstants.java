@@ -5,7 +5,7 @@ import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class ShooterConstants {
-    public static Pose GOAL_POS_RED = new Pose(139, 140);
+    public static Pose GOAL_POS_RED = new Pose(141, 141);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
 
     public static Pose GOAL_POS = (TransferConstants.isAllianceColorRed) ?
@@ -17,10 +17,10 @@ public class ShooterConstants {
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
-    public static double TURRET_P_GAIN = 0.007;
+    public static double TURRET_P_GAIN = 0.01;
     public static double TURRET_TICKS_PER_DEGREE = 1.55556;
     public static int TURRET_RESET_POS = 180 * (int)TURRET_TICKS_PER_DEGREE;//ticks
-    public static double TURRET_TRIM_SPEED = 0.001;
+    public static double TURRET_TRIM_SPEED = 0.1;
     public static double TURRET_MIN_ANGLE = -170;
     public static double TURRET_MAX_ANGLE = 180;
 
@@ -32,7 +32,7 @@ public class ShooterConstants {
     public static double DOOR_OPEN = 0.125;//
     public static double DOOR_CLOSED = 0.601;//
 
-    public static double BALL_DETECTION_TIME = 0.25;
+    public static double BALL_DETECTION_TIME = 0.1;
 
     private static double flywheelOffset = 0;
     private static double hoodOffset = 0;
@@ -42,8 +42,8 @@ public class ShooterConstants {
     }
 
     public static double hoodAngle(double goalDist) {
-        return MathFunctions.clamp(-(0.24037 * Math.pow(10, -7)) * Math.pow(goalDist, 3) +
-                0.000267701 * Math.pow(goalDist, 2) - 0.0281248 * goalDist + 1.28255 + hoodOffset, 0.02, 0.78);
+        return MathFunctions.clamp(-9.24037e-7 * Math.pow(goalDist, 3) +
+                0.000267701 * Math.pow(goalDist, 2) - 0.0281248 * goalDist + 1.28255 + hoodOffset, 0.02, 0.769);
     }
 
     public static double launchTime(double goalDist) {
