@@ -70,10 +70,13 @@ public class Shooter {
                 }
 
                 if (!timerReset && (lastBall || timer.getElapsedTimeSeconds() > 2)) {
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
-                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     timer.resetTimer();
                     timerReset = true;
+                }
+
+                if (timerReset && timer.getElapsedTimeSeconds() > 0.25) {
+                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 }
 
                 if (timerReset && timer.getElapsedTimeSeconds() > 0.5) {
@@ -181,15 +184,15 @@ public class Shooter {
     }
 
     private void ballDetectionUpdate() {
-        if (hardware.ball1.getDistance(DistanceUnit.INCH) < 1)
+        if (hardware.ball1.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
             ball1Timer.resetTimer();
         ball1 = ball1Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
 
-        if (hardware.ball2.getDistance(DistanceUnit.INCH) < 1)
+        if (hardware.ball2.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
             ball2Timer.resetTimer();
         ball2 = ball2Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
 
-        if (hardware.ball3.getDistance(DistanceUnit.INCH) < 1)
+        if (hardware.ball3.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
             ball3Timer.resetTimer();
         ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
     }

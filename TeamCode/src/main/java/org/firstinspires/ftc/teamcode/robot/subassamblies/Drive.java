@@ -39,10 +39,15 @@ public class Drive {
     }
 
     public void update() {
-        Pose updatedPose = vision.getRobotPosFromTarget();
+        if (resetHeading) {
+            Pose updatedPose = vision.getRobotPosFromTarget();
 
-        if (updatedPose != null) {
-            poseTracker.setPose(updatedPose);
+            if (updatedPose != null) {
+                poseTracker.setPose(updatedPose);
+                gamepad.rumble(0.5, 0.5,500);
+            } else {
+                poseTracker.setPose(new Pose(72, 72, 0));
+            }
         }
 
         poseTracker.update();
@@ -84,10 +89,6 @@ public class Drive {
     }
 
     private void movement() {
-        if (resetHeading) {
-            poseTracker.setPose(new Pose(72, 72, 0));
-        }
-
         double botHeading = robotPos.getHeading();
 
         // Rotate the movement direction counter to the bot's rotation

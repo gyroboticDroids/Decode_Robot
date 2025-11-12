@@ -134,7 +134,7 @@ public class MasterTeleop extends OpMode {
         if (!shooter.isBusy()) {
             if (drive.isPark()) {
                 shooter.setState(Shooter.State.OFF);
-            }else if ((gamepad1.rightBumperWasPressed() || gamepad2.rightBumperWasPressed() || prevShooterState == Shooter.State.LAUNCH
+            }else if ((gamepad1.right_bumper || gamepad2.right_bumper || prevShooterState == Shooter.State.LAUNCH
                     || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF)
                     && prevShooterState != Shooter.State.READY) {
                 shooter.setState(Shooter.State.READY);
@@ -146,9 +146,9 @@ public class MasterTeleop extends OpMode {
             }
         }
 
-        if (gamepad2.touchpad && shooter.velComp) {
+        if (gamepad2.touchpad && !gamepad2.touchpadWasPressed() && shooter.velComp) {
             shooter.velComp = false;
-        } else if (gamepad2.touchpad && !shooter.velComp) {
+        } else if (gamepad2.touchpad && !gamepad2.touchpadWasPressed() && !shooter.velComp) {
             shooter.velComp = true;
         }
 

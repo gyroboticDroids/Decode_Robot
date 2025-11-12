@@ -13,14 +13,13 @@ public class ShooterConstants {
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 10);
     public static double FLYWHEEL_OFF = 0; //ticks per second
-    public static double FLYWHEEL_REJECT = 300; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
     public static double TURRET_P_GAIN = 0.017;
     public static double TURRET_TICKS_PER_DEGREE = 1.55556;
     public static int TURRET_RESET_POS = 180 * (int)TURRET_TICKS_PER_DEGREE;//ticks
-    public static double TURRET_TRIM_SPEED = 0.1;
+    public static double TURRET_TRIM_SPEED = 0.5;
     public static double TURRET_MIN_ANGLE = -90;
     public static double TURRET_MAX_ANGLE = 90;
     public static double TURRET_MAX_SPEED = 0.6;
@@ -31,9 +30,10 @@ public class ShooterConstants {
     public static double LAUNCHER_DOWN = 0.126;//
 
     public static double DOOR_OPEN = 0.125;//
-    public static double DOOR_CLOSED = 0.601;//
+    public static double DOOR_CLOSED = 0.66;//
 
-    public static double BALL_DETECTION_TIME = 0.1;
+    public static double BALL_DETECTION_TIME = 0.08;
+    public static double BALL_DETECTION_DISTANCE = 1.5;//inches
 
     private static double flywheelOffset = 0;
     private static double hoodOffset = 0;
@@ -48,7 +48,7 @@ public class ShooterConstants {
     }
 
     public static double launchTime(double goalDist) {
-        return MathFunctions.clamp(0.00356061 * goalDist + 0.419091, 0, 1.5);
+        return MathFunctions.clamp(0.00356061 * goalDist + 0.45, 0, 1.5);
     }
 
     public static void flywheelOffset(double f) {
