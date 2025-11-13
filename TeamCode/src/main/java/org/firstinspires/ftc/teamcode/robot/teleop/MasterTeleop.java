@@ -45,6 +45,8 @@ public class MasterTeleop extends OpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+
+        gamepad1.setLedColor(128.0/255, 0, 1, -1);
     }
 
     @Override
@@ -55,7 +57,6 @@ public class MasterTeleop extends OpMode {
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
 
-        gamepad1.setLedColor(128.0/255, 0, 1, -1);
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
 
         lastGamepad1 = gamepad1;
@@ -116,6 +117,15 @@ public class MasterTeleop extends OpMode {
 
     private void driveUpdate() {
         drive.headingLock = gamepad1.cross;
+
+        if (gamepad1.touchpad && !lastGamepad1.touchpad && TransferConstants.isAllianceColorRed) {
+            TransferConstants.isAllianceColorRed = false;
+        } else if (gamepad1.touchpad && !lastGamepad1.touchpad && !TransferConstants.isAllianceColorRed) {
+            TransferConstants.isAllianceColorRed = true;
+        }
+
+        gamepad1.setLedColor(TransferConstants.isAllianceColorRed ? 1 : 0, 0,
+                TransferConstants.isAllianceColorRed ? 0 : 1, -1);
     }
 
     private void intakeUpdate() {
