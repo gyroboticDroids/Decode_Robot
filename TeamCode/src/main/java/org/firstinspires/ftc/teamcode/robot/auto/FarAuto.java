@@ -6,6 +6,8 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -16,7 +18,8 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 
 import java.util.EnumMap;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "far auto", group = "auto", preselectTeleOp = "Master Tele-op")
+@Disabled
+@Autonomous(name = "far auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class FarAuto extends OpMode {
     private enum PoseName {
         START, SCORE_PRELOAD, SPIKE_MARK_3, SCORE, HUMAN_PLAYER_SPIKE_MARK, GATE_BALLS

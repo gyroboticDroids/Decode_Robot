@@ -6,6 +6,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 
 import java.util.EnumMap;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
+@Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class CloseAuto extends OpMode {
     private enum PoseName {
         START, SCORE_PRELOAD, SPIKE_MARK_1, SCORE, GATE, SPIKE_MARK_2, SPIKE_MARK_3
@@ -40,41 +41,44 @@ public class CloseAuto extends OpMode {
     private boolean allianceColorRed = true;
 
     private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(41.93, 139.49));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(54, 84));
-        poses.put(PoseName.SPIKE_MARK_1, new Pose(24, 84));
-        poses.put(PoseName.SCORE, new Pose(54, 84));
-        poses.put(PoseName.SPIKE_MARK_2, new Pose(24, 60));
-        poses.put(PoseName.GATE, new Pose(14, 70));
-        poses.put(PoseName.SPIKE_MARK_3, new Pose(24, 36));
+        poses.put(PoseName.START, new Pose(113.93 + 3.0 / 8, 137.49, Math.toRadians(270)));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(84, 84, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_1, new Pose(120, 84, Math.toRadians(0)));
+        poses.put(PoseName.SCORE, new Pose(84, 84, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_2, new Pose(24, 60, Math.toRadians(0)));
+        poses.put(PoseName.GATE, new Pose(14, 70, Math.toRadians(270)));
+        poses.put(PoseName.SPIKE_MARK_3, new Pose(24, 36, Math.toRadians(0)));
     }
 
     private void buildPaths() {
         scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
-        scorePreload.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(180));
+        scorePreload.setLinearHeadingInterpolation(poses.get(PoseName.START).getHeading(), poses.get(PoseName.SCORE_PRELOAD).getHeading());
+        scorePreload.setBrakingStrength(2);
 
         collectBalls1 = new Path(new BezierLine(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.SPIKE_MARK_1)));
-        collectBalls1.setConstantHeadingInterpolation(Math.toRadians(180));
+        collectBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_1).getHeading());
+        scorePreload.setBrakingStrength(2);
 
         scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_1), poses.get(PoseName.SCORE)));
-        scoreBalls1.setConstantHeadingInterpolation(Math.toRadians(180));
+        scoreBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
+        scorePreload.setBrakingStrength(2);
 
         collectBalls2 = new Path(new BezierCurve(poses.get(PoseName.SCORE), new Pose(54, 57),
                 poses.get(PoseName.SPIKE_MARK_2)));
-        collectBalls2.setConstantHeadingInterpolation(Math.toRadians(180));
+        collectBalls2.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading());
 
         openGate = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_2), poses.get(PoseName.GATE)));
-        openGate.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(270), 0.7);
+        openGate.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading(), poses.get(PoseName.GATE).getHeading(), 0.7);
 
         scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.GATE), poses.get(PoseName.SCORE)));
-        scoreBalls2.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(180));
+        scoreBalls2.setLinearHeadingInterpolation(poses.get(PoseName.GATE).getHeading(), poses.get(PoseName.SCORE).getHeading());
 
         collectBalls3 = new Path(new BezierCurve(poses.get(PoseName.SCORE), new Pose(54, 32),
                 poses.get(PoseName.SPIKE_MARK_3)));
-        collectBalls3.setConstantHeadingInterpolation(Math.toRadians(180));
+        collectBalls3.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_3).getHeading());
 
         scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
-        scoreBalls3.setConstantHeadingInterpolation(Math.toRadians(180));
+        scoreBalls3.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
     }
 
     @Override
@@ -92,7 +96,7 @@ public class CloseAuto extends OpMode {
         shooter = new Shooter(hardware);
 
         intake.setState(Intake.State.INTAKE_SLEEP);
-        shooter.setState(Shooter.State.RESET);
+        shooter.setState(Shooter.State.OFF);
     }
 
     @Override
@@ -104,6 +108,9 @@ public class CloseAuto extends OpMode {
             shooter.setState(Shooter.State.OFF);
             telemetry.addLine("READY!");
         }
+
+        intake.update();
+        shooter.update();
 
         telemetry.addLine("alliance " + (allianceColorRed ? "RED" : "BLUE"));
         telemetry.update();
@@ -123,6 +130,8 @@ public class CloseAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
+        intake.update();
+        shooter.update();
         autonomousPathUpdate();
 
         telemetry.addData("path state", pathState);
@@ -138,7 +147,7 @@ public class CloseAuto extends OpMode {
 
         switch (pathState) {
             case 0:
-                intake.setState(Intake.State.INTAKE);
+                intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
                 follower.followPath(scorePreload);
@@ -148,6 +157,7 @@ public class CloseAuto extends OpMode {
 
             case 1:
                 if (!shooter.isBusy() && robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -170,15 +180,17 @@ public class CloseAuto extends OpMode {
                         ons = false;
                     }
 
-                    if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    if (pathTimer.getElapsedTimeSeconds() > 1 || shooter.areBallsCollected()) {
+                        intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls1);
-                        setPathState(pathState + 1);
+                        setPathState(-1);
                     }
                 }
                 break;
 
             case 4:
                 if (robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -186,21 +198,14 @@ public class CloseAuto extends OpMode {
                 break;
 
             case 5:
-                if (robotAtEnd || !ons) {
-                    if (ons) {
-                        pathTimer.resetTimer();
-                        ons = false;
-                    }
-
-                    if (pathTimer.getElapsedTimeSeconds() > 1) {
-                        follower.followPath(collectBalls2);
-                        setPathState(pathState + 1);
-                    }
+                if (!shooter.isBusy()) {
+                    follower.followPath(collectBalls2);
+                    setPathState(pathState + 1);
                 }
                 break;
 
             case 6:
-                if (!shooter.isBusy()) {
+                if (robotAtEnd) {
                     intake.setState(Intake.State.INTAKE_UP);
                     shooter.setState(Shooter.State.READY);
                     follower.followPath(openGate);
@@ -225,6 +230,7 @@ public class CloseAuto extends OpMode {
 
             case 8:
                 if (robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -234,7 +240,6 @@ public class CloseAuto extends OpMode {
             case 9:
                 if (!shooter.isBusy()) {
                     shooter.setState(Shooter.State.READY);
-                    intake.setState(Intake.State.INTAKE);
                     follower.followPath(collectBalls3);
 
                     setPathState(pathState + 1);
@@ -248,7 +253,8 @@ public class CloseAuto extends OpMode {
                         ons = false;
                     }
 
-                    if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    if (pathTimer.getElapsedTimeSeconds() > 1 || shooter.areBallsCollected()) {
+                        intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls3);
                         setPathState(pathState + 1);
                     }
@@ -257,6 +263,7 @@ public class CloseAuto extends OpMode {
 
             case 11:
                 if (robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -265,6 +272,7 @@ public class CloseAuto extends OpMode {
 
             case 12:
                 if (!shooter.isBusy()) {
+                    intake.setState(Intake.State.INTAKE_UP);
                     shooter.setState(Shooter.State.READY);
                     follower.followPath(collectBalls1);
 
