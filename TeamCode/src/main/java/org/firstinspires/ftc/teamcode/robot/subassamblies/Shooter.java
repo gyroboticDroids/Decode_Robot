@@ -23,15 +23,17 @@ public class Shooter {
     private boolean isBusy = false;
 
     public boolean velComp = false;
-    public boolean timerReset = true;
+    public boolean runTurret = true;
+
+    private boolean timerReset = true;
 
     private double turretOffset;
     private int turretReset = 0;
 
     //Ball detection
-    boolean ball1 = false;
-    boolean ball2 = false;
-    boolean ball3 = false;
+    private boolean ball1 = false;
+    private boolean ball2 = false;
+    private boolean ball3 = false;
 
     Timer ball1Timer;
     Timer ball2Timer;
@@ -180,7 +182,7 @@ public class Shooter {
         double motorPower = MathFunctions.clamp(error * ShooterConstants.TURRET_P_GAIN,
                 -ShooterConstants.TURRET_MAX_SPEED, ShooterConstants.TURRET_MAX_SPEED);
 
-        hardware.turret.setPower(motorPower);
+        hardware.turret.setPower(runTurret ? motorPower : 0);
     }
 
     private void ballDetectionUpdate() {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.teleop;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
@@ -23,6 +24,9 @@ public class MasterTeleop extends OpMode {
 
     private Intake.State prevIntakeState;
     private Shooter.State prevShooterState;
+
+    private Gamepad lastGamepad1;
+    private Gamepad lastGamepad2;
 
     //Bulk reading
     List<LynxModule> allHubs;
@@ -53,6 +57,9 @@ public class MasterTeleop extends OpMode {
 
         gamepad1.setLedColor(128.0/255, 0, 1, -1);
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
+
+        lastGamepad1 = gamepad1;
+        lastGamepad2 = gamepad2;
     }
 
     @Override
@@ -76,6 +83,9 @@ public class MasterTeleop extends OpMode {
         shooter.update();
 
         telemetryUpdate();
+
+        lastGamepad1 = gamepad1;
+        lastGamepad2 = gamepad2;
     }
 
     private void telemetryUpdate() {
@@ -108,25 +118,24 @@ public class MasterTeleop extends OpMode {
         drive.headingLock = gamepad1.cross;
     }
 
-    private boolean intakeOns = false;
     private void intakeUpdate() {
         if (!intake.isBusy()) {
             if (drive.isPark()) {
                 intake.setState(Intake.State.INTAKE_UP);
-            } else if (gamepad2.cross) {
+            } else if (gamepad1.triangle || gamepad2.cross) {
                 intake.setState(Intake.State.CLEAR);
-            } else if (gamepad2.crossWasReleased()) {
+            } else if (gamepad1.triangleWasReleased() || gamepad2.crossWasReleased()) {
                 intake.setState(Intake.State.INTAKE);
-            } else if (((gamepad1.circle || gamepad2.circle) && !intakeOns ||
+            } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle ||
                     shooter.getState() == Shooter.State.LAUNCH) && prevIntakeState != Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE);
-            } else if (((gamepad1.circle || gamepad2.circle) && !intakeOns || shooter.areBallsCollected()
-                    && shooter.getState() != Shooter.State.LAUNCH) && prevIntakeState == Intake.State.INTAKE) {
+            } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle
+                    || shooter.areBallsCollected() && shooter.getState() != Shooter.State.LAUNCH)
+                    && prevIntakeState == Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE_UP);
             }
         }
 
-        intakeOns = gamepad1.circle || gamepad2.circle;
         prevIntakeState = intake.getState();
     }
 
@@ -146,10 +155,18 @@ public class MasterTeleop extends OpMode {
             }
         }
 
-        if (gamepad2.touchpad && !gamepad2.touchpadWasPressed() && shooter.velComp) {
+        if (gamepad2.touchpad && !lastGamepad2.touchpad && shooter.velComp) {
             shooter.velComp = false;
-        } else if (gamepad2.touchpad && !gamepad2.touchpadWasPressed() && !shooter.velComp) {
+        } else if (gamepad2.touchpad && !lastGamepad2.touchpad && !shooter.velComp) {
             shooter.velComp = true;
+        }
+
+        if (gamepad2.options && !lastGamepad2.options && shooter.runTurret) {
+            shooter.runTurret = false;
+            gamepad2.rumble(0.5, 0.5, 500);
+        } else if (gamepad2.options && !lastGamepad2.options && !shooter.runTurret) {
+            shooter.runTurret = true;
+            gamepad2.rumble(0.5, 0.5, 500);
         }
 
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);

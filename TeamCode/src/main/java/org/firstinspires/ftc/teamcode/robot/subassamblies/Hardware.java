@@ -61,8 +61,7 @@ public class Hardware {
 
         //intake
         intake = this.hardwareMap.get(DcMotor.class, "intake");
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
         intakePivotRight = this.hardwareMap.get(Servo.class, "intakeRight");
