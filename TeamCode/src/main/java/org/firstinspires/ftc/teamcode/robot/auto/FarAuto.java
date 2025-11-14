@@ -22,7 +22,7 @@ import java.util.EnumMap;
 @Autonomous(name = "far auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class FarAuto extends OpMode {
     private enum PoseName {
-        START, SCORE_PRELOAD, SPIKE_MARK_3, SCORE, HUMAN_PLAYER_SPIKE_MARK, GATE_BALLS
+        START, SCORE_PRELOAD, SPIKE_MARK_3, SPIKE_MARK_3_CONTROL, SCORE, HUMAN_PLAYER_SPIKE_MARK, GATE_BALLS
     }
 
     EnumMap<PoseName, Pose> poses = new EnumMap<>(PoseName.class);
@@ -43,36 +43,38 @@ public class FarAuto extends OpMode {
     private boolean allianceColorRed = true;
 
     private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(54.06, 4.58));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(64, 22));
-        poses.put(PoseName.SPIKE_MARK_3, new Pose(24, 36));
-        poses.put(PoseName.SCORE, new Pose(64, 22));
-        poses.put(PoseName.HUMAN_PLAYER_SPIKE_MARK, new Pose(12, 8));
-        poses.put(PoseName.GATE_BALLS, new Pose(12, 10));
+        poses.put(PoseName.START, new Pose(54.06, 4.58, Math.toRadians(90)));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(64, 22, Math.toRadians(90)));
+        poses.put(PoseName.SPIKE_MARK_3, new Pose(24, 36, Math.toRadians(180)));
+        poses.put(PoseName.SPIKE_MARK_3_CONTROL, new Pose(80, 36));
+        poses.put(PoseName.SCORE, new Pose(64, 22, Math.toRadians(180)));
+        poses.put(PoseName.HUMAN_PLAYER_SPIKE_MARK, new Pose(12, 8, Math.toRadians(180)));
+        poses.put(PoseName.GATE_BALLS, new Pose(12, 10, Math.toRadians(180)));
     }
 
     private void buildPaths() {
         scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
-        scorePreload.setConstantHeadingInterpolation(Math.toRadians(90));
+        scorePreload.setConstantHeadingInterpolation(poses.get(PoseName.SCORE_PRELOAD).getHeading());
 
-        collectBalls1 = new Path(new BezierCurve(poses.get(PoseName.SCORE_PRELOAD), new Pose(64, 36),
+        collectBalls1 = new Path(new BezierCurve(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.SPIKE_MARK_3_CONTROL),
                 poses.get(PoseName.SPIKE_MARK_3)));
-        collectBalls1.setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180), 0.7);
+        collectBalls1.setLinearHeadingInterpolation(poses.get(PoseName.SCORE_PRELOAD).getHeading(),
+                poses.get(PoseName.SPIKE_MARK_3).getHeading(), 0.7);
 
         scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
-        scoreBalls1.setConstantHeadingInterpolation(Math.toRadians(180));
+        scoreBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
 
         collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK)));
-        collectBalls2.setConstantHeadingInterpolation(Math.toRadians(180));
+        collectBalls2.setConstantHeadingInterpolation(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK).getHeading());
 
         scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.HUMAN_PLAYER_SPIKE_MARK), poses.get(PoseName.SCORE)));
-        scoreBalls2.setConstantHeadingInterpolation(Math.toRadians(180));
+        scoreBalls2.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
 
         collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.GATE_BALLS)));
-        collectBalls3.setConstantHeadingInterpolation(Math.toRadians(180));
+        collectBalls3.setConstantHeadingInterpolation(poses.get(PoseName.GATE_BALLS).getHeading());
 
         scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.GATE_BALLS), poses.get(PoseName.SCORE)));
-        scoreBalls3.setConstantHeadingInterpolation(Math.toRadians(180));
+        scoreBalls3.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
     }
 
     @Override
@@ -81,7 +83,6 @@ public class FarAuto extends OpMode {
 
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(poses.get(PoseName.START));
 
         hardware = new Hardware(hardwareMap);
         hardware.setPoseTrackerInAuto(follower.poseTracker);
@@ -95,7 +96,7 @@ public class FarAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        if (gamepad1.crossWasPressed())
+        if (gamepad1.crossWasReleased())
             allianceColorRed = !allianceColorRed;
 
         if (shooter.getState() != Shooter.State.RESET && !shooter.isBusy()) {
@@ -115,6 +116,7 @@ public class FarAuto extends OpMode {
             mirrorPoses();
         }
 
+        follower.setStartingPose(poses.get(PoseName.START));
         buildPaths();
     }
 

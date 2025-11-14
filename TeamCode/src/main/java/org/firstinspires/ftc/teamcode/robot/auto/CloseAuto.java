@@ -55,15 +55,12 @@ public class CloseAuto extends OpMode {
     private void buildPaths() {
         scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
         scorePreload.setLinearHeadingInterpolation(poses.get(PoseName.START).getHeading(), poses.get(PoseName.SCORE_PRELOAD).getHeading());
-        scorePreload.setBrakingStrength(2);
 
         collectBalls1 = new Path(new BezierLine(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.SPIKE_MARK_1)));
         collectBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_1).getHeading());
-        scorePreload.setBrakingStrength(2);
 
         scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_1), poses.get(PoseName.SCORE)));
         scoreBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
-        scorePreload.setBrakingStrength(2);
 
         collectBalls2 = new Path(new BezierCurve(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_2_CONTROL),
                 poses.get(PoseName.SPIKE_MARK_2)));
@@ -102,7 +99,7 @@ public class CloseAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        if (gamepad1.crossWasPressed())
+        if (gamepad1.crossWasReleased())
             allianceColorRed = !allianceColorRed;
 
         if (shooter.getState() != Shooter.State.RESET && !shooter.isBusy()) {
