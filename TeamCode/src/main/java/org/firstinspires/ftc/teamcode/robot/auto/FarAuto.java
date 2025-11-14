@@ -138,7 +138,7 @@ public class FarAuto extends OpMode {
 
         switch (pathState) {
             case 0:
-                intake.setState(Intake.State.INTAKE);
+                intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
                 follower.followPath(scorePreload);
@@ -148,6 +148,7 @@ public class FarAuto extends OpMode {
 
             case 1:
                 if (!shooter.isBusy() && robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -171,6 +172,7 @@ public class FarAuto extends OpMode {
                     }
 
                     if (pathTimer.getElapsedTimeSeconds() > 1) {
+                        intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls1);
                         setPathState(pathState + 1);
                     }
@@ -179,6 +181,7 @@ public class FarAuto extends OpMode {
 
             case 4:
                 if (robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -186,16 +189,10 @@ public class FarAuto extends OpMode {
                 break;
 
             case 5:
-                if (robotAtEnd || !ons) {
-                    if (ons) {
-                        pathTimer.resetTimer();
-                        ons = false;
-                    }
-
-                    if (pathTimer.getElapsedTimeSeconds() > 1) {
-                        follower.followPath(collectBalls2);
-                        setPathState(pathState + 1);
-                    }
+                if (!shooter.isBusy()) {
+                    shooter.setState(Shooter.State.READY);
+                    follower.followPath(collectBalls2);
+                    setPathState(pathState + 1);
                 }
                 break;
 
@@ -207,6 +204,7 @@ public class FarAuto extends OpMode {
                     }
 
                     if (pathTimer.getElapsedTimeSeconds() > 1) {
+                        intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls2);
                         setPathState(pathState + 1);
                     }
@@ -215,6 +213,7 @@ public class FarAuto extends OpMode {
 
             case 7:
                 if (robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -238,6 +237,7 @@ public class FarAuto extends OpMode {
                     }
 
                     if (pathTimer.getElapsedTimeSeconds() > 1) {
+                        intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls3);
                         setPathState(pathState + 1);
                     }
@@ -246,6 +246,7 @@ public class FarAuto extends OpMode {
 
             case 10:
                 if (robotAtEnd) {
+                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.LAUNCH);
 
                     setPathState(pathState + 1);
@@ -254,6 +255,7 @@ public class FarAuto extends OpMode {
 
             case 11:
                 if (!shooter.isBusy()) {
+                    intake.setState(Intake.State.INTAKE_UP);
                     shooter.setState(Shooter.State.READY);
                     follower.followPath(collectBalls2);
 

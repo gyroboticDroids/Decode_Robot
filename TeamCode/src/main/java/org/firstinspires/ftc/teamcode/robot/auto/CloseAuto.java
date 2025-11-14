@@ -198,6 +198,7 @@ public class CloseAuto extends OpMode {
 
             case 5:
                 if (!shooter.isBusy()) {
+                    shooter.setState(Shooter.State.READY);
                     follower.followPath(collectBalls2);
                     setPathState(pathState + 1);
                 }
@@ -206,7 +207,6 @@ public class CloseAuto extends OpMode {
             case 6:
                 if (robotAtEnd) {
                     intake.setState(Intake.State.INTAKE_UP);
-                    shooter.setState(Shooter.State.READY);
                     follower.followPath(openGate);
 
                     setPathState(pathState + 1);
