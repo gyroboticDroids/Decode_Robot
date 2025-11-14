@@ -40,13 +40,12 @@ public class Drive {
 
     public void update() {
         if (resetHeading) {
+            poseTracker.setPose(new Pose(72, 72, 0));
+        } else if (hardware.poseTracker.getVelocity().getMagnitude() < 1 && hardware.poseTracker.getAngularVelocity() < 0.5) {
             Pose updatedPose = vision.getRobotPosFromTarget();
 
             if (updatedPose != null) {
                 poseTracker.setPose(updatedPose);
-                gamepad.rumble(0.5, 0.5,500);
-            } else {
-                poseTracker.setPose(new Pose(72, 72, 0));
             }
         }
 

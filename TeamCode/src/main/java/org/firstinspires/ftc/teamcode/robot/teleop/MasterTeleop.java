@@ -97,6 +97,8 @@ public class MasterTeleop extends OpMode {
         telemetry.addLine("----------drive--------------");
         telemetry.addData("robot position", hardware.poseTracker.getPose());
         telemetry.addData("is heading lock", drive.headingLock);
+        telemetry.addLine("robot velocity: " + hardware.poseTracker.getVelocity().getMagnitude()
+                + ", angular velocity: " + hardware.poseTracker.getAngularVelocity());
         telemetry.addLine("----------intake-------------");
         telemetry.addData("state", intake.getState());
         telemetry.addData("is busy", intake.isBusy());

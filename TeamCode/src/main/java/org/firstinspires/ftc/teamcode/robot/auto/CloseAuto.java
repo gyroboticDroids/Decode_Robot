@@ -20,7 +20,7 @@ import java.util.EnumMap;
 @Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class CloseAuto extends OpMode {
     private enum PoseName {
-        START, SCORE_PRELOAD, SPIKE_MARK_1, SCORE, GATE, SPIKE_MARK_2, SPIKE_MARK_3
+        START, SCORE_PRELOAD, SPIKE_MARK_1, SCORE, GATE, SPIKE_MARK_2, SPIKE_MARK_2_CONTROL, SPIKE_MARK_3, SPIKE_MARK_3_CONTROL
     }
 
     EnumMap<PoseName, Pose> poses = new EnumMap<>(PoseName.class);
@@ -41,13 +41,15 @@ public class CloseAuto extends OpMode {
     private boolean allianceColorRed = true;
 
     private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(113.93 + 3.0 / 8, 137.49, Math.toRadians(270)));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(84, 84, Math.toRadians(0)));
+        poses.put(PoseName.START, new Pose(102.07, 139.49, Math.toRadians(270)));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(90, 84, Math.toRadians(0)));
         poses.put(PoseName.SPIKE_MARK_1, new Pose(120, 84, Math.toRadians(0)));
-        poses.put(PoseName.SCORE, new Pose(84, 84, Math.toRadians(0)));
-        poses.put(PoseName.SPIKE_MARK_2, new Pose(24, 60, Math.toRadians(0)));
+        poses.put(PoseName.SCORE, new Pose(90, 84, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_2, new Pose(120, 60, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_2_CONTROL, new Pose(90, 57));
         poses.put(PoseName.GATE, new Pose(14, 70, Math.toRadians(270)));
-        poses.put(PoseName.SPIKE_MARK_3, new Pose(24, 36, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_3, new Pose(120, 36, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_3_CONTROL, new Pose(90, 32));
     }
 
     private void buildPaths() {
@@ -63,7 +65,7 @@ public class CloseAuto extends OpMode {
         scoreBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
         scorePreload.setBrakingStrength(2);
 
-        collectBalls2 = new Path(new BezierCurve(poses.get(PoseName.SCORE), new Pose(54, 57),
+        collectBalls2 = new Path(new BezierCurve(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_2_CONTROL),
                 poses.get(PoseName.SPIKE_MARK_2)));
         collectBalls2.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading());
 
@@ -73,7 +75,7 @@ public class CloseAuto extends OpMode {
         scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.GATE), poses.get(PoseName.SCORE)));
         scoreBalls2.setLinearHeadingInterpolation(poses.get(PoseName.GATE).getHeading(), poses.get(PoseName.SCORE).getHeading());
 
-        collectBalls3 = new Path(new BezierCurve(poses.get(PoseName.SCORE), new Pose(54, 32),
+        collectBalls3 = new Path(new BezierCurve(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3_CONTROL),
                 poses.get(PoseName.SPIKE_MARK_3)));
         collectBalls3.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_3).getHeading());
 
@@ -87,7 +89,6 @@ public class CloseAuto extends OpMode {
 
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(poses.get(PoseName.START));
 
         hardware = new Hardware(hardwareMap);
         hardware.setPoseTrackerInAuto(follower.poseTracker);
@@ -124,6 +125,7 @@ public class CloseAuto extends OpMode {
             mirrorPoses();
         }
 
+        follower.setStartingPose(poses.get(PoseName.START));
         buildPaths();
     }
 
@@ -183,7 +185,7 @@ public class CloseAuto extends OpMode {
                     if (pathTimer.getElapsedTimeSeconds() > 1 || shooter.areBallsCollected()) {
                         intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls1);
-                        setPathState(-1);
+                        setPathState(pathState + 1);
                     }
                 }
                 break;
