@@ -40,7 +40,7 @@ public class ShooterConstants {
     private static double hoodOffset = 0;
 
     public static double flywheelSpeed(double goalDist) {
-        return MathFunctions.clamp(546.32514 * Math.pow(1.00497, goalDist), 0, 1300) + flywheelOffset;
+        return MathFunctions.clamp(546.94072 * Math.pow(1.00501, goalDist), 0, 1300) + flywheelOffset;
     }
 
     public static double hoodAngle(double goalDist) {

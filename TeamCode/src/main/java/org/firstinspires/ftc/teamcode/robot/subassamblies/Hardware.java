@@ -56,9 +56,6 @@ public class Hardware {
         parkLeft = this.hardwareMap.get(Servo.class, "parkLeft");
         parkRight = this.hardwareMap.get(Servo.class, "parkRight");
 
-        parkLeft.setPosition(DriveConstants.PARK_LEFT_UP_POS);
-        parkRight.setPosition(DriveConstants.PARK_RIGHT_UP_POS);
-
         //intake
         intake = this.hardwareMap.get(DcMotor.class, "intake");
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

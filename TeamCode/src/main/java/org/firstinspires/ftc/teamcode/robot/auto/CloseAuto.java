@@ -86,6 +86,7 @@ public class CloseAuto extends OpMode {
 
         pathTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
+        follower.setMaxPower(0.7);
 
         hardware = new Hardware(hardwareMap);
         hardware.setPoseTrackerInAuto(follower.poseTracker);
@@ -157,11 +158,18 @@ public class CloseAuto extends OpMode {
                 break;
 
             case 1:
-                if (!shooter.isBusy() && robotAtEnd) {
-                    intake.setState(Intake.State.INTAKE);
-                    shooter.setState(Shooter.State.LAUNCH);
+                if (robotAtEnd || !ons) {
+                    if (ons) {
+                        pathTimer.resetTimer();
+                        ons = false;
+                    }
 
-                    setPathState(pathState + 1);
+                    if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        intake.setState(Intake.State.INTAKE);
+                        shooter.setState(Shooter.State.LAUNCH);
+
+                        setPathState(pathState + 1);
+                    }
                 }
                 break;
 
@@ -190,11 +198,18 @@ public class CloseAuto extends OpMode {
                 break;
 
             case 4:
-                if (robotAtEnd) {
-                    intake.setState(Intake.State.INTAKE);
-                    shooter.setState(Shooter.State.LAUNCH);
+                if (robotAtEnd || !ons) {
+                    if (ons) {
+                        pathTimer.resetTimer();
+                        ons = false;
+                    }
 
-                    setPathState(pathState + 1);
+                    if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        intake.setState(Intake.State.INTAKE);
+                        shooter.setState(Shooter.State.LAUNCH);
+
+                        setPathState(pathState + 1);
+                    }
                 }
                 break;
 
@@ -222,7 +237,7 @@ public class CloseAuto extends OpMode {
                         ons = false;
                     }
 
-                    if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    if (pathTimer.getElapsedTimeSeconds() > 1 || shooter.areBallsCollected()) {
                         intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls2);
                         setPathState(pathState + 1);
@@ -231,11 +246,18 @@ public class CloseAuto extends OpMode {
                 break;
 
             case 8:
-                if (robotAtEnd) {
-                    intake.setState(Intake.State.INTAKE);
-                    shooter.setState(Shooter.State.LAUNCH);
+                if (robotAtEnd || !ons) {
+                    if (ons) {
+                        pathTimer.resetTimer();
+                        ons = false;
+                    }
 
-                    setPathState(pathState + 1);
+                    if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        intake.setState(Intake.State.INTAKE);
+                        shooter.setState(Shooter.State.LAUNCH);
+
+                        setPathState(pathState + 1);
+                    }
                 }
                 break;
 
@@ -264,11 +286,18 @@ public class CloseAuto extends OpMode {
                 break;
 
             case 11:
-                if (robotAtEnd) {
-                    intake.setState(Intake.State.INTAKE);
-                    shooter.setState(Shooter.State.LAUNCH);
+                if (robotAtEnd || !ons) {
+                    if (ons) {
+                        pathTimer.resetTimer();
+                        ons = false;
+                    }
 
-                    setPathState(pathState + 1);
+                    if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        intake.setState(Intake.State.INTAKE);
+                        shooter.setState(Shooter.State.LAUNCH);
+
+                        setPathState(pathState + 1);
+                    }
                 }
                 break;
 
