@@ -94,7 +94,7 @@ public class CloseAuto extends OpMode {
         shooter = new Shooter(hardware);
 
         intake.setState(Intake.State.INTAKE_SLEEP);
-        shooter.setState(Shooter.State.OFF);
+        shooter.setState(Shooter.State.RESET);
     }
 
     @Override
@@ -121,6 +121,8 @@ public class CloseAuto extends OpMode {
         if (!allianceColorRed) {
             mirrorPoses();
         }
+
+        TransferConstants.isAllianceColorRed = allianceColorRed;
 
         follower.setStartingPose(poses.get(PoseName.START));
         buildPaths();
@@ -296,7 +298,6 @@ public class CloseAuto extends OpMode {
     @Override
     public void stop() {
         TransferConstants.endPose = follower.getPose();
-        TransferConstants.isAllianceColorRed = allianceColorRed;
         TransferConstants.endTurretPos = hardware.turret.getCurrentPosition();
     }
 }

@@ -47,6 +47,9 @@ public class MasterTeleop extends OpMode {
         }
 
         gamepad1.setLedColor(128.0/255, 0, 1, -1);
+
+        lastGamepad1 = new Gamepad();
+        lastGamepad2 = new Gamepad();
     }
 
     @Override
@@ -59,8 +62,8 @@ public class MasterTeleop extends OpMode {
 
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
 
-        lastGamepad1 = gamepad1;
-        lastGamepad2 = gamepad2;
+        lastGamepad1.copy(gamepad1);
+        lastGamepad2.copy(gamepad2);
     }
 
     @Override
@@ -85,11 +88,12 @@ public class MasterTeleop extends OpMode {
 
         telemetryUpdate();
 
-        lastGamepad1 = gamepad1;
-        lastGamepad2 = gamepad2;
+        lastGamepad1.copy(gamepad1);
+        lastGamepad2.copy(gamepad2);
     }
 
     private void telemetryUpdate() {
+        telemetry.addData("gpad test", shooter.getTurretOffset());
         telemetry.addLine("----------important----------");
         telemetry.addData("turret offset", shooter.getTurretOffset());
         telemetry.addData("hood offset", ShooterConstants.getHoodOffset());

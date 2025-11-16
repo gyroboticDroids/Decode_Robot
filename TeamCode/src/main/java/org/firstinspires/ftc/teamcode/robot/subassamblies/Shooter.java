@@ -7,6 +7,7 @@ import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 
 public class Shooter {
     public enum State {
@@ -28,7 +29,7 @@ public class Shooter {
     private boolean timerReset = true;
 
     private double turretOffset;
-    private int turretReset = 0;
+    private double turretReset = 0;
 
     //Ball detection
     private boolean ball1 = false;
@@ -101,12 +102,12 @@ public class Shooter {
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
-                hardware.turret.setPower(0.5);
-
-                if (timer.getElapsedTimeSeconds() > 1 || hardware.turret.getVelocity() < 10) {
+                if (timer.getElapsedTimeSeconds() > 1 && Math.abs(hardware.turret.getPower()) > 0.4) {
                     hardware.turret.setPower(0);
-                    turretReset = ShooterConstants.TURRET_RESET_POS - hardware.turret.getCurrentPosition();
+                    turretReset = hardware.turret.getCurrentPosition() - ShooterConstants.TURRET_RESET_POS;
                     isBusy = false;
+                } else {
+                    hardware.turret.setPower(-0.5);
                 }
                 break;
         }
@@ -153,8 +154,9 @@ public class Shooter {
             robotHeading -= 360;
         }
 
-        double angle = -Math.toDegrees(Math.atan((robotPos.getY() - ShooterConstants.GOAL_POS.getY())
-                / (robotPos.getX() - ShooterConstants.GOAL_POS.getX()))) + robotHeading + turretOffset;
+        double angle = -Math.toDegrees(Math.atan((robotPos.getY() - ShooterConstants.getGoalPos().getY())
+                / (robotPos.getX() - ShooterConstants.getGoalPos().getX()))) + (TransferConstants.isAllianceColorRed ? 0 : 180)
+                + robotHeading + turretOffset;
 
         if (angle > 185) {
             angle -= 360;
@@ -169,13 +171,13 @@ public class Shooter {
     }
 
     private double updateGoalDist(Pose robotPos) {
-        return Math.sqrt(Math.pow(robotPos.getX() - ShooterConstants.GOAL_POS.getX(), 2)
-                + Math.pow(robotPos.getY() - ShooterConstants.GOAL_POS.getY(), 2));
+        return Math.sqrt(Math.pow(robotPos.getX() - ShooterConstants.getGoalPos().getX(), 2)
+                + Math.pow(robotPos.getY() - ShooterConstants.getGoalPos().getY(), 2));
     }
 
     private void turretMoveTo(double angle) {
         double targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
-                * ShooterConstants.TURRET_TICKS_PER_DEGREE - turretReset;
+                * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset;
 
         double error = targetPos - hardware.turret.getCurrentPosition();
 
