@@ -76,7 +76,7 @@ public class Drive {
     }
 
     private void autoTurn() {
-        double error = DriveConstants.PARK_HEADING - Math.toDegrees(robotPos.getHeading());
+        double error = DriveConstants.getParkHeading() - Math.toDegrees(robotPos.getHeading());
 
         if (error > 180) {
             error -= 360;

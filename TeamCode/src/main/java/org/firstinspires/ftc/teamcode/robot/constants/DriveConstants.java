@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
 public class DriveConstants {
-    public static double PARK_HEADING = TransferConstants.isAllianceColorRed ? 0 : 180;
+    public static double getParkHeading() {
+        return TransferConstants.isAllianceColorRed ? 0 : 180;
+    }
     public static double TURN_P_GAIN = 0.022;
 
     public static double PARK_LEFT_DOWN_POS = 0;
