@@ -41,13 +41,13 @@ public class CloseAuto extends OpMode {
     private boolean allianceColorRed = true;
 
     private void setUpPoses() {
-        poses.put(PoseName.START, new Pose(102.07, 139.49, Math.toRadians(270)));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(90, 84, Math.toRadians(0)));
+        poses.put(PoseName.START, new Pose(126, 122.74, Math.toRadians(270)));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(85, 84, Math.toRadians(0)));
         poses.put(PoseName.SPIKE_MARK_1, new Pose(120, 84, Math.toRadians(0)));
-        poses.put(PoseName.SCORE, new Pose(90, 84, Math.toRadians(0)));
+        poses.put(PoseName.SCORE, new Pose(85, 84, Math.toRadians(0)));
         poses.put(PoseName.SPIKE_MARK_2, new Pose(120, 60, Math.toRadians(0)));
         poses.put(PoseName.SPIKE_MARK_2_CONTROL, new Pose(90, 57));
-        poses.put(PoseName.GATE, new Pose(14, 70, Math.toRadians(270)));
+        poses.put(PoseName.GATE, new Pose(130, 70, Math.toRadians(270)));
         poses.put(PoseName.SPIKE_MARK_3, new Pose(120, 36, Math.toRadians(0)));
         poses.put(PoseName.SPIKE_MARK_3_CONTROL, new Pose(90, 32));
     }
@@ -69,8 +69,8 @@ public class CloseAuto extends OpMode {
         openGate = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_2), poses.get(PoseName.GATE)));
         openGate.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading(), poses.get(PoseName.GATE).getHeading(), 0.7);
 
-        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.GATE), poses.get(PoseName.SCORE)));
-        scoreBalls2.setLinearHeadingInterpolation(poses.get(PoseName.GATE).getHeading(), poses.get(PoseName.SCORE).getHeading());
+        scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_2), poses.get(PoseName.SCORE)));
+        scoreBalls2.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading(), poses.get(PoseName.SCORE).getHeading());
 
         collectBalls3 = new Path(new BezierCurve(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3_CONTROL),
                 poses.get(PoseName.SPIKE_MARK_3)));
@@ -102,7 +102,7 @@ public class CloseAuto extends OpMode {
         if (gamepad1.crossWasReleased())
             allianceColorRed = !allianceColorRed;
 
-        if (shooter.getState() != Shooter.State.RESET && !shooter.isBusy()) {
+        if (shooter.getState() == Shooter.State.RESET && !shooter.isBusy()) {
             shooter.setState(Shooter.State.OFF);
             telemetry.addLine("READY!");
         }
@@ -144,7 +144,7 @@ public class CloseAuto extends OpMode {
     }
 
     private void autonomousPathUpdate() {
-        robotAtEnd = follower.getCurrentTValue() > 0.98;
+        robotAtEnd = follower.getCurrentTValue() > 0.99;
 
         switch (pathState) {
             case 0:
@@ -202,7 +202,7 @@ public class CloseAuto extends OpMode {
                 if (!shooter.isBusy()) {
                     shooter.setState(Shooter.State.READY);
                     follower.followPath(collectBalls2);
-                    setPathState(pathState + 1);
+                    setPathState(7);
                 }
                 break;
 
@@ -223,6 +223,7 @@ public class CloseAuto extends OpMode {
                     }
 
                     if (pathTimer.getElapsedTimeSeconds() > 1) {
+                        intake.setState(Intake.State.INTAKE_UP);
                         follower.followPath(scoreBalls2);
                         setPathState(pathState + 1);
                     }
@@ -274,7 +275,7 @@ public class CloseAuto extends OpMode {
             case 12:
                 if (!shooter.isBusy()) {
                     intake.setState(Intake.State.INTAKE_UP);
-                    shooter.setState(Shooter.State.READY);
+                    shooter.setState(Shooter.State.OFF);
                     follower.followPath(collectBalls1);
 
                     setPathState(-1);
@@ -284,9 +285,15 @@ public class CloseAuto extends OpMode {
     }
 
     private void mirrorPoses() {
-        for (Pose pose : poses.values()) {
-            pose.mirror();
-        }
+        poses.put(PoseName.START, poses.get(PoseName.START).mirror());
+        poses.put(PoseName.SCORE_PRELOAD, poses.get(PoseName.SCORE_PRELOAD).mirror());
+        poses.put(PoseName.SPIKE_MARK_1, poses.get(PoseName.SPIKE_MARK_1).mirror());
+        poses.put(PoseName.SCORE, poses.get(PoseName.SCORE).mirror());
+        poses.put(PoseName.SPIKE_MARK_2, poses.get(PoseName.SPIKE_MARK_2).mirror());
+        poses.put(PoseName.SPIKE_MARK_2_CONTROL, poses.get(PoseName.SPIKE_MARK_2_CONTROL).mirror());
+        poses.put(PoseName.GATE, poses.get(PoseName.GATE).mirror());
+        poses.put(PoseName.SPIKE_MARK_3, poses.get(PoseName.SPIKE_MARK_3).mirror());
+        poses.put(PoseName.SPIKE_MARK_3_CONTROL, poses.get(PoseName.SPIKE_MARK_3_CONTROL).mirror());
     }
 
     public void setPathState(int p) {

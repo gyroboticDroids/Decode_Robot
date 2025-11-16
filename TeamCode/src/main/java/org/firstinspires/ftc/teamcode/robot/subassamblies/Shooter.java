@@ -53,6 +53,8 @@ public class Shooter {
         ball1Timer.resetTimer();
         ball2Timer.resetTimer();
         ball3Timer.resetTimer();
+
+        turretReset = -TransferConstants.endTurretPos;
     }
 
     public void update() {
