@@ -20,7 +20,7 @@ import java.util.EnumMap;
 @Autonomous(name = "close auto", group = "auto", preselectTeleOp = "Master Tele-op")
 public class CloseAuto extends OpMode {
     private enum PoseName {
-        START, SCORE_PRELOAD, SPIKE_MARK_1, SCORE, GATE, SPIKE_MARK_2, SPIKE_MARK_2_CONTROL, SPIKE_MARK_3, SPIKE_MARK_3_CONTROL
+        START, SCORE_PRELOAD, SPIKE_MARK_1, SCORE, GATE, SPIKE_MARK_2, SPIKE_MARK_2_CONTROL, SPIKE_MARK_3, SPIKE_MARK_3_CONTROL, SPIKE_MARK_1_CONTROL
     }
 
     EnumMap<PoseName, Pose> poses = new EnumMap<>(PoseName.class);
@@ -42,13 +42,14 @@ public class CloseAuto extends OpMode {
 
     private void setUpPoses() {
         poses.put(PoseName.START, new Pose(126, 122.74, Math.toRadians(270)));
-        poses.put(PoseName.SCORE_PRELOAD, new Pose(85, 84, Math.toRadians(0)));
-        poses.put(PoseName.SPIKE_MARK_1, new Pose(120, 84, Math.toRadians(0)));
-        poses.put(PoseName.SCORE, new Pose(85, 84, Math.toRadians(0)));
-        poses.put(PoseName.SPIKE_MARK_2, new Pose(120, 60, Math.toRadians(0)));
+        poses.put(PoseName.SCORE_PRELOAD, new Pose(112, 112, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_1, new Pose(120, 84, Math.toRadians(270)));
+        poses.put(PoseName.SPIKE_MARK_1_CONTROL, new Pose(121, 104));
+        poses.put(PoseName.SCORE, new Pose(112, 112, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_2, new Pose(120, 60, Math.toRadians(270)));
         poses.put(PoseName.SPIKE_MARK_2_CONTROL, new Pose(90, 57));
         poses.put(PoseName.GATE, new Pose(130, 70, Math.toRadians(270)));
-        poses.put(PoseName.SPIKE_MARK_3, new Pose(120, 36, Math.toRadians(0)));
+        poses.put(PoseName.SPIKE_MARK_3, new Pose(120, 36, Math.toRadians(270)));
         poses.put(PoseName.SPIKE_MARK_3_CONTROL, new Pose(90, 32));
     }
 
@@ -56,15 +57,15 @@ public class CloseAuto extends OpMode {
         scorePreload = new Path(new BezierLine(poses.get(PoseName.START), poses.get(PoseName.SCORE_PRELOAD)));
         scorePreload.setLinearHeadingInterpolation(poses.get(PoseName.START).getHeading(), poses.get(PoseName.SCORE_PRELOAD).getHeading());
 
-        collectBalls1 = new Path(new BezierLine(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.SPIKE_MARK_1)));
-        collectBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_1).getHeading());
+        collectBalls1 = new Path(new BezierCurve(poses.get(PoseName.SCORE_PRELOAD), poses.get(PoseName.SPIKE_MARK_1_CONTROL),
+                poses.get(PoseName.SPIKE_MARK_1)));
+        collectBalls1.setLinearHeadingInterpolation(poses.get(PoseName.SCORE_PRELOAD).getHeading(), poses.get(PoseName.SPIKE_MARK_1).getHeading());
 
         scoreBalls1 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_1), poses.get(PoseName.SCORE)));
-        scoreBalls1.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
+        scoreBalls1.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_1).getHeading(), poses.get(PoseName.SCORE).getHeading());
 
-        collectBalls2 = new Path(new BezierCurve(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_2_CONTROL),
-                poses.get(PoseName.SPIKE_MARK_2)));
-        collectBalls2.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading());
+        collectBalls2 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_2)));
+        collectBalls2.setLinearHeadingInterpolation(poses.get(PoseName.SCORE).getHeading(), poses.get(PoseName.SPIKE_MARK_2).getHeading());
 
         openGate = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_2), poses.get(PoseName.GATE)));
         openGate.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading(), poses.get(PoseName.GATE).getHeading(), 0.7);
@@ -72,12 +73,11 @@ public class CloseAuto extends OpMode {
         scoreBalls2 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_2), poses.get(PoseName.SCORE)));
         scoreBalls2.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_2).getHeading(), poses.get(PoseName.SCORE).getHeading());
 
-        collectBalls3 = new Path(new BezierCurve(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3_CONTROL),
-                poses.get(PoseName.SPIKE_MARK_3)));
-        collectBalls3.setConstantHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_3).getHeading());
+        collectBalls3 = new Path(new BezierLine(poses.get(PoseName.SCORE), poses.get(PoseName.SPIKE_MARK_3)));
+        collectBalls3.setLinearHeadingInterpolation(poses.get(PoseName.SCORE).getHeading(), poses.get(PoseName.SPIKE_MARK_3).getHeading());
 
         scoreBalls3 = new Path(new BezierLine(poses.get(PoseName.SPIKE_MARK_3), poses.get(PoseName.SCORE)));
-        scoreBalls3.setConstantHeadingInterpolation(poses.get(PoseName.SCORE).getHeading());
+        scoreBalls3.setLinearHeadingInterpolation(poses.get(PoseName.SPIKE_MARK_3).getHeading(), poses.get(PoseName.SCORE).getHeading());
     }
 
     @Override
