@@ -46,7 +46,7 @@ public class MasterTeleop extends OpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        gamepad1.setLedColor(128.0/255, 0, 1, -1);
+        gamepad1.setLedColor(128.0 / 255, 0, 1, -1);
 
         lastGamepad1 = new Gamepad();
         lastGamepad2 = new Gamepad();
@@ -142,9 +142,11 @@ public class MasterTeleop extends OpMode {
                 intake.setState(Intake.State.CLEAR);
             } else if (gamepad1.triangleWasReleased() || gamepad2.crossWasReleased()) {
                 intake.setState(Intake.State.INTAKE);
-            } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle ||
-                    shooter.getState() == Shooter.State.LAUNCH) && prevIntakeState != Intake.State.INTAKE) {
+            } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle
+                    || prevIntakeState == Intake.State.INTAKE_LAUNCH) && prevIntakeState != Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE);
+            } else if (shooter.getState() == Shooter.State.LAUNCH && prevIntakeState != Intake.State.INTAKE_LAUNCH) {
+                intake.setState(Intake.State.INTAKE_LAUNCH);
             } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle
                     || shooter.areBallsCollected() && shooter.getState() != Shooter.State.LAUNCH)
                     && prevIntakeState == Intake.State.INTAKE) {
@@ -159,14 +161,14 @@ public class MasterTeleop extends OpMode {
         if (!shooter.isBusy()) {
             if (drive.isPark()) {
                 shooter.setState(Shooter.State.OFF);
-            }else if ((gamepad1.right_bumper || gamepad2.right_bumper || prevShooterState == Shooter.State.LAUNCH
+            } else if ((gamepad1.right_bumper || gamepad2.right_bumper || prevShooterState == Shooter.State.LAUNCH
                     || prevShooterState == Shooter.State.RESET || prevShooterState == Shooter.State.OFF)
                     && prevShooterState != Shooter.State.READY) {
                 shooter.setState(Shooter.State.READY);
             } else if ((gamepad1.right_bumper || gamepad2.right_bumper) && prevShooterState == Shooter.State.READY
                     && shooter.flywheelUpToSpeed()) {
                 shooter.setState(Shooter.State.LAUNCH);
-            }  else if (gamepad2.share) {
+            } else if (gamepad2.share) {
                 shooter.setState(Shooter.State.RESET);
             }
         }

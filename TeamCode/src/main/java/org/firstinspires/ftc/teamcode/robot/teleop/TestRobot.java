@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.teleop;
 
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Vision;
@@ -25,8 +27,12 @@ public class TestRobot extends OpMode {
     private double hood = 0.5;
     private double door = 0.5;
 
+    private Telemetry panelsTelemetry;
+
     @Override
     public void init() {
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getFtcTelemetry();
+
         hardware = new Hardware(hardwareMap);
         vision = new Vision(hardware);
         hardware.configureTeleop();
@@ -126,6 +132,8 @@ public class TestRobot extends OpMode {
 
                 telemetry.addData("flywheel (g1 left stick y, cross to reset)", hardware.flywheel.getVelocity());
                 telemetry.addData("turret (g1 dpad left right)", hardware.turret.getCurrentPosition());
+                panelsTelemetry.addData("flywheel setpoint", flywheelSpeed);
+                panelsTelemetry.addData("flywheel speed", hardware.flywheel.getVelocity());
 
                 telemetry.addData("launcher (g1 right stick y)", hardware.launcher.getPosition());
                 telemetry.addData("hood (g2 left stick y)", hardware.hood.getPosition());
@@ -140,5 +148,6 @@ public class TestRobot extends OpMode {
         telemetry.addData("robot pos from camera", vision.getRobotPosFromTarget());
 
         telemetry.update();
+        panelsTelemetry.update();
     }
 }
