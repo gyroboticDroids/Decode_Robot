@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -12,7 +13,7 @@ public class ShooterConstants {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
     }
 
-    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0, 0, 10);
+    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0.8, 0, 0);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
