@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous(name = "Configure Close Auto", group = "close auto")
@@ -21,7 +22,7 @@ public class ConfigureCloseAuto extends OpMode {
 
     @Override
     public void init() {
-
+        routine = new ArrayList<>();
     }
 
     @Override
@@ -71,7 +72,12 @@ public class ConfigureCloseAuto extends OpMode {
             requestOpModeStop();
         }
 
+        String routineString = routine.toString();
+        routineString = routineString.substring(1, routineString.length() - 1);
+
         File file = AppUtil.getInstance().getSettingsFile("CloseConfig.txt");
-        ReadWriteFile.writeFile(file, routine.toString());
+        ReadWriteFile.writeFile(file, routineString);
+
+        requestOpModeStop();
     }
 }
