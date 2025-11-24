@@ -324,7 +324,7 @@ public class RunCloseAuto extends OpMode {
 
     public void setPathState(int p) {
         if (p == -1) {
-            if (currentRoutineIndex < routine.size() - 1) {
+            if (currentRoutineIndex <= routine.size() - 1) {
                 pathState = stateToRoutineConversion[routine.get(currentRoutineIndex)];
             } else {
                 pathState = -1;
