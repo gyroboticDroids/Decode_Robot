@@ -10,11 +10,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "Configure Close Auto", group = "close auto")
+@Autonomous(name = "configure close auto", group = "close auto")
 public class ConfigureCloseAuto extends OpMode {
     private List<Integer> routine;
-    private final String[] names = {"spike mark 1", "spike mark 2", "spike mark 3", "gate", "wait (0.5 seconds)"};
-    private final double[] times = {4, 4.5, 5, 5, 0.5};
+    private final String[] names = {"spike mark 1", "spike mark 2", "spike mark 3", "gate", "wait (1 second)"};
+    private final double[] times = {4, 4.5, 5, 5, 1};
 
     private int selectedTask = 0;
     private boolean dpadOns = false;
