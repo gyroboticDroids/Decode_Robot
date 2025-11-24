@@ -32,7 +32,7 @@ public class RunCloseAuto extends OpMode {
             balls1 = new Pose(120, 84 + 8, Math.toRadians(270)),
             balls2 = new Pose(120, 60 + 8, Math.toRadians(270)),
             balls3 = new Pose(120, 36 + 8, Math.toRadians(270)),
-            gate = new Pose(130, 70, Math.toRadians(20));
+            gate = new Pose(120, 70, Math.toRadians(20));
 
     private Pose controlBalls1 = new Pose(121, 104),
             controlGate = new Pose(72, 72);
@@ -188,7 +188,7 @@ public class RunCloseAuto extends OpMode {
     }
 
     private void autonomousPathUpdate() {
-        robotAtEnd = follower.getCurrentTValue() > 0.99;
+        robotAtEnd = follower.getCurrentTValue() >= 0.99;
 
         switch (pathState) {
             case 0:
@@ -207,7 +207,7 @@ public class RunCloseAuto extends OpMode {
                         ons = false;
                     }
 
-                    if (timer.getElapsedTimeSeconds() > 0.5) {
+                    if (timer.getElapsedTimeSeconds() > 2) {
                         intake.setState(Intake.State.INTAKE_LAUNCH);
                         shooter.setState(Shooter.State.LAUNCH);
 
@@ -218,19 +218,20 @@ public class RunCloseAuto extends OpMode {
 
             case 2:
                 if (!shooter.isBusy()) {
+                    shooter.setState(Shooter.State.READY);
                     intake.setState(Intake.State.INTAKE);
                     setPathState(-1);
                 }
                 break;
 
             case 3:
+                if (robotAtEnd && !ons) {
+                    setPathState(pathState + 1);
+                }
+
                 if (ons) {
                     follower.followPath(collectBalls1);
                     ons = false;
-                }
-
-                if (robotAtEnd) {
-                    setPathState(pathState + 1);
                 }
                 break;
 
@@ -244,13 +245,13 @@ public class RunCloseAuto extends OpMode {
                 break;
 
             case 5:
+                if (robotAtEnd && !ons) {
+                    setPathState(pathState + 1);
+                }
+
                 if (ons) {
                     follower.followPath(collectBalls2);
                     ons = false;
-                }
-
-                if (robotAtEnd) {
-                    setPathState(pathState + 1);
                 }
                 break;
 
@@ -264,13 +265,13 @@ public class RunCloseAuto extends OpMode {
                 break;
 
             case 7:
+                if (robotAtEnd && !ons) {
+                    setPathState(pathState + 1);
+                }
+
                 if (ons) {
                     follower.followPath(collectBalls3);
                     ons = false;
-                }
-
-                if (robotAtEnd) {
-                    setPathState(pathState + 1);
                 }
                 break;
 
@@ -284,13 +285,13 @@ public class RunCloseAuto extends OpMode {
                 break;
 
             case 9:
+                if (robotAtEnd && !ons) {
+                    setPathState(pathState + 1);
+                }
+
                 if (ons) {
                     follower.followPath(collectFromGate);
                     ons = false;
-                }
-
-                if (robotAtEnd) {
-                    setPathState(pathState + 1);
                 }
                 break;
 
