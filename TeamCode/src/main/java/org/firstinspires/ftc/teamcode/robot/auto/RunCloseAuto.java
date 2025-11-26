@@ -28,14 +28,16 @@ public class RunCloseAuto extends OpMode {
     private int currentRoutineIndex = 0;
 
     private Pose start = new Pose(126, 122.74, Math.toRadians(270)),
-            score = new Pose(112, 112, Math.toRadians(320)),
-            balls1 = new Pose(120, 84 + 8, Math.toRadians(270)),
-            balls2 = new Pose(120, 60 + 8, Math.toRadians(270)),
-            balls3 = new Pose(120, 36 + 8, Math.toRadians(270)),
-            gate = new Pose(120, 70, Math.toRadians(20));
+            score = new Pose(96, 96, Math.toRadians(320)),
+            balls1 = new Pose(120, 84, Math.toRadians(0)),
+            balls2 = new Pose(120, 68, Math.toRadians(270)),
+            balls3 = new Pose(120, 44, Math.toRadians(270)),
+            gate = new Pose(129, 59, Math.toRadians(25));
 
-    private Pose controlBalls1 = new Pose(121, 104),
-            controlGate = new Pose(72, 72);
+    private Pose controlBalls1 = new Pose(95, 82),
+            controlBalls2 = new Pose(120, 96),
+            controlBalls3 = new Pose(120, 96),
+            controlGate = new Pose(96, 72);
 
     private Path scorePreload, collectBalls1, scoreBalls1, collectFromGate, scoreFromGate,
             collectBalls2, scoreBalls2, collectBalls3, scoreBalls3;
@@ -138,6 +140,8 @@ public class RunCloseAuto extends OpMode {
         gate = gate.mirror();
 
         controlBalls1 = controlBalls1.mirror();
+        controlBalls2 = controlBalls2.mirror();
+        controlBalls3 = controlBalls3.mirror();
         controlGate = controlGate.mirror();
     }
 
@@ -151,13 +155,13 @@ public class RunCloseAuto extends OpMode {
         scoreBalls1 = new Path(new BezierLine(balls1, score));
         scoreBalls1.setLinearHeadingInterpolation(balls1.getHeading(), score.getHeading());
 
-        collectBalls2 = new Path(new BezierLine(score, balls2));
+        collectBalls2 = new Path(new BezierCurve(score, controlBalls2, balls2));
         collectBalls2.setLinearHeadingInterpolation(score.getHeading(), balls2.getHeading(), 0.7);
 
         scoreBalls2 = new Path(new BezierLine(balls2, score));
         scoreBalls2.setLinearHeadingInterpolation(balls2.getHeading(), score.getHeading());
 
-        collectBalls3 = new Path(new BezierLine(score, balls3));
+        collectBalls3 = new Path(new BezierCurve(score, controlBalls3, balls3));
         collectBalls3.setLinearHeadingInterpolation(score.getHeading(), balls3.getHeading(), 0.7);
 
         scoreBalls3 = new Path(new BezierLine(balls3, score));
@@ -207,7 +211,7 @@ public class RunCloseAuto extends OpMode {
                         ons = false;
                     }
 
-                    if (timer.getElapsedTimeSeconds() > 2) {
+                    if (timer.getElapsedTimeSeconds() > 0.5) {
                         intake.setState(Intake.State.INTAKE_LAUNCH);
                         shooter.setState(Shooter.State.LAUNCH);
 

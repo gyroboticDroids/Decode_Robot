@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -41,7 +40,7 @@ public class ShooterConstants {
     private static double hoodOffset = 0;
 
     public static double flywheelSpeed(double goalDist) {
-        return MathFunctions.clamp(554.24722 * Math.pow(1.00505, goalDist), 0, 1300) + flywheelOffset;
+        return MathFunctions.clamp(554.24722 * Math.pow(1.00505, goalDist) + 300, 0, 1300) + flywheelOffset;
     }
 
     public static double hoodAngle(double goalDist) {
