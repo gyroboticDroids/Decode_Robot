@@ -877,6 +877,7 @@ class HeadingTuner extends OpMode {
 class DriveTuner extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
+    private Timer timer;
 
     private PathChain forwards;
     private PathChain backwards;
@@ -884,6 +885,7 @@ class DriveTuner extends OpMode {
     @Override
     public void init() {
         follower.setStartingPose(new Pose(72, 72));
+        timer = new Timer();
     }
 
     /**
@@ -929,7 +931,10 @@ class DriveTuner extends OpMode {
         follower.update();
         draw();
 
-        if (!follower.isBusy()) {
+        if (follower.isBusy()) {
+            timer.resetTimer();
+        }
+        else if (timer.getElapsedTimeSeconds()>1) {
             if (forward) {
                 forward = false;
                 follower.followPath(backwards);
@@ -957,6 +962,7 @@ class DriveTuner extends OpMode {
 class Line extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
+    private Timer timer;
 
     private Path forwards;
     private Path backwards;
@@ -964,6 +970,7 @@ class Line extends OpMode {
     @Override
     public void init() {
         follower.setStartingPose(new Pose(72, 72));
+        timer = new Timer();
     }
 
     /** This initializes the Follower and creates the forward and backward Paths. */
@@ -993,7 +1000,10 @@ class Line extends OpMode {
         follower.update();
         draw();
 
-        if (!follower.isBusy()) {
+        if (follower.isBusy()) {
+            timer.resetTimer();
+        }
+        else if (timer.getElapsedTimeSeconds()>1) {
             if (forward) {
                 forward = false;
                 follower.followPath(backwards);

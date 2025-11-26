@@ -74,7 +74,7 @@ public class Shooter {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 }
 
-                if (!timerReset && (lastBall && timer.getElapsedTimeSeconds() > 0.5 || timer.getElapsedTimeSeconds() > 2)) {
+                if (!timerReset && (lastBall && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
                     timer.resetTimer();
                     timerReset = true;
                 }
