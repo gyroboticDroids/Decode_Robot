@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "run close auto", group = "auto", preselectTeleOp = "Master Tele-op")
+@Autonomous(name = "run close auto", group = "close auto", preselectTeleOp = "Master Tele-op")
 public class RunCloseAuto extends OpMode {
     private final static double MAX_POWER = 1;
     private final static double SLOW_POWER = 0.5;
