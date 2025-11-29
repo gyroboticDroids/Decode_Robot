@@ -75,7 +75,7 @@ public class ConfigureCloseAuto extends OpMode {
         String routineString = routine.toString();
         routineString = routineString.substring(1, routineString.length() - 1);
 
-        File file = AppUtil.getInstance().getSettingsFile("CloseConfig.txt");
+        File file = AppUtil.getInstance().getSettingsFile("Config.txt");
         ReadWriteFile.writeFile(file, routineString);
 
         requestOpModeStop();

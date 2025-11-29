@@ -15,7 +15,7 @@ public class ConfigureAuto extends OpMode {
     private List<Integer> routine;
     private final String[] names = {"spike mark 1", "spike mark 2", "spike mark 3", "gate", "human player", "wait (1 second)"};
     private final String[] scoreNames = {"score close","score middle","score far"};
-    private final double[] times = {4, 4.5, 5, 5, 1};
+    private final double[] times = {4, 4.5, 5, 5, 5, 1};
 
     private int selectedTask = 0;
     private int selectedScorePosition = 0;
@@ -67,8 +67,8 @@ public class ConfigureAuto extends OpMode {
         telemetry.addLine("scoring " + ((routine.get(0) == 0)? "far" : "close"));
 
         telemetry.addLine("routine:");
-        for (int i = 0; i < routine.size(); i++) {
-            telemetry.addLine(i + 1 + ". " + names[routine.get(i)]);
+        for (int i = 1; i < routine.size(); i += 2) {
+            telemetry.addLine(i + 1 + ". " + names[routine.get(i)] + ", " + scoreNames[routine.get(i + 1)]);
         }
 
         double autoTime = 0;
@@ -92,7 +92,7 @@ public class ConfigureAuto extends OpMode {
         String routineString = routine.toString();
         routineString = routineString.substring(1, routineString.length() - 1);
 
-        File file = AppUtil.getInstance().getSettingsFile("CloseConfig.txt");
+        File file = AppUtil.getInstance().getSettingsFile("Config.txt");
         ReadWriteFile.writeFile(file, routineString);
 
         requestOpModeStop();

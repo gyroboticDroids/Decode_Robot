@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous(name = "run close auto", group = "close auto", preselectTeleOp = "Master Tele-op")
-public class RunCloseAuto extends OpMode {
+public class RunAuto extends OpMode {
     private final static double MAX_POWER = 1;
     private final static double SLOW_POWER = 0.5;
 
     private List<Integer> routine;
-    private final int[] stateToRoutineConversion = {3, 5, 7, 9, 11};
-    private int currentRoutineIndex = 0;
+    private final int[] stateToRoutineConversion = {4, 4, 4, 6, 8, 10};
+    private int currentRoutineIndex = 1;
 
     private Pose start = new Pose(126, 122.74, Math.toRadians(270)),
             score = new Pose(96, 96, Math.toRadians(330)),
@@ -216,7 +216,7 @@ public class RunCloseAuto extends OpMode {
                 setPathState(pathState + 1);
                 break;
 
-            case 1:
+            case 2:
                 if (robotAtEnd || !ons) {
                     if (ons) {
                         timer.resetTimer();
@@ -232,7 +232,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 2:
+            case 3:
                 if (!shooter.isBusy()) {
                     shooter.setState(Shooter.State.READY);
                     intake.setState(Intake.State.INTAKE);
@@ -240,7 +240,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 3:
+            case 4:
                 if (robotAtEnd && !ons) {
                     setPathState(pathState + 1);
                 }
@@ -251,7 +251,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 4:
+            case 5:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.5) {
                     intake.setState(Intake.State.INTAKE_UP);
 
@@ -260,7 +260,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 5:
+            case 6:
                 if (robotAtEnd && !ons) {
                     setPathState(pathState + 1);
                 }
@@ -272,7 +272,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 6:
+            case 7:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.5) {
                     intake.setState(Intake.State.INTAKE_UP);
 
@@ -282,7 +282,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 7:
+            case 8:
                 if (robotAtEnd && !ons) {
                     setPathState(pathState + 1);
                 }
@@ -294,7 +294,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 8:
+            case 9:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.5) {
                     intake.setState(Intake.State.INTAKE_UP);
 
@@ -304,7 +304,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 9:
+            case 10:
                 if (robotAtEnd && !ons) {
                     setPathState(pathState + 1);
                 }
@@ -315,7 +315,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 10:
+            case 11:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
                     intake.setState(Intake.State.INTAKE_UP);
 
@@ -324,7 +324,7 @@ public class RunCloseAuto extends OpMode {
                 }
                 break;
 
-            case 11:
+            case 12:
                 if (timer.getElapsedTimeSeconds() > 1) {
                     setPathState(-1);
                 }
@@ -350,7 +350,7 @@ public class RunCloseAuto extends OpMode {
                 pathState = -1;
             }
 
-            currentRoutineIndex++;
+            currentRoutineIndex += 2;
         } else {
             pathState = p;
         }
