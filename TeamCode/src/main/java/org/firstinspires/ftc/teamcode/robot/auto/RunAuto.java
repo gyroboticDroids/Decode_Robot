@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "run close auto", group = "close auto", preselectTeleOp = "Master Tele-op")
+@Autonomous(name = "run auto", group = "close auto", preselectTeleOp = "Master Tele-op")
 public class RunAuto extends OpMode {
     private final static double MAX_POWER = 1;
     private final static double SLOW_POWER = 0.5;
@@ -33,14 +33,16 @@ public class RunAuto extends OpMode {
 
     private Pose startClose = new Pose(126, 122.74, Math.toRadians(270)),
             startFar = new Pose(126, 122.74, Math.toRadians(90)),
-            scoreNear = new Pose(120, 120, Math.toRadians(0)),
+            scoreClose = new Pose(120, 120, Math.toRadians(0)),
             scoreMiddle = new Pose(96, 96, Math.toRadians(0)),
             scoreFar = new Pose(84, 12, Math.toRadians(0)),
             balls1 = new Pose(120, 84, Math.toRadians(0)),
             balls2 = new Pose(120, 67, Math.toRadians(0)),
             balls3 = new Pose(120, 44, Math.toRadians(0)),
             gate = new Pose(128, 61, Math.toRadians(22)),
-            hp = new Pose(130, 6, Math.toRadians(0));
+            hp = new Pose(130, 6, Math.toRadians(0)),
+            endClose = new Pose(120, 84, Math.toRadians(0)),
+            endFar = new Pose(120, 84, Math.toRadians(0));
 
     private Pose controlBalls1 = new Pose(95, 82),
             controlBalls2 = new Pose(96, 63),
@@ -152,7 +154,7 @@ public class RunAuto extends OpMode {
     private void mirrorPoses() {
         startClose = startClose.mirror();
         startFar = startFar.mirror();
-        scoreNear = scoreNear.mirror();
+        scoreClose = scoreClose.mirror();
         scoreMiddle = scoreMiddle.mirror();
         scoreFar = scoreFar.mirror();
         balls1 = balls1.mirror();
@@ -160,6 +162,8 @@ public class RunAuto extends OpMode {
         balls3 = balls3.mirror();
         gate = gate.mirror();
         hp = hp.mirror();
+        endClose = endClose.mirror();
+        endFar = endFar.mirror();
 
         controlBalls1 = controlBalls1.mirror();
         controlBalls2 = controlBalls2.mirror();
@@ -169,12 +173,84 @@ public class RunAuto extends OpMode {
     }
 
     private void buildPaths() {
-        for (int i = 2; i < routine.size() - 1; i += 2) {
+        for (int i = 0; i < routine.size() - 1; i += 2) {
             Pose lastPose;
             Pose scorePose = calcShootPose(i);
 
             if (i > 0) {
-                lastPose = paths.get((i - 1) / 2).endPose();
+                lastPose = paths.get(paths.size() - 1).endPose();
+
+                switch (routine.get(i)) {
+                    case 0:
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(lastPose, controlBalls1, balls1))
+                                .setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
+                                .setBrakingStrength(0.7)
+                                .build());
+
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(balls1, controlBalls1, scorePose))
+                                .setLinearHeadingInterpolation(balls1.getHeading(), scorePose.getHeading())
+                                .setBrakingStrength(0.7)
+                                .build());
+                        break;
+
+                    case 1:
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(lastPose, controlBalls2, balls2))
+                                .setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
+                                .setBrakingStrength(0.8)
+                                .build());
+
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(balls2, controlBalls2, scorePose))
+                                .setLinearHeadingInterpolation(balls2.getHeading(), scorePose.getHeading())
+                                .setBrakingStrength(0.8)
+                                .build());
+                        break;
+
+                    case 2:
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(lastPose, controlBalls3, balls3))
+                                .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
+                                .setBrakingStrength(0.8)
+                                .build());
+
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(balls3, scorePose))
+                                .setLinearHeadingInterpolation(balls3.getHeading(), scorePose.getHeading())
+                                .setBrakingStrength(0.8)
+                                .build());
+                        break;
+
+                    case 3:
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(lastPose, controlGate, gate))
+                                .setLinearHeadingInterpolation(lastPose.getHeading(), gate.getHeading(), 0.7)
+                                .setBrakingStrength(0.6)
+                                .build());
+
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(gate, scorePose))
+                                .setLinearHeadingInterpolation(gate.getHeading(), scorePose.getHeading())
+                                .setBrakingStrength(0.8)
+                                .build());
+                        break;
+
+                    case 4:
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(lastPose, controlHp, hp))
+                                .setLinearHeadingInterpolation(lastPose.getHeading(), hp.getHeading(), 0.7)
+                                .setBrakingStrength(0.6)
+                                .build());
+
+                        paths.add(follower.pathBuilder()
+                                .addPath(new BezierCurve(hp, scorePose))
+                                .setLinearHeadingInterpolation(hp.getHeading(), scorePose.getHeading())
+                                .setBrakingStrength(0.8)
+                                .build());
+                        break;
+                }
             } else {
                 lastPose = startPose;
 
@@ -183,80 +259,22 @@ public class RunAuto extends OpMode {
                         .setLinearHeadingInterpolation(lastPose.getHeading(), calcShootPose(0).getHeading())
                         .setBrakingStrength(0.8)
                         .build());
-                break;
             }
+        }
 
-            switch (routine.get(i)) {
-                case 0:
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlBalls1, balls1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
-                            .setBrakingStrength(0.7)
-                            .build());
-
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(balls1, controlBalls1, scorePose))
-                            .setLinearHeadingInterpolation(balls1.getHeading(), scorePose.getHeading())
-                            .setBrakingStrength(0.7)
-                            .build());
-                break;
-
-                case 1:
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlBalls2, balls2))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
-                            .setBrakingStrength(0.8)
-                            .build());
-
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(balls2, controlBalls2, scorePose))
-                            .setLinearHeadingInterpolation(balls2.getHeading(), scorePose.getHeading())
-                            .setBrakingStrength(0.8)
-                            .build());
-                    break;
-
-                case 2:
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlBalls3, balls3))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
-                            .setBrakingStrength(0.8)
-                            .build());
-
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(balls3, scorePose))
-                            .setLinearHeadingInterpolation(balls3.getHeading(), scorePose.getHeading())
-                            .setBrakingStrength(0.8)
-                            .build());
-                    break;
-
-                case 3:
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlGate, gate))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), gate.getHeading(), 0.7)
-                            .setBrakingStrength(0.6)
-                            .build());
-
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(gate, scorePose))
-                            .setLinearHeadingInterpolation(gate.getHeading(), scorePose.getHeading())
-                            .setBrakingStrength(0.8)
-                            .build());
-                    break;
-
-                case 4:
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlHp, hp))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp.getHeading(), 0.7)
-                            .setBrakingStrength(0.6)
-                            .build());
-
-                    paths.add(follower.pathBuilder()
-                            .addPath(new BezierCurve(hp, scorePose))
-                            .setLinearHeadingInterpolation(hp.getHeading(), scorePose.getHeading())
-                            .setBrakingStrength(0.8)
-                            .build());
-                    break;
-            }
+        Pose endPose = paths.get(paths.size() - 1).endPose();
+        if(endPose.equals(scoreFar)) {
+            paths.add(follower.pathBuilder()
+                    .addPath(new BezierLine(endPose, endFar))
+                    .setLinearHeadingInterpolation(endPose.getHeading(), endFar.getHeading())
+                    .setBrakingStrength(0.8)
+                    .build());
+        } else {
+            paths.add(follower.pathBuilder()
+                    .addPath(new BezierLine(endPose, endClose))
+                    .setLinearHeadingInterpolation(endPose.getHeading(), endClose.getHeading())
+                    .setBrakingStrength(0.8)
+                    .build());
         }
     }
 
@@ -265,7 +283,7 @@ public class RunAuto extends OpMode {
 
         switch (routine.get(index + 1)) {
             case 0:
-                scorePose = scoreNear;
+                scorePose = scoreClose;
                 break;
             case 2:
                 scorePose = scoreFar;
@@ -296,7 +314,7 @@ public class RunAuto extends OpMode {
     }
 
     private void autonomousPathUpdate() {
-        robotAtEnd = follower.getCurrentTValue() >= 0.99;
+        robotAtEnd = !follower.isBusy();
 
         switch (pathState) {
             case 0:
@@ -433,7 +451,7 @@ public class RunAuto extends OpMode {
 
     private void setPathState(int p) {
         if (p == -1) {
-            if (currentRoutineIndex <= routine.size() - 3) {
+            if (currentRoutineIndex <= routine.size() - 1) {
                 pathState = stateToRoutineConversion[routine.get(currentRoutineIndex)];
             } else {
                 pathState = -1;

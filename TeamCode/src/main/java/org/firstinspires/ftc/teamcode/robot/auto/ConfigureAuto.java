@@ -19,7 +19,7 @@ public class ConfigureAuto extends OpMode {
 
     private int selectedTask = 0;
     private int selectedScorePosition = 0;
-    private int selectedStartScorePosition = 0;
+    private int selectedStartScorePosition = 1;
     private boolean dpadOns = false;
     private boolean startOns = false;
     private boolean manageTaskOns = false;
@@ -34,7 +34,7 @@ public class ConfigureAuto extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addLine("Configure Far Auto \ncross to add task \ncircle to delete task " +
-                "\ntriangle to delete all tasks \nsquare to toggle shooting area");
+                "\ntriangle to delete all tasks \nsquare to toggle shooting area \n");
 
         selectedTask += (gamepad1.dpad_up && !dpadOns ? 1 : 0) - (gamepad1.dpad_down && !dpadOns ? 1 : 0);
         selectedScorePosition += (gamepad1.dpad_right && !dpadOns ? 1 : 0) - (gamepad1.dpad_left && !dpadOns ? 1 : 0);
@@ -73,12 +73,12 @@ public class ConfigureAuto extends OpMode {
 
         startOns = gamepad1.square || gamepad1.left_bumper || gamepad1.right_bumper;
 
-        telemetry.addLine("starting " + ((routine.get(0) == 0)? "far" : "close"));
+        telemetry.addLine("\nstarting " + ((routine.get(0) == 0)? "close" : "far"));
         telemetry.addLine("preload " + scoreNames[routine.get(1)]);
 
-        telemetry.addLine("routine:");
-        for (int i = 3; i < routine.size(); i += 2) {
-            telemetry.addLine(i / 2 - 0.5 + ". " + names[routine.get(i)] + ", " + scoreNames[routine.get(i + 1)]);
+        telemetry.addLine("\nroutine:");
+        for (int i = 2; i < routine.size() - 1; i += 2) {
+            telemetry.addLine(i / 2 + ". " + names[routine.get(i)] + ", " + scoreNames[routine.get(i + 1)]);
         }
 
         double autoTime = 0;
