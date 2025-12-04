@@ -27,8 +27,8 @@ public class RunAuto extends OpMode {
     private final static double SLOW_POWER = 0.5;
 
     private List<Integer> routine;
-    private final int[] stateToRoutineConversion = {4, 4, 4, 6, 8, 10};
-    private int currentRoutineIndex = 2;
+    private int currentRoutineIndex = 0;
+    int currentAction = 0;
     private int nextPath = -1;
 
     private Pose startClose = new Pose(126, 122.74, Math.toRadians(270)),
@@ -62,9 +62,10 @@ public class RunAuto extends OpMode {
     private Shooter shooter;
 
     private boolean ons = false;
+    private boolean isBusy = false;
     private boolean robotAtEnd = false;
 
-    private int pathState = -1;
+    private int state = -1;
     private boolean allianceColorRed = true;
 
     private boolean routineLoaded = false;
@@ -90,8 +91,8 @@ public class RunAuto extends OpMode {
     }
 
     private void loadRoutine() {
-        File closeAuto = AppUtil.getInstance().getSettingsFile("Config.txt");
-        String[] types = ReadWriteFile.readFile(closeAuto).trim().split(", ");
+        File seqAutoFile = AppUtil.getInstance().getSettingsFile("Config.txt");
+        String[] types = ReadWriteFile.readFile(seqAutoFile).trim().split(", ");
 
         for (String type : types) {
             if (!type.isEmpty()) {
@@ -133,7 +134,7 @@ public class RunAuto extends OpMode {
 
     @Override
     public void start() {
-        setPathState(0);
+        setState(0);
 
         if (!allianceColorRed) {
             mirrorPoses();
@@ -141,7 +142,7 @@ public class RunAuto extends OpMode {
 
         TransferConstants.isAllianceColorRed = allianceColorRed;
 
-        if(routine.get(0) == 0) {
+        if (routine.get(0) == 0) {
             startPose = startClose;
         } else {
             startPose = startFar;
@@ -173,97 +174,101 @@ public class RunAuto extends OpMode {
     }
 
     private void buildPaths() {
-        for (int i = 0; i < routine.size() - 1; i += 2) {
-            Pose lastPose;
-            Pose scorePose = calcShootPose(i);
+        Pose lastControlPoint = null;
+        Pose lastPose = startPose;
 
-            if (i > 0) {
-                lastPose = paths.get(paths.size() - 1).endPose();
+        for (int i = 1; i < routine.size() - 1; i++) {
+            switch (routine.get(i)) {
+                case 10:
+                    paths.add(follower.pathBuilder()
+                            .addPath((lastControlPoint == null) ? new BezierCurve(lastPose, scoreClose) :
+                                    new BezierCurve(lastPose, lastControlPoint, scoreClose))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), scoreClose.getHeading())
+                            .setBrakingStrength(0.7)
+                            .build());
 
-                switch (routine.get(i)) {
-                    case 0:
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(lastPose, controlBalls1, balls1))
-                                .setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
-                                .setBrakingStrength(0.7)
-                                .build());
+                    lastControlPoint = null;
+                    break;
 
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(balls1, controlBalls1, scorePose))
-                                .setLinearHeadingInterpolation(balls1.getHeading(), scorePose.getHeading())
-                                .setBrakingStrength(0.7)
-                                .build());
-                        break;
+                case 11:
+                    paths.add(follower.pathBuilder()
+                            .addPath((lastControlPoint == null) ? new BezierCurve(lastPose, scoreMiddle) :
+                                    new BezierCurve(lastPose, lastControlPoint, scoreMiddle))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), scoreMiddle.getHeading())
+                            .setBrakingStrength(0.7)
+                            .build());
 
-                    case 1:
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(lastPose, controlBalls2, balls2))
-                                .setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
-                                .setBrakingStrength(0.8)
-                                .build());
+                    lastControlPoint = null;
+                    break;
 
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(balls2, controlBalls2, scorePose))
-                                .setLinearHeadingInterpolation(balls2.getHeading(), scorePose.getHeading())
-                                .setBrakingStrength(0.8)
-                                .build());
-                        break;
+                case 12:
+                    paths.add(follower.pathBuilder()
+                            .addPath((lastControlPoint == null) ? new BezierCurve(lastPose, scoreFar) :
+                                    new BezierCurve(lastPose, lastControlPoint, scoreFar))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading())
+                            .setBrakingStrength(0.7)
+                            .build());
 
-                    case 2:
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(lastPose, controlBalls3, balls3))
-                                .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
-                                .setBrakingStrength(0.8)
-                                .build());
+                    lastControlPoint = null;
+                    break;
 
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(balls3, scorePose))
-                                .setLinearHeadingInterpolation(balls3.getHeading(), scorePose.getHeading())
-                                .setBrakingStrength(0.8)
-                                .build());
-                        break;
+                case 20:
+                    paths.add(follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, controlBalls1, balls1))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
+                            .setBrakingStrength(0.7)
+                            .build());
 
-                    case 3:
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(lastPose, controlGate, gate))
-                                .setLinearHeadingInterpolation(lastPose.getHeading(), gate.getHeading(), 0.7)
-                                .setBrakingStrength(0.6)
-                                .build());
+                    lastControlPoint = controlBalls1;
+                    break;
 
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(gate, scorePose))
-                                .setLinearHeadingInterpolation(gate.getHeading(), scorePose.getHeading())
-                                .setBrakingStrength(0.8)
-                                .build());
-                        break;
+                case 21:
+                    paths.add(follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, controlBalls2, balls2))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
+                            .setBrakingStrength(0.8)
+                            .build());
 
-                    case 4:
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(lastPose, controlHp, hp))
-                                .setLinearHeadingInterpolation(lastPose.getHeading(), hp.getHeading(), 0.7)
-                                .setBrakingStrength(0.6)
-                                .build());
+                    lastControlPoint = controlBalls2;
+                    break;
 
-                        paths.add(follower.pathBuilder()
-                                .addPath(new BezierCurve(hp, scorePose))
-                                .setLinearHeadingInterpolation(hp.getHeading(), scorePose.getHeading())
-                                .setBrakingStrength(0.8)
-                                .build());
-                        break;
-                }
-            } else {
-                lastPose = startPose;
+                case 22:
+                    paths.add(follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, controlBalls3, balls3))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
+                            .setBrakingStrength(0.8)
+                            .build());
 
-                paths.add(follower.pathBuilder()
-                        .addPath(new BezierLine(lastPose, calcShootPose(0)))
-                        .setLinearHeadingInterpolation(lastPose.getHeading(), calcShootPose(0).getHeading())
-                        .setBrakingStrength(0.8)
-                        .build());
+                    lastControlPoint = controlBalls3;
+                    break;
+
+                case 30:
+                    paths.add(follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, controlGate, gate))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), gate.getHeading(), 0.7)
+                            .setBrakingStrength(0.6)
+                            .build());
+
+                    lastControlPoint = controlGate;
+                    break;
+
+                case 40:
+                    paths.add(follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, controlHp, hp))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp.getHeading(), 0.7)
+                            .setBrakingStrength(0.6)
+                            .build());
+
+                    lastControlPoint = controlHp;
+                    break;
             }
+
+            lastPose = paths.get(paths.size() - 1).endPose();
         }
 
         Pose endPose = paths.get(paths.size() - 1).endPose();
-        if(endPose.equals(scoreFar)) {
+
+        if (endPose.equals(scoreFar)) {
             paths.add(follower.pathBuilder()
                     .addPath(new BezierLine(endPose, endFar))
                     .setLinearHeadingInterpolation(endPose.getHeading(), endFar.getHeading())
@@ -278,24 +283,6 @@ public class RunAuto extends OpMode {
         }
     }
 
-    private Pose calcShootPose(int index) {
-        Pose scorePose;
-
-        switch (routine.get(index + 1)) {
-            case 0:
-                scorePose = scoreClose;
-                break;
-            case 2:
-                scorePose = scoreFar;
-                break;
-            default:
-                scorePose = scoreMiddle;
-                break;
-        }
-
-        return scorePose;
-    }
-
     @Override
     public void loop() {
         follower.update();
@@ -303,7 +290,7 @@ public class RunAuto extends OpMode {
         shooter.update();
         autonomousPathUpdate();
 
-        telemetry.addData("path state", pathState);
+        telemetry.addData("path state", state);
         telemetry.addData("routine", routine);
         telemetry.addData("current step", currentRoutineIndex);
         telemetry.addData("x", follower.getPose().getX());
@@ -314,16 +301,40 @@ public class RunAuto extends OpMode {
     }
 
     private void autonomousPathUpdate() {
-        robotAtEnd = !follower.isBusy();
+        robotAtEnd = follower.getCurrentTValue() > 0.99;
 
-        switch (pathState) {
+        if (!isBusy) {
+            nextAction();
+        }
+
+        if (currentAction >= 10 && currentAction <= 19){
+            if (currentRoutineIndex > 1) {
+                isBusy = score();
+            } else {
+                isBusy = scorePreload();
+            }
+        } else if (currentAction >= 20 && currentAction <= 29) {
+            isBusy = spikeMarks();
+        } else if (currentAction >= 30 && currentAction <= 39) {
+            isBusy = gate();
+        } else if (currentAction >= 40 && currentAction <= 49) {
+            isBusy = hp();
+        } else if (currentAction >= 50 && currentAction <= 59) {
+            isBusy = pause();
+        } else {
+            park();
+        }
+    }
+
+    private boolean scorePreload() {
+        switch (state) {
             case 0:
                 intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
                 follower.followPath(getPath());
 
-                setPathState(pathState + 1);
+                setState(state + 1);
                 break;
 
             case 1:
@@ -334,113 +345,143 @@ public class RunAuto extends OpMode {
                 }
 
                 if (robotAtEnd && ons)
-                    setPathState(3);
+                    setState(state + 1);
                 break;
 
             case 2:
-                if (robotAtEnd || !ons) {
-                    if (ons) {
+                if (!shooter.isBusy()) {
+                    intake.setState(Intake.State.INTAKE);
+                    shooter.setState(Shooter.State.READY);
+                    return false;
+                }
+                break;
+        }
+
+        return true;
+    }
+
+    private boolean score() {
+        switch (state) {
+            case 0:
+                follower.followPath(getPath());
+                setState(state + 1);
+                break;
+
+            case 1:
+                if (robotAtEnd || ons) {
+                    if (!ons) {
                         timer.resetTimer();
-                        ons = false;
+                        ons = true;
                     }
 
                     if (timer.getElapsedTimeSeconds() > 0.3) {
                         intake.setState(Intake.State.INTAKE_LAUNCH);
                         shooter.setState(Shooter.State.LAUNCH);
 
-                        setPathState(pathState + 1);
+                        setState(state + 1);
                     }
                 }
                 break;
 
-            case 3:
+            case 2:
                 if (!shooter.isBusy()) {
-                    shooter.setState(Shooter.State.READY);
                     intake.setState(Intake.State.INTAKE);
-                    setPathState(-1);
+                    shooter.setState(Shooter.State.READY);
+                    return false;
+                }
+                break;
+        }
+
+        return true;
+    }
+
+    private boolean spikeMarks() {
+        switch (state) {
+            case 0:
+                follower.followPath(getPath());
+                setState(state + 1);
+                break;
+
+            case 1:
+                if (robotAtEnd && ons || shooter.areBallsCollected()) {
+                    setState(state + 1);
                 }
                 break;
 
-            case 4:
-                if (robotAtEnd && !ons) {
-                    setPathState(pathState + 1);
-                }
-
-                if (ons) {
-                    follower.followPath(getPath());
-                    ons = false;
-                }
-                break;
-
-            case 5:
+            case 2:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.5) {
                     intake.setState(Intake.State.INTAKE_UP);
+                    return false;
+                }
+                break;
+        }
 
-                    follower.followPath(getPath());
-                    setPathState(2);
+        return true;
+    }
+
+    private boolean gate() {
+        switch (state) {
+            case 0:
+                follower.setMaxPower(SLOW_POWER);
+                follower.followPath(getPath());
+                setState(state + 1);
+                break;
+
+            case 1:
+                if (robotAtEnd && ons || shooter.areBallsCollected()) {
+                    follower.setMaxPower(MAX_POWER);
+                    setState(state + 1);
                 }
                 break;
 
-            case 6:
-                if (robotAtEnd && !ons) {
-                    setPathState(pathState + 1);
-                }
-
-                if (ons) {
-                    follower.setMaxPower(SLOW_POWER);
-                    follower.followPath(getPath());
-                    ons = false;
-                }
-                break;
-
-            case 7:
+            case 2:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
                     intake.setState(Intake.State.INTAKE_UP);
+                    return false;
+                }
+                break;
+        }
 
+        return true;
+    }
+
+    private boolean hp() {
+        switch (state) {
+            case 0:
+                follower.setMaxPower(SLOW_POWER);
+                follower.followPath(getPath());
+                setState(state + 1);
+                break;
+
+            case 1:
+                if (robotAtEnd && ons || shooter.areBallsCollected()) {
                     follower.setMaxPower(MAX_POWER);
-                    follower.followPath(getPath());
-                    setPathState(1);
+                    setState(state + 1);
                 }
                 break;
 
-            case 8:
-                //comment to remove warning
-                if (robotAtEnd && !ons) {
-                    setPathState(pathState + 1);
-                }
-
-                if (ons) {
-                    follower.setMaxPower(SLOW_POWER);
-                    follower.followPath(getPath());
-                    ons = false;
-                }
-                break;
-
-            case 9:
-                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.5) {
+            case 2:
+                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 1) {
                     intake.setState(Intake.State.INTAKE_UP);
-
-                    follower.setMaxPower(MAX_POWER);
-                    follower.followPath(getPath());
-                    setPathState(1);
+                    return false;
                 }
                 break;
+        }
 
-            case 10:
-                if (timer.getElapsedTimeSeconds() > 1) {
-                    setPathState(-1);
-                }
-                break;
+        return true;
+    }
 
-            case -1:
-                if (ons) {
-                    intake.setState(Intake.State.INTAKE_SLEEP);
-                    shooter.setState(Shooter.State.OFF);
-                    follower.followPath(getPath());
+    private boolean pause() {
+        return timer.getElapsedTimeSeconds() < 0.5;
+    }
 
-                    ons = false;
-                }
-                break;
+    private void park() {
+        if (!ons) {
+            intake.setState(Intake.State.INTAKE_SLEEP);
+            shooter.setState(Shooter.State.OFF);
+            follower.followPath(getPath());
+
+            ons = true;
         }
     }
 
@@ -449,21 +490,23 @@ public class RunAuto extends OpMode {
         return paths.get(nextPath);
     }
 
-    private void setPathState(int p) {
-        if (p == -1) {
-            if (currentRoutineIndex <= routine.size() - 1) {
-                pathState = stateToRoutineConversion[routine.get(currentRoutineIndex)];
-            } else {
-                pathState = -1;
-            }
+    private void setState(int p) {
+        state = p;
+        ons = false;
+        timer.resetTimer();
+    }
 
-            currentRoutineIndex += 2;
+    private void nextAction() {
+        currentRoutineIndex++;
+
+        if (currentRoutineIndex <= routine.size() - 1) {
+            currentAction = routine.get(currentRoutineIndex);
         } else {
-            pathState = p;
+            currentAction = -1;
         }
 
-        ons = true;
-        timer.resetTimer();
+        isBusy = true;
+        setState(0);
     }
 
     @Override
