@@ -35,6 +35,7 @@ public class Hardware {
 
     //shooter
     public DcMotorEx flywheel;
+    public DcMotor flywheel2;
     public DcMotorEx turret;
 
     public Servo hood;
@@ -67,6 +68,10 @@ public class Hardware {
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
+
+        flywheel2 = this.hardwareMap.get(DcMotor.class, "shooter2");
+        flywheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheel2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         turret = this.hardwareMap.get(DcMotorEx.class, "turret");
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
