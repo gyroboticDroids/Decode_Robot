@@ -14,7 +14,7 @@ import java.util.List;
 public class ConfigureAuto extends OpMode {
     private List<Integer> routine;
     private final String[] groupNames = {"starting", "shooting", "spike mark", "gate collect", "human player collect", "wait (1 second)"};
-    private final String[] startingNames = {"near","far"};
+    private final String[] startingNames = {"start near","start far"};
     private final String[] shootingNames = {"shoot close","shoot middle","shoot far"};
     private final String[] spikeMarkNames = {"spike mark 1","spike mark 2","spike mark 3"};
     private final String[] gateCollectNames = {"gate"};
@@ -27,6 +27,7 @@ public class ConfigureAuto extends OpMode {
     private int selectedTaskValue = 0;
     private boolean dpadOns = false;
     private boolean manageTaskOns = false;
+    private boolean isStartSelected = false;
 
     @Override
     public void init() {
@@ -37,37 +38,47 @@ public class ConfigureAuto extends OpMode {
     public void init_loop() {
         telemetry.addLine("Configure Auto \ncross to add task \ncircle to delete task " +
                 "\ntriangle to clear all tasks \n");
-        if(gamepad1.dpad_up && !dpadOns){
+
+
+        if(gamepad1.dpad_up && !dpadOns && isStartSelected){
             selectedGroup = (selectedGroup + 1) % groupNames.length;
-            selectedTaskValue = 0;
-        } else if(gamepad1.dpad_down && !dpadOns){
+            selectedTaskValue = selectedGroup * 10;
+        } else if(gamepad1.dpad_down && !dpadOns && isStartSelected){
             selectedGroup = (selectedGroup - 1 + groupNames.length) % groupNames.length;
-            selectedTaskValue = 0;
+            selectedTaskValue = selectedGroup * 10;
         }
 
         if (gamepad1.dpad_right && !dpadOns) {
-            selectedTaskValue = ((selectedTaskValue + 1) % allTaskNames[selectedGroup].length) + selectedGroup * 10;
+            selectedTaskValue = Math.floorMod((selectedTaskValue + 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
         } else if (gamepad1.dpad_left && !dpadOns) {
-            selectedTaskValue = ((selectedTaskValue - 1 + allTaskNames[selectedGroup].length) % allTaskNames[selectedGroup].length) + selectedGroup * 10;
+            selectedTaskValue = Math.floorMod((selectedTaskValue - 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
         }
 
         if(!manageTaskOns) {
             if (gamepad1.cross) {
-                routine.add(selectedGroup);
                 routine.add(selectedTaskValue);
+                if (!isStartSelected) {
+                    isStartSelected = true;
+                }
             } else if (gamepad1.circle && routine.size() > 1) {
                 routine.remove(routine.size() - 1);
-                routine.remove(routine.size() - 1);
             } else if (gamepad1.triangle) {
+                selectedGroup = 0;
                 routine.clear();
+                isStartSelected = false;
             }
         }
 
+        telemetry.addLine("Selected Task = " + allTaskNames[selectedGroup][selectedTaskValue - selectedGroup * 10]);
+
+        telemetry.addLine("Selected Group = " + groupNames[selectedGroup]);
+
         double autoTime = 0;
         telemetry.addLine("\nroutine:");
-        for (int i = 0; i < routine.size(); i += 2) {
-            telemetry.addLine((i / 2 + 1) + ". " + groupNames[routine.get(i)] + ", " + allTaskNames[routine.get(i)][routine.get(i + 1)]);
-            autoTime += times[routine.get(i)];
+        for (int i = 0; i < routine.size(); i ++) {
+            telemetry.addLine((i) + ". " + groupNames[Math.floorDiv(routine.get(i), 10)] + ": " +
+                    allTaskNames[(Math.floorDiv(routine.get(i), 10))][routine.get(i) - ((Math.floorDiv(routine.get(i), 10)) * 10)]);
+
         }
 
         telemetry.addLine("\nauto run time = " + autoTime);
