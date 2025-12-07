@@ -117,6 +117,8 @@ public class TestRobot extends OpMode {
                     flywheelSpeed = 0;
 
                 hardware.flywheel.setVelocity(flywheelSpeed);
+                hardware.flywheel2.setPower(hardware.flywheel.getPower());
+
                 hardware.turret.setPower(((gamepad1.dpad_left ? 1 : 0) - (gamepad1.dpad_right ? 1 : 0)) * 0.2);
 
                 launcher += gamepad1.right_stick_y * 0.001;
@@ -132,6 +134,7 @@ public class TestRobot extends OpMode {
                 hardware.door.setPosition(door);
 
                 telemetry.addData("flywheel (g1 left stick y, cross to reset)", hardware.flywheel.getVelocity());
+                telemetry.addData("flywheel2 power", hardware.flywheel2.getPower());
                 telemetry.addData("turret (g1 dpad left right)", hardware.turret.getCurrentPosition());
                 panelsTelemetry.addData("flywheel setpoint", flywheelSpeed);
                 panelsTelemetry.addData("flywheel speed", hardware.flywheel.getVelocity());

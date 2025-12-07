@@ -151,6 +151,11 @@ public class Shooter {
                 coordinateTheta += 2 * Math.PI;
 
             double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+
+            robotVelocity.setMagnitude((robotVelocity.getMagnitude() + parallelComponent *
+                    ShooterConstants.VELOCITY_TIME_MULTIPLIER) * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
+
+            goalToRobotVector.plus(robotVelocity);
         }
 
         double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
