@@ -48,6 +48,10 @@ public class ShooterConstants {
                 0.000261473 * Math.pow(goalDist, 2) - 0.0283785 * goalDist + 1.29433, 0.2, 0.769) + hoodOffset;
     }
 
+    public static double launchTime(double goalDist) {
+        return (0.5 * goalDist + 0.7) * VELOCITY_TIME_MULTIPLIER;
+    }
+
     public static void flywheelOffset(double f) {
         flywheelOffset += f;
     }
@@ -64,6 +68,5 @@ public class ShooterConstants {
         return flywheelOffset;
     }
 
-    public static double FLYWHEEL_TPS_TO_VELOCITY = 40;
-    public static double HOOD_TICKS_TO_DEGREES = 0.5 / 40;
+    public static double VELOCITY_TIME_MULTIPLIER = 1;
 }
