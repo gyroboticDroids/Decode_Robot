@@ -140,10 +140,6 @@ public class Shooter {
         goalToRobotVector.setOrthogonalComponents(robotPos.getX() - ShooterConstants.getGoalPos().getX(),
                 ShooterConstants.getGoalPos().getY() - robotPos.getY());
 
-        double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
-        double hoodAngle = ShooterConstants.hoodAngle(goalToRobotVector.getMagnitude());
-        double turretAngle = Math.toDegrees(goalToRobotVector.getTheta()) + Math.toDegrees(robotPos.getHeading()) + turretOffset;
-
         if (velComp) {
             Vector robotVelocity = hardware.poseTracker.getVelocity();
 
@@ -155,25 +151,11 @@ public class Shooter {
                 coordinateTheta += 2 * Math.PI;
 
             double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
-            double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
-
-            Vector ballVector = new Vector();
-            ballVector.setComponents(flywheelSpeed / ShooterConstants.FLYWHEEL_TPS_TO_VELOCITY,
-                    Math.toRadians(hoodAngle / ShooterConstants.HOOD_TICKS_TO_DEGREES));
-
-            flywheelSpeed = ShooterConstants.FLYWHEEL_TPS_TO_VELOCITY * Math.sqrt(Math.pow(ballVector.getMagnitude(), 2) -
-                    2 * ballVector.getMagnitude() * parallelComponent * Math.cos(ballVector.getTheta()) +
-                    Math.pow(parallelComponent, 2));
-
-            //TODO: fox stuff below this
-            hoodAngle = ShooterConstants.HOOD_TICKS_TO_DEGREES * Math.sqrt(Math.pow(ballVector.getMagnitude() *
-                    Math.cos(ballVector.getTheta()) + parallelComponent, 2) + Math.pow(ballVector.getMagnitude() *
-                    Math.sin(ballVector.getTheta()), 2));
-
-            turretAngle = Math.sqrt(Math.pow(ballVector.getMagnitude() *
-                    Math.cos(ballVector.getTheta()) + perpendicularComponent, 2) + Math.pow(ballVector.getMagnitude() *
-                    Math.sin(ballVector.getTheta()), 2));
         }
+
+        double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
+        double hoodAngle = ShooterConstants.hoodAngle(goalToRobotVector.getMagnitude());
+        double turretAngle = Math.toDegrees(goalToRobotVector.getTheta()) + Math.toDegrees(robotPos.getHeading()) + turretOffset;
 
         if (turretAngle > 180) {
             turretAngle -= 360;
