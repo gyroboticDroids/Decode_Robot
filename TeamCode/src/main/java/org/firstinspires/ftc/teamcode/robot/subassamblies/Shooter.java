@@ -67,24 +67,24 @@ public class Shooter {
                 break;
 
             case LAUNCH:
-                boolean lastBall = isLastBall();
+                boolean ballsLaunched = areBallsLaunched();
 
-                if (!lastBall) {
+                if (!ballsLaunched) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 }
 
-                if (!timerReset && (lastBall && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
+                if (!timerReset && (ballsLaunched && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
                     timer.resetTimer();
                     timerReset = true;
                 }
 
-                if (timerReset && timer.getElapsedTimeSeconds() > 0.25) {
+                /*if (timerReset && timer.getElapsedTimeSeconds() > 0.25) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
-                }
+                }*/
 
-                if (timerReset && timer.getElapsedTimeSeconds() > 0.5) {
+                if (timerReset && timer.getElapsedTimeSeconds() > 0.3) {
                     hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                     isBusy = false;
@@ -205,8 +205,8 @@ public class Shooter {
         ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
     }
 
-    public boolean isLastBall() {
-        return !ball1 && !ball2;
+    public boolean areBallsLaunched() {
+        return !ball1 && !ball2 && !ball3;
     }
 
     public boolean areBallsCollected() {
