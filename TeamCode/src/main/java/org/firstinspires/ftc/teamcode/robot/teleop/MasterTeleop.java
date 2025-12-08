@@ -83,7 +83,7 @@ public class MasterTeleop extends OpMode {
         shooterUpdate();
 
         drive.update();
-        intake.update();
+        intake.update(shooter.flywheelUpToSpeed());
         shooter.update();
 
         telemetryUpdate();

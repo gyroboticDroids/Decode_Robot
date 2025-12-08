@@ -113,7 +113,7 @@ public class RunCloseAuto extends OpMode {
             telemetry.addLine("READY!");
         }
 
-        intake.update();
+        intake.update(shooter.flywheelUpToSpeed());
         shooter.update();
 
         telemetry.addLine("alliance " + (allianceColorRed ? "RED" : "BLUE"));
@@ -189,7 +189,7 @@ public class RunCloseAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        intake.update();
+        intake.update(shooter.flywheelUpToSpeed());
         shooter.update();
         autonomousPathUpdate();
 

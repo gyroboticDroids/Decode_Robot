@@ -16,7 +16,7 @@ public class Intake {
         this.hardware = hardware;
     }
 
-    public void update(){
+    public void update(boolean flywheelUpToSpeed){
         switch (state){
             case INTAKE:
                 hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
@@ -28,7 +28,7 @@ public class Intake {
             case INTAKE_LAUNCH:
                 hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_LAUNCH);
+                hardware.intake.setPower(flywheelUpToSpeed? IntakeConstants.INTAKE_LAUNCH : IntakeConstants.INTAKE_OFF);
                 isBusy = false;
                 break;
 
@@ -42,7 +42,7 @@ public class Intake {
             case INTAKE_UP:
                 hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_SLOW);
+                hardware.intake.setPower(IntakeConstants.INTAKE_OFF);
                 isBusy = false;
                 break;
 
