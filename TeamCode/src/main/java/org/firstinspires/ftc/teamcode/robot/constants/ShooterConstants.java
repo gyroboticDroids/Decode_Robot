@@ -18,7 +18,7 @@ public class ShooterConstants {
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
     public static double TURRET_P_GAIN = 0.023;
-    public static double TURRET_TICKS_PER_DEGREE = 1.55556;
+    public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0;
     public static double TURRET_RESET_POS = -91 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.5;
     public static double TURRET_MIN_ANGLE = -91;
@@ -30,8 +30,8 @@ public class ShooterConstants {
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
 
-    public static double DOOR_OPEN = 0.125;//
-    public static double DOOR_CLOSED = 0.66;//
+    public static double DOOR_OPEN = 0.081;//
+    public static double DOOR_CLOSED = 0.88;//
 
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
@@ -45,7 +45,7 @@ public class ShooterConstants {
 
     public static double hoodAngle(double goalDist) {
         return MathFunctions.clamp(-8.2635e-7 * Math.pow(goalDist, 3) +
-                0.000261473 * Math.pow(goalDist, 2) - 0.0283785 * goalDist + 1.29433, 0.2, 0.769) + hoodOffset;
+                0.000261473 * Math.pow(goalDist, 2) - 0.0283785 * goalDist + 1.29433, 0.11, 0.904) + hoodOffset;
     }
 
     public static double launchTime(double goalDist) {
