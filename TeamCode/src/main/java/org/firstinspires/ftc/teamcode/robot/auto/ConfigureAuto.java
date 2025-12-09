@@ -38,27 +38,27 @@ public class ConfigureAuto extends OpMode {
         telemetry.addLine("Configure Auto \ncross to add task \ncircle to delete task " +
                 "\ntriangle to clear all tasks \ndpad up/down to cycle groups \ndpad left/right to cycle tasks\n");
 
-        if (!dpadOns) {
-            if (gamepad1.dpad_up && isStartSelected && selectedGroup != 5) {
+        if (!dpadOns && isStartSelected) {
+            if (gamepad1.dpad_up && selectedGroup != 5) {
                 selectedGroup = Math.floorMod((selectedGroup + 1), groupNames.length);
                 selectedTaskIndex = selectedGroup * 10;
             } else if (gamepad1.dpad_up) {
                 selectedGroup = 1;
-                selectedTaskIndex = 10;
-            } else if (gamepad1.dpad_down && isStartSelected && selectedGroup != 1) {
+                selectedTaskIndex = selectedGroup * 10;
+            } else if (gamepad1.dpad_down && selectedGroup != 1) {
                 selectedGroup = Math.floorMod((selectedGroup - 1), groupNames.length);
                 selectedTaskIndex = selectedGroup * 10;
             } else if (gamepad1.dpad_down) {
                 selectedGroup = 5;
-                selectedTaskIndex = 50;
-            }
-
-            if (gamepad1.dpad_right) {
-                selectedTaskIndex = Math.floorMod((selectedTaskIndex + 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
-            } else if (gamepad1.dpad_left) {
-                selectedTaskIndex = Math.floorMod((selectedTaskIndex - 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
+                selectedTaskIndex = selectedGroup * 10;
             }
         }
+            if (gamepad1.dpad_right && !dpadOns) {
+                selectedTaskIndex = Math.floorMod((selectedTaskIndex + 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
+            } else if (gamepad1.dpad_left && !dpadOns) {
+                selectedTaskIndex = Math.floorMod((selectedTaskIndex - 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
+            }
+
         if(!manageTaskOns) {
             if (gamepad1.cross) {
                 routine.add(selectedTaskIndex);
