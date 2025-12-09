@@ -53,11 +53,12 @@ public class ConfigureAuto extends OpMode {
                 selectedTaskIndex = selectedGroup * 10;
             }
         }
-            if (gamepad1.dpad_right && !dpadOns) {
-                selectedTaskIndex = Math.floorMod((selectedTaskIndex + 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
-            } else if (gamepad1.dpad_left && !dpadOns) {
-                selectedTaskIndex = Math.floorMod((selectedTaskIndex - 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
-            }
+
+        if (gamepad1.dpad_right && !dpadOns) {
+            selectedTaskIndex = Math.floorMod((selectedTaskIndex + 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
+        } else if (gamepad1.dpad_left && !dpadOns) {
+            selectedTaskIndex = Math.floorMod((selectedTaskIndex - 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
+        }
 
         if(!manageTaskOns) {
             if (gamepad1.cross) {
@@ -65,12 +66,13 @@ public class ConfigureAuto extends OpMode {
                 if (!isStartSelected) {
                     isStartSelected = true;
                 }
-                if (routine.get(routine.size() - 1) != 50 && routine.get(routine.size() - 1) < 20) {
+                if (routine.get(routine.size() - 1) != 50) {
                     if (routine.get(routine.size() - 1) >= 20) {
                         selectedGroup = 1;
                     } else {
                         selectedGroup = 2;
                     }
+                    selectedTaskIndex = selectedGroup * 10;
                 }
             } else if (gamepad1.circle && routine.size() > 1) {
                 routine.remove(routine.size() - 1);
