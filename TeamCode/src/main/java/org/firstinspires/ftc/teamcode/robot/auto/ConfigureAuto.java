@@ -59,17 +59,13 @@ public class ConfigureAuto extends OpMode {
                 selectedTaskIndex = Math.floorMod((selectedTaskIndex - 1) - selectedGroup * 10, allTaskNames[selectedGroup].length) + selectedGroup * 10;
             }
 
-        telemetry.addLine("select a " + groupNames[selectedGroup] + " task");
-
-        telemetry.addLine("selected task = " + allTaskNames[selectedGroup][selectedTaskIndex - selectedGroup * 10]);
-
         if(!manageTaskOns) {
             if (gamepad1.cross) {
                 routine.add(selectedTaskIndex);
                 if (!isStartSelected) {
                     isStartSelected = true;
                 }
-                if (routine.get(routine.size() - 1) != 50) {
+                if (routine.get(routine.size() - 1) != 50 && routine.get(routine.size() - 1) < 20) {
                     if (routine.get(routine.size() - 1) >= 20) {
                         selectedGroup = 1;
                     } else {
@@ -84,6 +80,10 @@ public class ConfigureAuto extends OpMode {
                 isStartSelected = false;
             }
         }
+
+        telemetry.addLine("select a " + groupNames[selectedGroup] + " task");
+
+        telemetry.addLine("selected task = " + allTaskNames[selectedGroup][selectedTaskIndex - selectedGroup * 10]);
 
         telemetry.addLine("\nroutine:");
         for (int i = 0; i < routine.size(); i ++) {
