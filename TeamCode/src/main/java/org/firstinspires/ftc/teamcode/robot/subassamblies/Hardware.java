@@ -35,7 +35,7 @@ public class Hardware {
 
     //shooter
     public DcMotorEx flywheel;
-    public DcMotor flywheel2;
+    public DcMotorEx flywheel2;
     public DcMotorEx turret;
 
     public Servo hood;
@@ -69,9 +69,10 @@ public class Hardware {
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
-        flywheel2 = this.hardwareMap.get(DcMotor.class, "shooter2");
-        flywheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheel2 = this.hardwareMap.get(DcMotorEx.class, "shooter2");
+        flywheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel2.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheel2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
         turret = this.hardwareMap.get(DcMotorEx.class, "turret");
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -106,10 +107,10 @@ public class Hardware {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Localizer localizer = new PinpointLocalizer(hardwareMap, Constants.localizerConstants);
         poseTracker = new PoseTracker(localizer);

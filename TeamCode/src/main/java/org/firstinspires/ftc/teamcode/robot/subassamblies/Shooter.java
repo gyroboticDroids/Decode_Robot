@@ -67,19 +67,12 @@ public class Shooter {
                 break;
 
             case LAUNCH:
-                boolean lastBall = isLastBall();
-
-                if (!lastBall) {
-                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
-                    hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                }
-
-                if (!timerReset && (lastBall && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
+                if (!timerReset && (isLastBall() && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
                     timer.resetTimer();
                     timerReset = true;
                 }
 
-                if (timerReset && timer.getElapsedTimeSeconds() > 0.25) {
+                if (timerReset && timer.getElapsedTimeSeconds() > 0.3) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
                 }
@@ -88,6 +81,12 @@ public class Shooter {
                     hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                     isBusy = false;
+                } else {
+                    if(!timerReset) {
+                        hardware.door.setPosition(flywheelUpToSpeed() ? ShooterConstants.DOOR_OPEN : ShooterConstants.DOOR_CLOSED);
+                    } else {
+                        hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+                    }
                 }
                 break;
 
@@ -152,10 +151,11 @@ public class Shooter {
 
             double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
 
+            double oldSpeed = robotVelocity.getMagnitude();
             robotVelocity.setMagnitude(parallelComponent * ShooterConstants.VELOCITY_TIME_MULTIPLIER +
-                    robotVelocity.getMagnitude() * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
+                    oldSpeed * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
 
-            goalToRobotVector.minus(robotVelocity);
+            goalToRobotVector.plus(robotVelocity);
         }
 
         double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());

@@ -12,14 +12,14 @@ public class ShooterConstants {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
     }
 
-    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(300, 0.8, 0, 0);
+    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(200, 0.7, 0, 0);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
-    public static double TURRET_P_GAIN = 0.02;
+    public static double TURRET_P_GAIN = 0.022;
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0;
-    public static double TURRET_RESET_POS = -91 * TURRET_TICKS_PER_DEGREE;//ticks
+    public static double TURRET_RESET_POS = -93 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.5;
     public static double TURRET_MIN_ANGLE = -93;
     public static double TURRET_MAX_ANGLE = 92;
@@ -30,8 +30,8 @@ public class ShooterConstants {
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
 
-    public static double DOOR_OPEN = 0.081;//
-    public static double DOOR_CLOSED = 0.873;//
+    public static double DOOR_OPEN = 0.653;//
+    public static double DOOR_CLOSED = 0.452;//
 
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
@@ -40,7 +40,7 @@ public class ShooterConstants {
     private static double hoodOffset = 0;
 
     public static double flywheelSpeed(double goalDist) {
-        return MathFunctions.clamp(0.018211 * Math.pow(goalDist, 2) + 0.811772 * goalDist + 710.72727, 0, 1300)
+        return MathFunctions.clamp(0.0204772 * Math.pow(goalDist, 2) + 0.643162 * goalDist + 712.90909, 0, 1400)
                 + flywheelOffset;
     }
 
