@@ -67,24 +67,24 @@ public class Shooter {
                 break;
 
             case LAUNCH:
-                boolean ballsLaunched = areBallsLaunched();
+                boolean lastBall = isLastBall();
 
-                if (!ballsLaunched) {
+                if (!lastBall) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 }
 
-                if (!timerReset && (ballsLaunched && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
+                if (!timerReset && (lastBall && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
                     timer.resetTimer();
                     timerReset = true;
                 }
 
-                /*if (timerReset && timer.getElapsedTimeSeconds() > 0.25) {
+                if (timerReset && timer.getElapsedTimeSeconds() > 0.25) {
                     hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_UP);
-                }*/
+                }
 
-                if (timerReset && timer.getElapsedTimeSeconds() > 0.3) {
+                if (timerReset && timer.getElapsedTimeSeconds() > 0.4) {
                     hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                     isBusy = false;
@@ -137,7 +137,7 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        goalToRobotVector.setOrthogonalComponents(robotPos.getX() - ShooterConstants.getGoalPos().getX(),
+        goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX(),
                 ShooterConstants.getGoalPos().getY() - robotPos.getY());
 
         if (velComp) {
@@ -160,7 +160,7 @@ public class Shooter {
 
         double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
         double hoodAngle = ShooterConstants.hoodAngle(goalToRobotVector.getMagnitude());
-        double turretAngle = Math.toDegrees(goalToRobotVector.getTheta()) + Math.toDegrees(robotPos.getHeading()) + turretOffset;
+        double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta()) + Math.toDegrees(robotPos.getHeading()) + turretOffset;
 
         if (turretAngle > 180) {
             turretAngle -= 360;
@@ -205,8 +205,8 @@ public class Shooter {
         ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
     }
 
-    public boolean areBallsLaunched() {
-        return !ball1 && !ball2 && !ball3;
+    public boolean isLastBall() {
+        return !ball1 && !ball2;
     }
 
     public boolean areBallsCollected() {

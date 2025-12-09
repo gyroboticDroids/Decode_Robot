@@ -83,7 +83,7 @@ public class MasterTeleop extends OpMode {
         shooterUpdate();
 
         drive.update();
-        intake.update(shooter.flywheelUpToSpeed());
+        intake.update();
         shooter.update();
 
         telemetryUpdate();
@@ -143,11 +143,11 @@ public class MasterTeleop extends OpMode {
                 intake.setState(Intake.State.CLEAR);
             } else if (gamepad1.triangleWasReleased() || gamepad2.crossWasReleased()) {
                 intake.setState(Intake.State.INTAKE);
+            } else if (shooter.getState() == Shooter.State.LAUNCH) {
+                intake.setState(Intake.State.INTAKE_LAUNCH);
             } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle
                     || prevIntakeState == Intake.State.INTAKE_LAUNCH) && prevIntakeState != Intake.State.INTAKE) {
                 intake.setState(Intake.State.INTAKE);
-            } else if (shooter.getState() == Shooter.State.LAUNCH && prevIntakeState != Intake.State.INTAKE_LAUNCH) {
-                intake.setState(Intake.State.INTAKE_LAUNCH);
             } else if ((gamepad1.circle && !lastGamepad1.circle || gamepad2.circle && !lastGamepad2.circle
                     || shooter.areBallsCollected() && shooter.getState() != Shooter.State.LAUNCH)
                     && prevIntakeState == Intake.State.INTAKE) {

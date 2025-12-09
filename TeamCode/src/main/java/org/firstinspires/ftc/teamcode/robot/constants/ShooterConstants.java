@@ -17,12 +17,12 @@ public class ShooterConstants {
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
 
-    public static double TURRET_P_GAIN = 0.023;
+    public static double TURRET_P_GAIN = 0.02;
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0;
     public static double TURRET_RESET_POS = -91 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.5;
-    public static double TURRET_MIN_ANGLE = -91;
-    public static double TURRET_MAX_ANGLE = 91;
+    public static double TURRET_MIN_ANGLE = -93;
+    public static double TURRET_MAX_ANGLE = 92;
     public static double TURRET_MAX_SPEED = 0.6;
 
     public static double HOOD_TRIM_SPEED = 0.001;
@@ -31,7 +31,7 @@ public class ShooterConstants {
     public static double LAUNCHER_DOWN = 0.126;//
 
     public static double DOOR_OPEN = 0.081;//
-    public static double DOOR_CLOSED = 0.88;//
+    public static double DOOR_CLOSED = 0.873;//
 
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
@@ -40,16 +40,17 @@ public class ShooterConstants {
     private static double hoodOffset = 0;
 
     public static double flywheelSpeed(double goalDist) {
-        return MathFunctions.clamp(554.24722 * Math.pow(1.00505, goalDist) + 280, 0, 1300) + flywheelOffset;
+        return MathFunctions.clamp(0.018211 * Math.pow(goalDist, 2) + 0.811772 * goalDist + 710.72727, 0, 1300)
+                + flywheelOffset;
     }
 
     public static double hoodAngle(double goalDist) {
-        return MathFunctions.clamp(-8.2635e-7 * Math.pow(goalDist, 3) +
-                0.000261473 * Math.pow(goalDist, 2) - 0.0283785 * goalDist + 1.29433, 0.11, 0.904) + hoodOffset;
+        return MathFunctions.clamp(-2.34831e-7 * Math.pow(goalDist, 3) + 0.0000936893 * Math.pow(goalDist, 2) - 0.0165033
+                * goalDist + 1.25724, 0.11, 0.904) + hoodOffset;
     }
 
     public static double launchTime(double goalDist) {
-        return (0.5 * goalDist + 0.7) * VELOCITY_TIME_MULTIPLIER;
+        return 0.000018211 * Math.pow(goalDist, 2) - 0.00173368 * goalDist + 0.713636;
     }
 
     public static void flywheelOffset(double f) {
@@ -68,5 +69,5 @@ public class ShooterConstants {
         return flywheelOffset;
     }
 
-    public static double VELOCITY_TIME_MULTIPLIER = 1;
+    public static double VELOCITY_TIME_MULTIPLIER = 0;
 }

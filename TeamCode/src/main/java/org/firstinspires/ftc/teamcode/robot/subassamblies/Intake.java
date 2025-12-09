@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
+import com.pedropathing.util.Timer;
+
 import org.firstinspires.ftc.teamcode.robot.constants.IntakeConstants;
 
 public class Intake {
@@ -8,15 +10,17 @@ public class Intake {
     }
 
     Hardware hardware;
+    Timer timer;
 
     private State state;
     private boolean isBusy = false;
 
     public Intake(Hardware hardware){
         this.hardware = hardware;
+        timer = new Timer();
     }
 
-    public void update(boolean flywheelUpToSpeed){
+    public void update(){
         switch (state){
             case INTAKE:
                 hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
@@ -28,7 +32,7 @@ public class Intake {
             case INTAKE_LAUNCH:
                 hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
 
-                hardware.intake.setPower(flywheelUpToSpeed? IntakeConstants.INTAKE_LAUNCH : IntakeConstants.INTAKE_OFF);
+                hardware.intake.setPower(IntakeConstants.INTAKE_LAUNCH);
                 isBusy = false;
                 break;
 
@@ -58,6 +62,7 @@ public class Intake {
     public void setState(State s){
         state = s;
         isBusy = true;
+        timer.resetTimer();
     }
 
     public boolean isBusy() {

@@ -125,7 +125,7 @@ public class RunAuto extends OpMode {
             telemetry.addLine("READY!");
         }
 
-        intake.update(shooter.flywheelUpToSpeed());
+        intake.update();
         shooter.update();
 
         telemetry.addLine("alliance " + (allianceColorRed ? "RED" : "BLUE"));
@@ -286,7 +286,7 @@ public class RunAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        intake.update(shooter.flywheelUpToSpeed());
+        intake.update();
         shooter.update();
         autonomousPathUpdate();
 

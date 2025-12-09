@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
+@Disabled
 @Autonomous(name = "configure close auto", group = "close auto")
 public class ConfigureCloseAuto extends OpMode {
     private List<Integer> routine;

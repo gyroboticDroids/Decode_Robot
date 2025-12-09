@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.teaching;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
-
+@Disabled
 @TeleOp(name = "drive with auto turn")
 public class RobotAutoTurn extends OpMode {
     private Hardware hardware;

@@ -7,6 +7,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Shooter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
+@Disabled
 @Autonomous(name = "run close auto", group = "close auto", preselectTeleOp = "Master Tele-op")
 public class RunCloseAuto extends OpMode {
     private final static double MAX_POWER = 1;
@@ -113,7 +114,7 @@ public class RunCloseAuto extends OpMode {
             telemetry.addLine("READY!");
         }
 
-        intake.update(shooter.flywheelUpToSpeed());
+        intake.update();
         shooter.update();
 
         telemetry.addLine("alliance " + (allianceColorRed ? "RED" : "BLUE"));
@@ -189,7 +190,7 @@ public class RunCloseAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        intake.update(shooter.flywheelUpToSpeed());
+        intake.update();
         shooter.update();
         autonomousPathUpdate();
 
