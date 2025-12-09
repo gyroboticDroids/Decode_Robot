@@ -152,10 +152,10 @@ public class Shooter {
 
             double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
 
-            robotVelocity.setMagnitude((robotVelocity.getMagnitude() + parallelComponent *
-                    ShooterConstants.VELOCITY_TIME_MULTIPLIER) * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
+            robotVelocity.setMagnitude(parallelComponent * ShooterConstants.VELOCITY_TIME_MULTIPLIER +
+                    robotVelocity.getMagnitude() * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
 
-            goalToRobotVector.plus(robotVelocity);
+            goalToRobotVector.minus(robotVelocity);
         }
 
         double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
