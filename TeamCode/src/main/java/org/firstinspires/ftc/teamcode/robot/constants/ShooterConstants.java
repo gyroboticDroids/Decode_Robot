@@ -16,14 +16,16 @@ public class ShooterConstants {
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
+    public static double FLYWHEEL_RAMP_SPEED = 100;
 
-    public static double TURRET_P_GAIN = 0.022;
+    public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
+            new com.pedropathing.control.PIDFCoefficients(0.026, 0, 0.001, 0);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0;
-    public static double TURRET_RESET_POS = -93 * TURRET_TICKS_PER_DEGREE;//ticks
+    public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.5;
     public static double TURRET_MIN_ANGLE = -93;
     public static double TURRET_MAX_ANGLE = 92;
-    public static double TURRET_MAX_SPEED = 0.6;
+    public static double TURRET_MAX_SPEED = 0.5;
 
     public static double HOOD_TRIM_SPEED = 0.001;
 

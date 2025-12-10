@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
@@ -14,6 +15,7 @@ public class Shooter {
         READY, LAUNCH, OFF, RESET
     }
 
+    private final PIDFController turretPIDFController;
     private final Hardware hardware;
 
     private State state;
@@ -55,6 +57,7 @@ public class Shooter {
         ball3Timer.resetTimer();
 
         turretReset = -TransferConstants.endTurretPos;
+        turretPIDFController = new PIDFController(ShooterConstants.TURRET_PIDF);
     }
 
     public void update() {
@@ -103,12 +106,12 @@ public class Shooter {
                 hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                 hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
 
-                if (timer.getElapsedTimeSeconds() > 1 && Math.abs(hardware.turret.getPower()) > 0.4) {
+                if (timer.getElapsedTimeSeconds() > 1) {
                     hardware.turret.setPower(0);
                     turretReset = hardware.turret.getCurrentPosition() - ShooterConstants.TURRET_RESET_POS;
                     isBusy = false;
                 } else {
-                    hardware.turret.setPower(-0.5);
+                    hardware.turret.setPower(-0.4);
                 }
                 break;
         }
@@ -117,6 +120,7 @@ public class Shooter {
             targetGoal();
         } else {
             hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
+            hardware.flywheel2.setVelocity(ShooterConstants.FLYWHEEL_OFF);
         }
 
         ballDetectionUpdate();
@@ -174,8 +178,8 @@ public class Shooter {
 
         turretMoveTo(turretAngle);
 
-        hardware.flywheel.setVelocity(flywheelSpeed);
-        hardware.flywheel2.setPower(hardware.flywheel.getPower());
+        hardware.flywheel.setVelocity(rampUpFlywheel(flywheelSpeed));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(flywheelSpeed));
         hardware.hood.setPosition(hoodAngle);
     }
 
@@ -185,7 +189,9 @@ public class Shooter {
 
         double error = targetPos - hardware.turret.getCurrentPosition();
 
-        double motorPower = MathFunctions.clamp(error * ShooterConstants.TURRET_P_GAIN,
+        turretPIDFController.updateError(error);
+
+        double motorPower = MathFunctions.clamp(turretPIDFController.run(),
                 -ShooterConstants.TURRET_MAX_SPEED, ShooterConstants.TURRET_MAX_SPEED);
 
         hardware.turret.setPower(runTurret ? motorPower : 0);
@@ -226,6 +232,11 @@ public class Shooter {
     public void turretOffset(double offset) {
         turretOffset += offset;
         turretOffset = MathFunctions.clamp(turretOffset, -180, 180);
+    }
+
+    private double rampUpFlywheel(double speed) {
+        return MathFunctions.clamp(speed, hardware.flywheel.getVelocity() - ShooterConstants.FLYWHEEL_RAMP_SPEED,
+                hardware.flywheel.getVelocity() + ShooterConstants.FLYWHEEL_RAMP_SPEED);
     }
 
     public Vector getGoalVector() {

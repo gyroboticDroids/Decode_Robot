@@ -146,6 +146,7 @@ public class TestRobot extends OpMode {
                 telemetry.addData("flywheel2 power", hardware.flywheel2.getPower());
                 telemetry.addData("turret degrees (g1 dpad left right)", hardware.turret.getCurrentPosition()
                         / ShooterConstants.TURRET_TICKS_PER_DEGREE);
+                telemetry.addData("turret ticks", hardware.turret.getCurrentPosition());
                 panelsTelemetry.addData("flywheel setpoint", flywheelSpeed);
                 panelsTelemetry.addData("flywheel speed", hardware.flywheel.getVelocity());
 
