@@ -69,6 +69,8 @@ public class ConfigureAuto extends OpMode {
                 if (routine.get(routine.size() - 1) != 50) {
                     if (routine.get(routine.size() - 1) >= 20 || routine.get(routine.size() - 1) < 10) {
                         selectedGroup = 1;
+                    } else {
+                        selectedGroup = 2;
                     }
                     selectedTaskIndex = selectedGroup * 10;
                 }
