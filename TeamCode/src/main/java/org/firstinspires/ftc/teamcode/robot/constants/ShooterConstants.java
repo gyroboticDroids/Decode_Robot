@@ -16,7 +16,7 @@ public class ShooterConstants {
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 50; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
-    public static double FLYWHEEL_RAMP_SPEED = 100;
+    public static double FLYWHEEL_RAMP_SPEED = 200;
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
             new com.pedropathing.control.PIDFCoefficients(0.026, 0, 0.001, 0);

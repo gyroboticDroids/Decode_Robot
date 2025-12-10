@@ -14,6 +14,7 @@ public class Shooter {
     public enum State {
         READY, LAUNCH, OFF, RESET
     }
+    public double parallelComponent = 0;
 
     private final PIDFController turretPIDFController;
     private final Hardware hardware;
@@ -21,7 +22,7 @@ public class Shooter {
     private State state;
     private final Timer timer;
 
-    private final Vector goalToRobotVector = new Vector();
+    private Vector goalToRobotVector = new Vector();
 
     private boolean isBusy = false;
 
@@ -111,7 +112,7 @@ public class Shooter {
                     turretReset = hardware.turret.getCurrentPosition() - ShooterConstants.TURRET_RESET_POS;
                     isBusy = false;
                 } else {
-                    hardware.turret.setPower(-0.4);
+                    hardware.turret.setPower(-0.5);
                 }
                 break;
         }
@@ -153,13 +154,12 @@ public class Shooter {
             else if (coordinateTheta < -2 * Math.PI)
                 coordinateTheta += 2 * Math.PI;
 
-            double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+            parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
 
-            double oldSpeed = robotVelocity.getMagnitude();
             robotVelocity.setMagnitude(parallelComponent * ShooterConstants.VELOCITY_TIME_MULTIPLIER +
-                    oldSpeed * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
+                    robotVelocity.getMagnitude() * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
 
-            goalToRobotVector.plus(robotVelocity);
+            goalToRobotVector = goalToRobotVector.minus(robotVelocity);
         }
 
         double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());

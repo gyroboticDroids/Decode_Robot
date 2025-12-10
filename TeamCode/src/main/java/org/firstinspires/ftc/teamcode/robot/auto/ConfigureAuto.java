@@ -72,6 +72,7 @@ public class ConfigureAuto extends OpMode {
                     } else {
                         selectedGroup = 2;
                     }
+                    selectedTaskIndex = selectedGroup * 10;
                 }
             } else if (gamepad1.circle && routine.size() > 1) {
                 routine.remove(routine.size() - 1);
@@ -79,8 +80,8 @@ public class ConfigureAuto extends OpMode {
                 selectedGroup = 0;
                 routine.clear();
                 isStartSelected = false;
+                selectedTaskIndex = selectedGroup * 10;
             }
-            selectedTaskIndex = selectedGroup * 10;
         }
 
         telemetry.addLine("select a " + groupNames[selectedGroup] + " task");

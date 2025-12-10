@@ -119,6 +119,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("flywheel2 speed", hardware.flywheel2.getVelocity());
         telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
         telemetry.addData("velocity compensation", shooter.velComp);
+        telemetry.addData("velocity compensation parallel component", shooter.parallelComponent);
         telemetry.update();
     }
 
