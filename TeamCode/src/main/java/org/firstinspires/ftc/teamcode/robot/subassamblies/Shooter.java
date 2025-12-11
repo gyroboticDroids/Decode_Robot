@@ -71,7 +71,7 @@ public class Shooter {
                 break;
 
             case LAUNCH:
-                if (!timerReset && (isLastBall() && timer.getElapsedTimeSeconds() > 0.2 || timer.getElapsedTimeSeconds() > 2)) {
+                if (!timerReset && (isLastBall() && timer.getElapsedTimeSeconds() > 0.5 || timer.getElapsedTimeSeconds() > 2)) {
                     timer.resetTimer();
                     timerReset = true;
                 }
@@ -86,11 +86,11 @@ public class Shooter {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                     isBusy = false;
                 } else {
-                    if(!timerReset) {
-                        hardware.door.setPosition(flywheelUpToSpeed() ? ShooterConstants.DOOR_OPEN : ShooterConstants.DOOR_CLOSED);
-                    } else {
+//                    if(!timerReset) {
+//                        hardware.door.setPosition(flywheelUpToSpeed() ? ShooterConstants.DOOR_OPEN : ShooterConstants.DOOR_CLOSED);
+//                    } else {
                         hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
-                    }
+//                    }
                 }
                 break;
 
