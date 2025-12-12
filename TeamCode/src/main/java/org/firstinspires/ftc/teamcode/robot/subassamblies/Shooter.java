@@ -31,7 +31,7 @@ public class Shooter {
 
     private boolean timerReset = true;
 
-    private double turretOffset;
+    private double turretOffset = 0;
     private double turretReset;
 
     //Ball detection
@@ -112,7 +112,7 @@ public class Shooter {
                     turretReset = hardware.turret.getCurrentPosition() - ShooterConstants.TURRET_RESET_POS;
                     isBusy = false;
                 } else {
-                    hardware.turret.setPower(-0.5);
+                    hardware.turret.setPower(-0.45);
                 }
                 break;
         }
@@ -165,7 +165,7 @@ public class Shooter {
 
         double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
         double hoodAngle = ShooterConstants.hoodAngle(goalToRobotVector.getMagnitude());
-        double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta()) + Math.toDegrees(robotPos.getHeading()) + turretOffset;
+        double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta() - robotPos.getHeading()) + turretOffset;
 
         if (turretAngle > 180) {
             turretAngle -= 360;
@@ -224,6 +224,12 @@ public class Shooter {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
                 ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude()),
                 ShooterConstants.FLYWHEEL_ACCURACY);
+    }
+
+    public boolean flywheelUpToSpeed(double accuracy) {
+        return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
+                ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude()),
+                accuracy);
     }
 
     public boolean isBusy() {

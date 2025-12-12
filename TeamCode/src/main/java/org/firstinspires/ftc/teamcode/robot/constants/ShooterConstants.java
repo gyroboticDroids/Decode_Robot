@@ -14,12 +14,12 @@ public class ShooterConstants {
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(200, 0.7, 0, 0);
     public static double FLYWHEEL_OFF = 0; //ticks per second
-    public static double FLYWHEEL_ACCURACY = 70; //ticks per second
+    public static double FLYWHEEL_ACCURACY = 60; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
-    public static double FLYWHEEL_RAMP_SPEED = 250;
+    public static double FLYWHEEL_RAMP_SPEED = 300;
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
-            new com.pedropathing.control.PIDFCoefficients(0.026, 0, 0.001, 0);
+            new com.pedropathing.control.PIDFCoefficients(0.026, 0, 0.0012, 0);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0;
     public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_TRIM_SPEED = 0.5;
@@ -42,7 +42,7 @@ public class ShooterConstants {
     private static double hoodOffset = 0;
 
     public static double flywheelSpeed(double goalDist) {
-        return MathFunctions.clamp(0.0204772 * Math.pow(goalDist, 2) + 0.643162 * goalDist + 712.90909, 0, 1400)
+        return MathFunctions.clamp(0.0204772 * Math.pow(goalDist, 2) + 0.643162 * goalDist + 712.90909 + 15, 0, 1400)
                 + flywheelOffset;
     }
 

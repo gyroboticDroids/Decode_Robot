@@ -25,23 +25,25 @@ import java.util.List;
 @Autonomous(name = "run auto", group = "close auto", preselectTeleOp = "Master Tele-op")
 public class RunAuto extends OpMode {
     private final static double MAX_POWER = 1;
-    private final static double SLOW_POWER = 0.5;
+    private final static double SLOW_POWER = 0.6;
 
     private List<Integer> routine;
     private int currentRoutineIndex = 0;
     int currentAction = 0;
     private int nextPath = -1;
 
-    private Pose startClose = new Pose(126.5, 123.551, Math.toRadians(270)),
+    private Pose startClose = new Pose(126.5, 121, Math.toRadians(270)),
             startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
             scoreClose = new Pose(110, 110, Math.toRadians(0)),
             scoreMiddle = new Pose(90, 90, Math.toRadians(0)),
             scoreFar = new Pose(84, 12, Math.toRadians(0)),
             balls1 = new Pose(120, 84, Math.toRadians(0)),
-            balls2 = new Pose(124, 60, Math.toRadians(0)),
-            balls3 = new Pose(124, 36, Math.toRadians(0)),
-            gate = new Pose(128, 61, Math.toRadians(22)),
-            hp = new Pose(128, 10, Math.toRadians(0)),
+            balls2 = new Pose(126, 60, Math.toRadians(0)),
+            balls3 = new Pose(126, 36, Math.toRadians(0)),
+            gate1 = new Pose(122, 64.5, Math.toRadians(0)),
+            gate2 = new Pose(128.5, 48, Math.toRadians(30)),
+
+            hp = new Pose(128, 8, Math.toRadians(0)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
             endFar = new Pose(105, 33, Math.toRadians(0));
 
@@ -174,7 +176,8 @@ public class RunAuto extends OpMode {
         balls1 = balls1.mirror();
         balls2 = balls2.mirror();
         balls3 = balls3.mirror();
-        gate = gate.mirror();
+        gate1 = gate1.mirror();
+        gate2 = gate2.mirror();
         hp = hp.mirror();
         endClose = endClose.mirror();
         endFar = endFar.mirror();
@@ -258,9 +261,15 @@ public class RunAuto extends OpMode {
                     break;
 
                 case 30:
-                    path = new Path(new BezierCurve(lastPose, controlGate, gate));
-                    path.setLinearHeadingInterpolation(lastPose.getHeading(), gate.getHeading(), 0.7);
-                    path.setBrakingStrength(0.6);
+                    path = new Path(new BezierCurve(lastPose, controlGate, gate1));
+                    path.setLinearHeadingInterpolation(lastPose.getHeading(), gate1.getHeading(), 0.7);
+                    path.setBrakingStrength(0.4);
+
+                    paths.add(path);
+
+                    path = new Path(new BezierLine(gate1, gate2));
+                    path.setLinearHeadingInterpolation(gate1.getHeading(), gate2.getHeading(), 0.7);
+                    path.setBrakingStrength(0.5);
 
                     paths.add(path);
 
@@ -281,15 +290,13 @@ public class RunAuto extends OpMode {
             lastPose = paths.get(paths.size() - 1).getPose(1);
         }
 
-        Pose endPose = paths.get(paths.size() - 1).getPose(1);
-
-        if (endPose.distanceFrom(endFar) < 1) {
-            path = new Path(new BezierLine(endPose, endFar));
-            path.setLinearHeadingInterpolation(endPose.getHeading(), endFar.getHeading());
+        if (lastPose.distanceFrom(scoreFar) < 1) {
+            path = new Path(new BezierLine(lastPose, endFar));
+            path.setLinearHeadingInterpolation(lastPose.getHeading(), endFar.getHeading());
 
         } else {
-            path = new Path(new BezierLine(endPose, endClose));
-            path.setLinearHeadingInterpolation(endPose.getHeading(), endClose.getHeading());
+            path = new Path(new BezierLine(lastPose, endClose));
+            path.setLinearHeadingInterpolation(lastPose.getHeading(), endClose.getHeading());
 
         }
         path.setBrakingStrength(0.8);
@@ -392,7 +399,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (robotAtEnd || ons) {
+                if (robotAtEnd && shooter.flywheelUpToSpeed() || ons) {
                     if (!ons) {
                         timer.resetTimer();
                         ons = true;
@@ -452,13 +459,20 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (robotAtEnd || shooter.areBallsCollected()) {
+                if (robotAtEnd) {
                     follower.setMaxPower(MAX_POWER);
                     setState(2);
                 }
                 break;
 
             case 2:
+                if (timer.getElapsedTimeSeconds() > 0.2) {
+                    follower.followPath(getPath());
+                    setState(3);
+                }
+                break;
+
+            case 3:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
                     intake.setState(Intake.State.INTAKE_UP);
                     return false;
@@ -483,7 +497,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 2:
-                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 3) {
+                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 1.5) {
                     intake.setState(Intake.State.INTAKE_UP);
                     return false;
                 }
