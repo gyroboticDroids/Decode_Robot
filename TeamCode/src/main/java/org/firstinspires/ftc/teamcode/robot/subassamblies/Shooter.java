@@ -87,7 +87,11 @@ public class Shooter {
                     isBusy = false;
                 } else {
 //                    if(!timerReset) {
-//                        hardware.door.setPosition(flywheelUpToSpeed() ? ShooterConstants.DOOR_OPEN : ShooterConstants.DOOR_CLOSED);
+//                        if (flywheelUpToSpeed(80)) {
+//                            hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+//                        } else if (flywheelUpToSpeed()) {
+//                            hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+//                        }
 //                    } else {
                         hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
 //                    }
