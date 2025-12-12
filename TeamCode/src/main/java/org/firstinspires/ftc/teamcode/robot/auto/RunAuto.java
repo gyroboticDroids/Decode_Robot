@@ -32,8 +32,8 @@ public class RunAuto extends OpMode {
     int currentAction = 0;
     private int nextPath = -1;
 
-    private Pose startClose = new Pose(126.875, 123.551, Math.toRadians(270)),
-            startFar = new Pose(88.324, 6.5, Math.toRadians(0)),
+    private Pose startClose = new Pose(126.5, 123.551, Math.toRadians(270)),
+            startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
             scoreClose = new Pose(110, 110, Math.toRadians(0)),
             scoreMiddle = new Pose(90, 90, Math.toRadians(0)),
             scoreFar = new Pose(84, 12, Math.toRadians(0)),
@@ -85,7 +85,7 @@ public class RunAuto extends OpMode {
         intake = new Intake(hardware);
         shooter = new Shooter(hardware);
 
-        intake.setState(Intake.State.INTAKE_SLEEP);
+        intake.setState(Intake.State.INTAKE_AUTO_READY);
         shooter.setState(Shooter.State.RESET);
 
         routine = new ArrayList<>();
@@ -499,7 +499,7 @@ public class RunAuto extends OpMode {
 
     private void park() {
         if (!ons) {
-            intake.setState(Intake.State.INTAKE_SLEEP);
+            intake.setState(Intake.State.INTAKE_UP);
             shooter.setState(Shooter.State.OFF);
             follower.followPath(getPath());
 

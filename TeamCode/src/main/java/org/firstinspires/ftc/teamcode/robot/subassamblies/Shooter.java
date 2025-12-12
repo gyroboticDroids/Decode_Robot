@@ -122,6 +122,7 @@ public class Shooter {
         } else {
             hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
             hardware.flywheel2.setVelocity(ShooterConstants.FLYWHEEL_OFF);
+            hardware.hood.setPosition(ShooterConstants.hoodAngle(0));
         }
 
         ballDetectionUpdate();

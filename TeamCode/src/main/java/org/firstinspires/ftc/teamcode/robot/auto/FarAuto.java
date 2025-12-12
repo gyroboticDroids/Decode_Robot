@@ -90,7 +90,7 @@ public class FarAuto extends OpMode {
         intake = new Intake(hardware);
         shooter = new Shooter(hardware);
 
-        intake.setState(Intake.State.INTAKE_SLEEP);
+        intake.setState(Intake.State.INTAKE_UP);
         shooter.setState(Shooter.State.OFF);
     }
 
