@@ -71,5 +71,5 @@ public class ShooterConstants {
         return flywheelOffset;
     }
 
-    public static double VELOCITY_TIME_MULTIPLIER = 0;
+    public static double VELOCITY_TIME_MULTIPLIER = 0.01;
 }
