@@ -32,7 +32,7 @@ public class RunAuto extends OpMode {
     int currentAction = 0;
     private int nextPath = -1;
 
-    private Pose startClose = new Pose(126.5, 121, Math.toRadians(270)),
+    private Pose startClose = new Pose(126, 123, Math.toRadians(270)),
             startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
             scoreClose = new Pose(110, 110, Math.toRadians(0)),
             scoreMiddle = new Pose(90, 90, Math.toRadians(0)),
@@ -153,6 +153,8 @@ public class RunAuto extends OpMode {
 
         if (!allianceColorRed) {
             mirrorPoses();
+
+            shooter.turretOffset(2);
         }
 
         TransferConstants.isAllianceColorRed = allianceColorRed;
@@ -399,7 +401,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (robotAtEnd && shooter.flywheelUpToSpeed() || ons) {
+                if (robotAtEnd && shooter.flywheelUpToSpeed(80) || ons) {
                     if (!ons) {
                         timer.resetTimer();
                         ons = true;
