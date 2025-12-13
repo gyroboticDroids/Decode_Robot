@@ -550,6 +550,6 @@ public class RunAuto extends OpMode {
     @Override
     public void stop() {
         TransferConstants.endPose = follower.getPose();
-        TransferConstants.endTurretPos = hardware.turret.getCurrentPosition();
+        TransferConstants.endTurretPos = (int) (hardware.turret.getCurrentPosition() - shooter.getTurretReset());
     }
 }
