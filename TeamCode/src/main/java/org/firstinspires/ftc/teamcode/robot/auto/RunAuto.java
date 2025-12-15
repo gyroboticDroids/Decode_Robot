@@ -40,8 +40,8 @@ public class RunAuto extends OpMode {
             balls1 = new Pose(120, 84, Math.toRadians(0)),
             balls2 = new Pose(126, 60, Math.toRadians(0)),
             balls3 = new Pose(126, 36, Math.toRadians(0)),
-            gate1 = new Pose(122, 64.5, Math.toRadians(0)),
-            gate2 = new Pose(128.5, 48, Math.toRadians(30)),
+            gate1 = new Pose(122, 66, Math.toRadians(0)),
+            gate2 = new Pose(128.5, 49, Math.toRadians(30)),
 
             hp = new Pose(128, 8, Math.toRadians(0)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
