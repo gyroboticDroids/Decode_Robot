@@ -96,8 +96,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("gpad test", shooter.getTurretOffset());
         telemetry.addLine("----------important----------");
         telemetry.addData("turret offset", shooter.getTurretOffset());
-        telemetry.addData("hood offset", ShooterConstants.getHoodOffset());
-        telemetry.addData("flywheel offset", ShooterConstants.getFlywheelOffset());
+        telemetry.addData("goal offset", shooter.getGoalVector());//TODO
         telemetry.addLine("----------drive--------------");
         telemetry.addData("robot position", hardware.poseTracker.getPose());
         telemetry.addData("is heading lock", drive.headingLock);
@@ -114,7 +113,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("turret pos (degrees)", hardware.turret.getCurrentPosition()
                 / ShooterConstants.TURRET_TICKS_PER_DEGREE);
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
-        telemetry.addData("hood angle", hardware.hood.getPosition());
+        telemetry.addData("hood angle", Math.toDegrees(shooter.getHoodAngle()));
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
         telemetry.addData("flywheel2 speed", hardware.flywheel2.getVelocity());
         telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
@@ -192,10 +191,6 @@ public class MasterTeleop extends OpMode {
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
 
         shooter.turretOffset(gamepad2.left_stick_x * ShooterConstants.TURRET_TRIM_SPEED);
-
-        ShooterConstants.flywheelOffset(((gamepad2.dpad_up ? 1 : 0) + (gamepad2.dpad_down ? -1 : 0))
-                * ShooterConstants.FLYWHEEL_TRIM_SPEED);
-        ShooterConstants.hoodOffset(gamepad2.right_stick_y * ShooterConstants.HOOD_TRIM_SPEED);
 
         prevShooterState = shooter.getState();
     }

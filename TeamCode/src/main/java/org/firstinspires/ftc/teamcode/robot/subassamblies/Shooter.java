@@ -34,6 +34,9 @@ public class Shooter {
     private double turretOffset = 0;
     private double turretReset;
 
+    private double flywheelSpeed = 0;
+    private double hoodAngle = 0;
+
     //Ball detection
     private boolean ball1 = false;
     private boolean ball2 = false;
@@ -126,7 +129,7 @@ public class Shooter {
         } else {
             hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
             hardware.flywheel2.setVelocity(ShooterConstants.FLYWHEEL_OFF);
-            hardware.hood.setPosition(ShooterConstants.hoodAngle(0));
+            hardware.hood.setPosition(ShooterConstants.HOOD_MIN_ANGLE);
         }
 
         ballDetectionUpdate();
@@ -149,7 +152,7 @@ public class Shooter {
         goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX(),
                 ShooterConstants.getGoalPos().getY() - robotPos.getY());
 
-        if (velComp) {
+/*        if (velComp) {
             Vector robotVelocity = hardware.poseTracker.getVelocity();
 
             double coordinateTheta = robotVelocity.getTheta() - goalToRobotVector.getTheta();
@@ -165,10 +168,14 @@ public class Shooter {
                     robotVelocity.getMagnitude() * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
 
             goalToRobotVector = goalToRobotVector.minus(robotVelocity);
-        }
+        }*/
 
-        double flywheelSpeed = ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude());
-        double hoodAngle = ShooterConstants.hoodAngle(goalToRobotVector.getMagnitude());
+        hoodAngle = Math.atan(2 * ShooterConstants.SCORE_HEIGHT / goalToRobotVector.getMagnitude() -
+                Math.tan(ShooterConstants.SCORE_ANGLE));
+
+        flywheelSpeed = Math.sqrt(32.2 * goalToRobotVector.getMagnitude() / (Math.pow(Math.cos(hoodAngle), 2) *
+                (Math.tan(hoodAngle) - Math.tan(ShooterConstants.SCORE_ANGLE))));
+
         double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta() - robotPos.getHeading()) + turretOffset;
 
         if (turretAngle > 180) {
@@ -183,9 +190,10 @@ public class Shooter {
 
         turretMoveTo(turretAngle);
 
-        hardware.flywheel.setVelocity(rampUpFlywheel(flywheelSpeed));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(flywheelSpeed));
-        hardware.hood.setPosition(hoodAngle);
+        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed)));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed)));
+
+        hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(hoodAngle)));
     }
 
     private void turretMoveTo(double angle) {
@@ -226,14 +234,18 @@ public class Shooter {
 
     public boolean flywheelUpToSpeed() {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude()),
+                ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed),
                 ShooterConstants.FLYWHEEL_ACCURACY);
     }
 
     public boolean flywheelUpToSpeed(double accuracy) {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.flywheelSpeed(goalToRobotVector.getMagnitude()),
+                ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed),
                 accuracy);
+    }
+
+    public double getHoodAngle() {
+        return hoodAngle;
     }
 
     public boolean isBusy() {

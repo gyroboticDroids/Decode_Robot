@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(141, 141);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
+    public static double SCORE_HEIGHT = 45; //inches
+    public static double SCORE_ANGLE = Math.toRadians(-20); //radians
 
     public static Pose getGoalPos() {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
@@ -17,6 +18,8 @@ public class ShooterConstants {
     public static double FLYWHEEL_ACCURACY = 60; //ticks per second
     public static double FLYWHEEL_TRIM_SPEED = 1;
     public static double FLYWHEEL_RAMP_SPEED = 300;
+    public static double FLYWHEEL_MIN_SPEED = 0;
+    public static double FLYWHEEL_MAX_SPEED = 1400;
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
             new com.pedropathing.control.PIDFCoefficients(0.025, 0, 0.0012, 0);
@@ -28,6 +31,8 @@ public class ShooterConstants {
     public static double TURRET_MAX_SPEED = 0.5;
 
     public static double HOOD_TRIM_SPEED = 0.001;
+    public static double HOOD_MIN_ANGLE = 0.126;
+    public static double HOOD_MAX_ANGLE = 0.904;
 
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
@@ -38,38 +43,11 @@ public class ShooterConstants {
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
 
-    private static double flywheelOffset = 0;
-    private static double hoodOffset = 0;
-
-    public static double flywheelSpeed(double goalDist) {
-        return MathFunctions.clamp(0.0204772 * Math.pow(goalDist, 2) + 0.643162 * goalDist + 712.90909 + 15, 0, 1400)
-                + flywheelOffset;
+    public static double getFlywheelTicksFromVelocity(double velocity) {
+        return 68.041 * velocity - 243.54;
     }
 
-    public static double hoodAngle(double goalDist) {
-        return MathFunctions.clamp(-2.34831e-7 * Math.pow(goalDist, 3) + 0.0000936893 * Math.pow(goalDist, 2) - 0.0165033
-                * goalDist + 1.25724, 0.11, 0.904) + hoodOffset;
+    public static double getHoodTicksFromDegrees(double degrees) {
+        return 0.0268 * degrees - 0.9569;
     }
-
-    public static double launchTime(double goalDist) {
-        return 0.000018211 * Math.pow(goalDist, 2) - 0.00173368 * goalDist + 0.713636;
-    }
-
-    public static void flywheelOffset(double f) {
-        flywheelOffset += f;
-    }
-
-    public static void hoodOffset(double h) {
-        hoodOffset += h;
-    }
-
-    public static double getHoodOffset() {
-        return hoodOffset;
-    }
-
-    public static double getFlywheelOffset() {
-        return flywheelOffset;
-    }
-
-    public static double VELOCITY_TIME_MULTIPLIER = 0.01;
 }
