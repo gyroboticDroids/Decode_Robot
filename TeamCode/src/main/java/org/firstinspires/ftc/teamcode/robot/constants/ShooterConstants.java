@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(141, 141);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
-    public static double SCORE_HEIGHT = 45; //inches
+    public static double SCORE_HEIGHT = (45 - 14.5) / 12; //feet
     public static double SCORE_ANGLE = Math.toRadians(-20); //radians
 
     public static Pose getGoalPos() {
@@ -16,7 +17,6 @@ public class ShooterConstants {
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(200, 0.7, 0, 0);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 60; //ticks per second
-    public static double FLYWHEEL_TRIM_SPEED = 1;
     public static double FLYWHEEL_RAMP_SPEED = 300;
     public static double FLYWHEEL_MIN_SPEED = 0;
     public static double FLYWHEEL_MAX_SPEED = 1400;
@@ -30,7 +30,6 @@ public class ShooterConstants {
     public static double TURRET_MAX_ANGLE = 92;
     public static double TURRET_MAX_SPEED = 0.5;
 
-    public static double HOOD_TRIM_SPEED = 0.001;
     public static double HOOD_MIN_ANGLE = 0.126;
     public static double HOOD_MAX_ANGLE = 0.904;
 
@@ -44,10 +43,10 @@ public class ShooterConstants {
     public static double BALL_DETECTION_DISTANCE = 1;//inches
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return 68.041 * velocity - 243.54;
+        return MathFunctions.clamp(68.041 * velocity - 243.54, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
-        return 0.0268 * degrees - 0.9569;
+        return MathFunctions.clamp(0.0268 * degrees - 0.9569, HOOD_MIN_ANGLE, HOOD_MAX_ANGLE);
     }
 }

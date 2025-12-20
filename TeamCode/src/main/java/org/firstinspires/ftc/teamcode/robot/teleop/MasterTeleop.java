@@ -93,7 +93,6 @@ public class MasterTeleop extends OpMode {
     }
 
     private void telemetryUpdate() {
-        telemetry.addData("gpad test", shooter.getTurretOffset());
         telemetry.addLine("----------important----------");
         telemetry.addData("turret offset", shooter.getTurretOffset());
         telemetry.addData("goal offset", shooter.getGoalVector());//TODO
@@ -108,17 +107,16 @@ public class MasterTeleop extends OpMode {
         telemetry.addLine("----------shooter------------");
         telemetry.addData("state", shooter.getState());
         telemetry.addData("is busy", shooter.isBusy());
-        telemetry.addData("goal dist", shooter.getGoalVector());
+        telemetry.addData("goal dist", shooter.getGoalVector().getMagnitude());
         telemetry.addData("turret reset offset", shooter.getTurretReset());
         telemetry.addData("turret pos (degrees)", hardware.turret.getCurrentPosition()
                 / ShooterConstants.TURRET_TICKS_PER_DEGREE);
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
         telemetry.addData("hood angle", Math.toDegrees(shooter.getHoodAngle()));
+        telemetry.addData("flywheel speed feet/sec", shooter.getFlywheelSpeed());
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
-        telemetry.addData("flywheel2 speed", hardware.flywheel2.getVelocity());
         telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
         telemetry.addData("velocity compensation", shooter.velComp);
-        telemetry.addData("velocity compensation parallel component", shooter.parallelComponent);
         telemetry.update();
     }
 

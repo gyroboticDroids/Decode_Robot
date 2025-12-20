@@ -149,8 +149,8 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX(),
-                ShooterConstants.getGoalPos().getY() - robotPos.getY());
+        goalToRobotVector.setOrthogonalComponents((ShooterConstants.getGoalPos().getX() - robotPos.getX()) / 12,
+                (ShooterConstants.getGoalPos().getY() - robotPos.getY()) / 12);
 
 /*        if (velComp) {
             Vector robotVelocity = hardware.poseTracker.getVelocity();
@@ -173,7 +173,7 @@ public class Shooter {
         hoodAngle = Math.atan(2 * ShooterConstants.SCORE_HEIGHT / goalToRobotVector.getMagnitude() -
                 Math.tan(ShooterConstants.SCORE_ANGLE));
 
-        flywheelSpeed = Math.sqrt(32.2 * goalToRobotVector.getMagnitude() / (Math.pow(Math.cos(hoodAngle), 2) *
+        flywheelSpeed = Math.sqrt((32.2 * goalToRobotVector.getMagnitude()) / (Math.pow(Math.cos(hoodAngle), 2) *
                 (Math.tan(hoodAngle) - Math.tan(ShooterConstants.SCORE_ANGLE))));
 
         double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta() - robotPos.getHeading()) + turretOffset;
@@ -246,6 +246,10 @@ public class Shooter {
 
     public double getHoodAngle() {
         return hoodAngle;
+    }
+
+    public double getFlywheelSpeed() {
+        return flywheelSpeed;
     }
 
     public boolean isBusy() {
