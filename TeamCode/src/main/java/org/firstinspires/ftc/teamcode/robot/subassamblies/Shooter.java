@@ -170,11 +170,12 @@ public class Shooter {
             goalToRobotVector = goalToRobotVector.minus(robotVelocity);
         }*/
 
-        hoodAngle = Math.atan(2 * ShooterConstants.SCORE_HEIGHT / goalToRobotVector.getMagnitude() -
-                Math.tan(ShooterConstants.SCORE_ANGLE));
+        hoodAngle = MathFunctions.clamp(Math.atan(2 * ShooterConstants.SCORE_HEIGHT / (goalToRobotVector.getMagnitude() -
+                ShooterConstants.PASS_THROUGH_POINT_RADIUS) - Math.tan(ShooterConstants.SCORE_ANGLE)),
+                ShooterConstants.HOOD_MAX_ANGLE, ShooterConstants.HOOD_MIN_ANGLE);
 
-        flywheelSpeed = Math.sqrt((32.2 * goalToRobotVector.getMagnitude()) / (Math.pow(Math.cos(hoodAngle), 2) *
-                (Math.tan(hoodAngle) - Math.tan(ShooterConstants.SCORE_ANGLE))));
+        flywheelSpeed = Math.sqrt((32.2 * goalToRobotVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS) /
+                (Math.pow(Math.cos(hoodAngle), 2) * (Math.tan(hoodAngle) - Math.tan(ShooterConstants.SCORE_ANGLE))));
 
         double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta() - robotPos.getHeading()) + turretOffset;
 

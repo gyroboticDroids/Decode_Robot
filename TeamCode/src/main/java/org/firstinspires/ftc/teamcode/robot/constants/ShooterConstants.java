@@ -9,6 +9,7 @@ public class ShooterConstants {
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
     public static double SCORE_HEIGHT = (45 - 14.5) / 12; //feet
     public static double SCORE_ANGLE = Math.toRadians(-20); //radians
+    public static double PASS_THROUGH_POINT_RADIUS = 5.0 / 12; //feet
 
     public static Pose getGoalPos() {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
@@ -30,8 +31,8 @@ public class ShooterConstants {
     public static double TURRET_MAX_ANGLE = 92;
     public static double TURRET_MAX_SPEED = 0.5;
 
-    public static double HOOD_MIN_ANGLE = 0.126;
-    public static double HOOD_MAX_ANGLE = 0.904;
+    public static double HOOD_MIN_ANGLE = Math.toRadians(70); //radians
+    public static double HOOD_MAX_ANGLE = Math.toRadians(40); //radians
 
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
@@ -47,6 +48,6 @@ public class ShooterConstants {
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
-        return MathFunctions.clamp(0.0268 * degrees - 0.9569, HOOD_MIN_ANGLE, HOOD_MAX_ANGLE);
+        return 0.0268 * degrees - 0.9569;
     }
 }
