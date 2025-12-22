@@ -14,7 +14,7 @@ public class Shooter {
     public enum State {
         READY, LAUNCH, OFF, RESET
     }
-    public double parallelComponent = 0;
+    public double vrx = 0;
 
     private final PIDFController turretPIDFController;
     private final Hardware hardware;
@@ -149,8 +149,8 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        goalToRobotVector.setOrthogonalComponents((ShooterConstants.getGoalPos().getX() - robotPos.getX()) / 12,
-                (ShooterConstants.getGoalPos().getY() - robotPos.getY()) / 12);
+        goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX(),
+                ShooterConstants.getGoalPos().getY() - robotPos.getY());
 
 /*        if (velComp) {
             Vector robotVelocity = hardware.poseTracker.getVelocity();
@@ -169,13 +169,15 @@ public class Shooter {
 
             goalToRobotVector = goalToRobotVector.minus(robotVelocity);
         }*/
+        double g = 32.174 * 12;
+        double x = goalToRobotVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS;
+        double y = ShooterConstants.SCORE_HEIGHT;
+        double a = ShooterConstants.SCORE_ANGLE;
 
-        hoodAngle = MathFunctions.clamp(Math.atan(2 * ShooterConstants.SCORE_HEIGHT / (goalToRobotVector.getMagnitude() -
-                ShooterConstants.PASS_THROUGH_POINT_RADIUS) - Math.tan(ShooterConstants.SCORE_ANGLE)),
-                ShooterConstants.HOOD_MAX_ANGLE, ShooterConstants.HOOD_MIN_ANGLE);
+        hoodAngle = MathFunctions.clamp(Math.atan(2 * y / x - Math.tan(a)), ShooterConstants.HOOD_MAX_ANGLE,
+                ShooterConstants.HOOD_MIN_ANGLE);
 
-        flywheelSpeed = Math.sqrt((32.2 * goalToRobotVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS) /
-                (Math.pow(Math.cos(hoodAngle), 2) * (Math.tan(hoodAngle) - Math.tan(ShooterConstants.SCORE_ANGLE))));
+        flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
 
         double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta() - robotPos.getHeading()) + turretOffset;
 

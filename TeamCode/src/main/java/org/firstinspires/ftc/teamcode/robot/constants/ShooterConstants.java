@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(141, 141);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
-    public static double SCORE_HEIGHT = (45 - 14.5) / 12; //feet
-    public static double SCORE_ANGLE = Math.toRadians(-20); //radians
-    public static double PASS_THROUGH_POINT_RADIUS = 5.0 / 12; //feet
+    public static double SCORE_HEIGHT = 45 - 15; //inches
+    public static double SCORE_ANGLE = Math.toRadians(-30); //radians
+    public static double PASS_THROUGH_POINT_RADIUS = 12; //inches
 
     public static Pose getGoalPos() {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
@@ -44,7 +44,7 @@ public class ShooterConstants {
     public static double BALL_DETECTION_DISTANCE = 1;//inches
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return MathFunctions.clamp(68.041 * velocity - 243.54, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
+        return MathFunctions.clamp(68.041 * velocity / 12 - 243.54, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
