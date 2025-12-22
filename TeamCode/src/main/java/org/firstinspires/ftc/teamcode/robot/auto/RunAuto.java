@@ -340,8 +340,7 @@ public class RunAuto extends OpMode {
             if (currentRoutineIndex > 1) {
                 isBusy = score();
             } else {
-                isBusy = score();
-                //isBusy = scorePreload();
+                isBusy = scorePreload();
             }
         } else if (currentAction >= 20 && currentAction <= 29) {
             isBusy = spikeMarks();
@@ -368,7 +367,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (!shooter.isBusy() && !ons) {
+                if (shooter.flywheelUpToSpeed(80) && !ons) {
                     intake.setState(Intake.State.INTAKE_LAUNCH);
                     shooter.setState(Shooter.State.LAUNCH);
                     ons = true;
