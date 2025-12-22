@@ -24,8 +24,8 @@ public class Shooter {
 
     private Vector goalToRobotVector = new Vector();
 
-    public static double goalXOffset = 0;
-    public static double goalYOffset = 0;
+    public double goalXOffset = 0;
+    public double goalYOffset = 0;
 
     private boolean isBusy = false;
 
@@ -155,23 +155,6 @@ public class Shooter {
         goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
                 + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
 
-/*        if (velComp) {
-            Vector robotVelocity = hardware.poseTracker.getVelocity();
-
-            double coordinateTheta = robotVelocity.getTheta() - goalToRobotVector.getTheta();
-
-            if(coordinateTheta > 2 * Math.PI)
-                coordinateTheta -= 2 * Math.PI;
-            else if (coordinateTheta < -2 * Math.PI)
-                coordinateTheta += 2 * Math.PI;
-
-            parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
-
-            robotVelocity.setMagnitude(parallelComponent * ShooterConstants.VELOCITY_TIME_MULTIPLIER +
-                    robotVelocity.getMagnitude() * ShooterConstants.launchTime(goalToRobotVector.getMagnitude()));
-
-            goalToRobotVector = goalToRobotVector.minus(robotVelocity);
-        }*/
         double g = 32.174 * 12;
         double x = goalToRobotVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS;
         double y = ShooterConstants.SCORE_HEIGHT;
@@ -182,7 +165,29 @@ public class Shooter {
 
         flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
 
-        double turretAngle = -Math.toDegrees(goalToRobotVector.getTheta() - robotPos.getHeading()) + turretOffset;
+        Vector launchVector = new Vector(flywheelSpeed, hoodAngle);
+        double turretTheta = goalToRobotVector.getTheta();
+
+        if (velComp) {
+            Vector robotVelocity = hardware.poseTracker.getVelocity();
+
+            double coordinateTheta = robotVelocity.getTheta() - goalToRobotVector.getTheta();
+
+            if(coordinateTheta > 2 * Math.PI)
+                coordinateTheta -= 2 * Math.PI;
+            else if (coordinateTheta < -2 * Math.PI)
+                coordinateTheta += 2 * Math.PI;
+
+            double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+            double time = x / (launchVector.getMagnitude() * Math.cos(hoodAngle));
+            Vector robotDistance = new Vector(robotVelocity.getMagnitude() * time, robotVelocity.getTheta());
+
+            launchVector = launchVector.plus(new Vector(parallelComponent, 0));
+
+            turretTheta = goalToRobotVector.plus(robotDistance).getTheta();
+        }
+
+        double turretAngle = -Math.toDegrees(turretTheta - robotPos.getHeading()) + turretOffset;
 
         if (turretAngle > 180) {
             turretAngle -= 360;
@@ -196,8 +201,8 @@ public class Shooter {
 
         turretMoveTo(turretAngle);
 
-        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed)));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed)));
+        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getTheta())));
 
         hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(hoodAngle)));
     }
