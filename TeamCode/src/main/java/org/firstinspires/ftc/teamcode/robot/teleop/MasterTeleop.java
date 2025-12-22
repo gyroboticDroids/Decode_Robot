@@ -95,7 +95,8 @@ public class MasterTeleop extends OpMode {
     private void telemetryUpdate() {
         telemetry.addLine("----------important----------");
         telemetry.addData("turret offset", shooter.getTurretOffset());
-        telemetry.addData("goal offset", shooter.getGoalVector());//TODO
+        telemetry.addData("goal X offset", shooter.goalXOffset);
+        telemetry.addData("goal Y offset", shooter.goalYOffset);
         telemetry.addLine("----------drive--------------");
         telemetry.addData("robot position", hardware.poseTracker.getPose());
         telemetry.addData("is heading lock", drive.headingLock);
@@ -187,15 +188,15 @@ public class MasterTeleop extends OpMode {
         }
 
         if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            Shooter.goalXOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
+            shooter.goalXOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
         } else if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
-            Shooter.goalXOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
+            shooter.goalXOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
         }
 
         if (gamepad2.dpad_right && !lastGamepad2.dpad_right) {
-            Shooter.goalYOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
+            shooter.goalYOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
         } else if (gamepad2.dpad_left && !lastGamepad2.dpad_left) {
-            Shooter.goalYOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
+            shooter.goalYOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
         }
 
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
