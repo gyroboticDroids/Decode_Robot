@@ -22,7 +22,7 @@ public class Shooter {
     private State state;
     private final Timer timer;
 
-    private Vector goalToRobotVector = new Vector();
+    private final Vector goalToRobotVector = new Vector();
 
     public double goalXOffset = 0;
     public double goalYOffset = 0;
