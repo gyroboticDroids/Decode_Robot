@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(141, 141);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
-    public static double SCORE_HEIGHT = 45 - 15; //inches
-    public static double SCORE_ANGLE = Math.toRadians(-30); //radians
-    public static double PASS_THROUGH_POINT_RADIUS = 12; //inches
+    public static double SCORE_HEIGHT = 42 - 15; //inches
+    public static double SCORE_ANGLE = Math.toRadians(-25); //radians
+    public static double PASS_THROUGH_POINT_RADIUS = 8; //inches
 
     public static Pose getGoalPos() {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;

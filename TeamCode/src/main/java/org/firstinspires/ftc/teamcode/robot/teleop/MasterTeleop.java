@@ -114,7 +114,7 @@ public class MasterTeleop extends OpMode {
                 / ShooterConstants.TURRET_TICKS_PER_DEGREE);
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
         telemetry.addData("hood angle", Math.toDegrees(shooter.getHoodAngle()));
-        telemetry.addData("flywheel speed feet/sec", shooter.getFlywheelSpeed());
+        telemetry.addData("flywheel speed in/s", shooter.getFlywheelSpeed());
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
         telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
         telemetry.addData("velocity compensation", shooter.velComp);

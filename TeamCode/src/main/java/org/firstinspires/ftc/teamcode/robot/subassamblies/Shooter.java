@@ -182,9 +182,9 @@ public class Shooter {
             double time = x / (launchVector.getMagnitude() * Math.cos(hoodAngle));
             Vector robotDistance = new Vector(robotVelocity.getMagnitude() * time, robotVelocity.getTheta());
 
-            launchVector = launchVector.plus(new Vector(parallelComponent, 0));
+            launchVector = launchVector.minus(new Vector(parallelComponent, 0));
 
-            turretTheta = goalToRobotVector.plus(robotDistance).getTheta();
+            turretTheta = goalToRobotVector.minus(robotDistance).getTheta();
         }
 
         double turretAngle = -Math.toDegrees(turretTheta - robotPos.getHeading()) + turretOffset;
@@ -202,9 +202,9 @@ public class Shooter {
         turretMoveTo(turretAngle);
 
         hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getTheta())));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
 
-        hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(hoodAngle)));
+        hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
     }
 
     private void turretMoveTo(double angle) {
