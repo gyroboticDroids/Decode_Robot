@@ -24,6 +24,9 @@ public class Shooter {
 
     private Vector goalToRobotVector = new Vector();
 
+    public static double goalXOffset = 0;
+    public static double goalYOffset = 0;
+
     private boolean isBusy = false;
 
     public boolean velComp = false;
@@ -149,8 +152,8 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX(),
-                ShooterConstants.getGoalPos().getY() - robotPos.getY());
+        goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
+                + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
 
 /*        if (velComp) {
             Vector robotVelocity = hardware.poseTracker.getVelocity();

@@ -186,6 +186,18 @@ public class MasterTeleop extends OpMode {
             gamepad2.rumble(0.5, 0.5, 500);
         }
 
+        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
+            Shooter.goalXOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
+        } else if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
+            Shooter.goalXOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
+        }
+
+        if (gamepad2.dpad_right && !lastGamepad2.dpad_right) {
+            Shooter.goalYOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
+        } else if (gamepad2.dpad_left && !lastGamepad2.dpad_left) {
+            Shooter.goalYOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
+        }
+
         gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
 
         shooter.turretOffset(gamepad2.left_stick_x * ShooterConstants.TURRET_TRIM_SPEED);
