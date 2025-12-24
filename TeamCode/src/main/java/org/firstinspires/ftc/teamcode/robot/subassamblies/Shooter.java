@@ -14,7 +14,6 @@ public class Shooter {
     public enum State {
         READY, LAUNCH, OFF, RESET
     }
-    public double vrx = 0;
 
     private final PIDFController turretPIDFController;
     private final Hardware hardware;
@@ -37,8 +36,7 @@ public class Shooter {
     private double turretOffset = 0;
     private double turretReset;
 
-    private double flywheelSpeed = 0;
-    private double hoodAngle = 0;
+    private Vector launchVector = new Vector();
 
     //Ball detection
     private boolean ball1 = false;
@@ -155,39 +153,56 @@ public class Shooter {
         goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
                 + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
 
+        launchVector = calculateShotVectorAndUpdateTurret(robotPos.getHeading());
+
+        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+
+        hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
+    }
+
+    private Vector calculateShotVectorAndUpdateTurret(double robotHeading) {
+        //constants
         double g = 32.174 * 12;
         double x = goalToRobotVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS;
         double y = ShooterConstants.SCORE_HEIGHT;
         double a = ShooterConstants.SCORE_ANGLE;
 
-        hoodAngle = MathFunctions.clamp(Math.atan(2 * y / x - Math.tan(a)), ShooterConstants.HOOD_MAX_ANGLE,
+        //calculate initial launch components
+        double hoodAngle = MathFunctions.clamp(Math.atan(2 * y / x - Math.tan(a)), ShooterConstants.HOOD_MAX_ANGLE,
                 ShooterConstants.HOOD_MIN_ANGLE);
 
-        flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
+        double flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
 
-        Vector launchVector = new Vector(flywheelSpeed, hoodAngle);
-        double turretTheta = goalToRobotVector.getTheta();
+        //get robot velocity and convert it into parallel and perpendicular components
+        Vector robotVelocity = hardware.poseTracker.getVelocity();
 
-        if (velComp) {
-            Vector robotVelocity = hardware.poseTracker.getVelocity();
+        double coordinateTheta = robotVelocity.getTheta() - goalToRobotVector.getTheta();
 
-            double coordinateTheta = robotVelocity.getTheta() - goalToRobotVector.getTheta();
+        if(coordinateTheta > 2 * Math.PI)
+            coordinateTheta -= 2 * Math.PI;
+        else if (coordinateTheta < -2 * Math.PI)
+            coordinateTheta += 2 * Math.PI;
 
-            if(coordinateTheta > 2 * Math.PI)
-                coordinateTheta -= 2 * Math.PI;
-            else if (coordinateTheta < -2 * Math.PI)
-                coordinateTheta += 2 * Math.PI;
+        double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+        double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
 
-            double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
-            double time = x / (launchVector.getMagnitude() * Math.cos(hoodAngle));
-            Vector robotDistance = new Vector(robotVelocity.getMagnitude() * time, robotVelocity.getTheta());
+        //velocity compensation variables
+        double vz = flywheelSpeed * Math.sin(hoodAngle);
+        double time = x / (flywheelSpeed * Math.cos(hoodAngle));
+        double ivr = x / time + parallelComponent;
+        double nvr = Math.sqrt(ivr * ivr + perpendicularComponent * perpendicularComponent);
+        double ndr = nvr * time;
 
-            launchVector = launchVector.minus(new Vector(parallelComponent, 0));
+        //recalculate launch components
+        hoodAngle = MathFunctions.clamp(Math.atan(vz / nvr), ShooterConstants.HOOD_MAX_ANGLE,
+                ShooterConstants.HOOD_MIN_ANGLE);
 
-            turretTheta = goalToRobotVector.minus(robotDistance).getTheta();
-        }
+        flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math.pow(Math.cos(hoodAngle), 2) * (ndr * Math.tan(hoodAngle) - y)));
 
-        double turretAngle = -Math.toDegrees(turretTheta - robotPos.getHeading()) + turretOffset;
+        //update turret
+        double turretVelCompOffset = Math.atan(perpendicularComponent / nvr);
+        double turretAngle = Math.toDegrees(robotHeading - goalToRobotVector.getTheta() + turretVelCompOffset) + turretOffset;
 
         if (turretAngle > 180) {
             turretAngle -= 360;
@@ -201,10 +216,7 @@ public class Shooter {
 
         turretMoveTo(turretAngle);
 
-        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
-
-        hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
+        return new Vector(flywheelSpeed, hoodAngle);
     }
 
     private void turretMoveTo(double angle) {
@@ -245,22 +257,22 @@ public class Shooter {
 
     public boolean flywheelUpToSpeed() {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed),
+                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
                 ShooterConstants.FLYWHEEL_ACCURACY);
     }
 
     public boolean flywheelUpToSpeed(double accuracy) {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(flywheelSpeed),
+                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
                 accuracy);
     }
 
     public double getHoodAngle() {
-        return hoodAngle;
+        return launchVector.getTheta();
     }
 
     public double getFlywheelSpeed() {
-        return flywheelSpeed;
+        return launchVector.getMagnitude();
     }
 
     public boolean isBusy() {
