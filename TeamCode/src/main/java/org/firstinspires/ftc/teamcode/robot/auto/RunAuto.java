@@ -153,8 +153,6 @@ public class RunAuto extends OpMode {
 
         if (!allianceColorRed) {
             mirrorPoses();
-
-            shooter.turretOffset(2);
         }
 
         TransferConstants.isAllianceColorRed = allianceColorRed;

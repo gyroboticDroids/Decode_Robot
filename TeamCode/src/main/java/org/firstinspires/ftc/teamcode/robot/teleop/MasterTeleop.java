@@ -94,7 +94,6 @@ public class MasterTeleop extends OpMode {
 
     private void telemetryUpdate() {
         telemetry.addLine("----------important----------");
-        telemetry.addData("turret offset", shooter.getTurretOffset());
         telemetry.addData("goal X offset", shooter.goalXOffset);
         telemetry.addData("goal Y offset", shooter.goalYOffset);
         telemetry.addLine("----------drive--------------");
@@ -192,8 +191,6 @@ public class MasterTeleop extends OpMode {
         } else if (gamepad2.dpad_left && !lastGamepad2.dpad_left) {
             shooter.goalYOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
         }
-
-        shooter.turretOffset(gamepad2.left_stick_x * ShooterConstants.TURRET_TRIM_SPEED);
 
         prevShooterState = shooter.getState();
     }

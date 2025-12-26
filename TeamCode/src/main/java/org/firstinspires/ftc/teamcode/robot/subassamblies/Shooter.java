@@ -33,8 +33,6 @@ public class Shooter {
     public boolean runTurret = true;
 
     private boolean timerReset = true;
-
-    private double turretOffset = 0;
     private double turretReset;
 
     private Vector launchVector = new Vector();
@@ -203,7 +201,7 @@ public class Shooter {
 
         //update turret
         double turretVelCompOffset = Math.atan(perpendicularComponent / nvr);
-        double turretAngle = Math.toDegrees(robotHeading - goalToRobotVector.getTheta() + turretVelCompOffset) + turretOffset;
+        double turretAngle = Math.toDegrees(robotHeading - goalToRobotVector.getTheta() + turretVelCompOffset);
 
         if (turretAngle > 180) {
             turretAngle -= 360;
@@ -280,11 +278,6 @@ public class Shooter {
         return isBusy;
     }
 
-    public void turretOffset(double offset) {
-        turretOffset += offset;
-        turretOffset = MathFunctions.clamp(turretOffset, -180, 180);
-    }
-
     private double rampUpFlywheel(double speed) {
         return MathFunctions.clamp(speed, hardware.flywheel.getVelocity() - ShooterConstants.FLYWHEEL_RAMP_SPEED,
                 hardware.flywheel.getVelocity() + ShooterConstants.FLYWHEEL_RAMP_SPEED);
@@ -292,10 +285,6 @@ public class Shooter {
 
     public Vector getGoalVector() {
         return goalToRobotVector;
-    }
-
-    public double getTurretOffset() {
-        return turretOffset;
     }
 
     public double getTurretReset() {
