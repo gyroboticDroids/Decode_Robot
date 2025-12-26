@@ -28,7 +28,6 @@ public class Shooter {
 
     private boolean isBusy = false;
 
-    public boolean velComp = false;
     public boolean runTurret = true;
 
     private boolean timerReset = true;

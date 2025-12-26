@@ -60,7 +60,7 @@ public class MasterTeleop extends OpMode {
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
 
-        gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
+        gamepad2.setLedColor(1, 1, 1, -1);
 
         lastGamepad1.copy(gamepad1);
         lastGamepad2.copy(gamepad2);
@@ -117,7 +117,6 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("flywheel speed in/s", shooter.getFlywheelSpeed());
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
         telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
-        telemetry.addData("velocity compensation", shooter.velComp);
         telemetry.update();
     }
 
@@ -173,12 +172,6 @@ public class MasterTeleop extends OpMode {
             }
         }
 
-        if (gamepad2.touchpad && !lastGamepad2.touchpad && shooter.velComp) {
-            shooter.velComp = false;
-        } else if (gamepad2.touchpad && !lastGamepad2.touchpad && !shooter.velComp) {
-            shooter.velComp = true;
-        }
-
         if (gamepad2.options && !lastGamepad2.options && shooter.runTurret) {
             shooter.runTurret = false;
             gamepad2.rumble(0.5, 0.5, 500);
@@ -198,8 +191,6 @@ public class MasterTeleop extends OpMode {
         } else if (gamepad2.dpad_left && !lastGamepad2.dpad_left) {
             shooter.goalYOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
         }
-
-        gamepad2.setLedColor(shooter.velComp ? 0 : 1, shooter.velComp ? 1 : 0, 0, -1);
 
         shooter.turretOffset(gamepad2.left_stick_x * ShooterConstants.TURRET_TRIM_SPEED);
 
