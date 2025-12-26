@@ -26,6 +26,8 @@ public class Shooter {
     public double goalXOffset = 0;
     public double goalYOffset = 0;
 
+    public double targetPos;
+
     private boolean isBusy = false;
 
     public boolean runTurret = true;
@@ -154,8 +156,8 @@ public class Shooter {
 
         launchVector = calculateShotVectorAndUpdateTurret(robotPos.getHeading());
 
-        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta())));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta())));
 
         hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
     }
@@ -183,7 +185,7 @@ public class Shooter {
         else if (coordinateTheta < -2 * Math.PI)
             coordinateTheta += 2 * Math.PI;
 
-        double parallelComponent = Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
+        double parallelComponent = -Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
         double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
 
         //velocity compensation variables
@@ -219,7 +221,7 @@ public class Shooter {
     }
 
     private void turretMoveTo(double angle) {
-        double targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
+        targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
                 * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset;
 
         double error = targetPos - hardware.turret.getCurrentPosition();
@@ -256,13 +258,13 @@ public class Shooter {
 
     public boolean flywheelUpToSpeed() {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
+                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta()),
                 ShooterConstants.FLYWHEEL_ACCURACY);
     }
 
     public boolean flywheelUpToSpeed(double accuracy) {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
+                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta()),
                 accuracy);
     }
 

@@ -43,8 +43,13 @@ public class ShooterConstants {
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
 
-    public static double getFlywheelTicksFromVelocity(double velocity) {
-        return MathFunctions.clamp(68.041 * velocity / 12 - 243.54, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
+    public static double getFlywheelTicksFromVelocity(double velocity, double hoodAngle) {
+        return MathFunctions.clamp((68.041 * velocity / 12 - 243.54) * getFlywheelMultiplier(hoodAngle), FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
+    }
+
+    public static double getFlywheelMultiplier(double hoodAngle) {
+        double a = Math.toDegrees(hoodAngle);
+        return 0.0001 * a * a - 0.0074 * a + 1.1323;
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
