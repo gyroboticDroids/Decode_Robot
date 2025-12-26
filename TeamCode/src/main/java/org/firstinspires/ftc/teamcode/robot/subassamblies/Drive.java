@@ -23,6 +23,7 @@ public class Drive {
 
     public boolean headingLock = false;
     private boolean resetHeading = false;
+    private boolean prevResetHeading = false;
 
     private boolean park = false;
 
@@ -39,11 +40,14 @@ public class Drive {
     }
 
     public void update() {
-        if (resetHeading) {
+        input();
+
+        if (resetHeading && !prevResetHeading) {
             Pose updatedPose = vision.getRobotPosFromTarget();
 
             if (updatedPose != null) {
                 poseTracker.setPose(updatedPose);
+                vision.makeSnapshot(updatedPose.toString());
                 gamepad.rumble(0.5, 0.5, 500);
             } else {
                 poseTracker.setPose(new Pose(72 + 5, 72 - 6.5, TransferConstants.isAllianceColorRed ? 0 : Math.toRadians(180)));
@@ -53,13 +57,13 @@ public class Drive {
         poseTracker.update();
         robotPos = poseTracker.getPose();
 
-        input();
-
         if (headingLock)
             autoTurn();
 
         park();
         movement();
+
+        prevResetHeading = resetHeading;
     }
 
     private void input() {

@@ -69,6 +69,7 @@ public class MasterTeleop extends OpMode {
     @Override
     public void stop() {
         TransferConstants.resetConstants();
+        hardware.limelight.stop();
     }
 
     @Override

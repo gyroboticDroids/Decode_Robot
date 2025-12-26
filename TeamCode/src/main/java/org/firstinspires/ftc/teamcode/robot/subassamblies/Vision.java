@@ -11,6 +11,7 @@ public class Vision {
 
     public Vision(Hardware h) {
         hardware = h;
+        hardware.limelight.deleteSnapshots();
     }
 
     public Pose getRobotPosFromTarget() {
@@ -29,5 +30,9 @@ public class Vision {
         }
 
         return null;
+    }
+
+    public void makeSnapshot(String name) {
+        hardware.limelight.captureSnapshot(name);
     }
 }
