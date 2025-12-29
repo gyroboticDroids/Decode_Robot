@@ -117,7 +117,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("hood angle", Math.toDegrees(shooter.getHoodAngle()));
         telemetry.addData("flywheel speed in/s", shooter.getFlywheelSpeed());
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
-        telemetry.addData("flywheel up to speed ", shooter.flywheelUpToSpeed());
+        telemetry.addData("shooter ready", shooter.isGoalTargeted());
         telemetry.update();
     }
 
@@ -166,7 +166,7 @@ public class MasterTeleop extends OpMode {
                     && prevShooterState != Shooter.State.READY) {
                 shooter.setState(Shooter.State.READY);
             } else if ((gamepad1.right_bumper || gamepad2.right_bumper) && prevShooterState == Shooter.State.READY
-                    && shooter.flywheelUpToSpeed()) {
+                    && shooter.isGoalTargeted()) {
                 shooter.setState(Shooter.State.LAUNCH);
             } else if (gamepad2.share) {
                 shooter.setState(Shooter.State.RESET);
