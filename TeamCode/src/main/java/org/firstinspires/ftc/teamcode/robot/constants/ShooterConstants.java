@@ -43,9 +43,10 @@ public class ShooterConstants {
 
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
+    public static double flywheelOffset = 0;
 
     public static double getFlywheelTicksFromVelocity(double velocity, double hoodAngle) {
-        return MathFunctions.clamp((68.041 * velocity / 12 - 243.54) * getFlywheelMultiplier(hoodAngle), FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
+        return MathFunctions.clamp((68.041 * velocity / 12 - 243.54) * getFlywheelMultiplier(hoodAngle) + flywheelOffset, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
     }
 
     public static double getFlywheelMultiplier(double hoodAngle) {

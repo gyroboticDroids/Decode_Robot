@@ -90,15 +90,7 @@ public class Shooter {
                     hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
                     isBusy = false;
                 } else {
-//                    if(!timerReset) {
-//                        if (flywheelUpToSpeed(80)) {
-//                            hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
-//                        } else if (flywheelUpToSpeed()) {
-//                            hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
-//                        }
-//                    } else {
-                        hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
-//                    }
+                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
                 }
                 break;
 

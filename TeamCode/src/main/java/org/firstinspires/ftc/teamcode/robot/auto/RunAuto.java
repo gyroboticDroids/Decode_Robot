@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
@@ -25,22 +26,22 @@ import java.util.List;
 @Autonomous(name = "run auto", group = "close auto", preselectTeleOp = "Master Tele-op")
 public class RunAuto extends OpMode {
     private final static double MAX_POWER = 1;
-    private final static double SLOW_POWER = 0.6;
+    private final static double SLOW_POWER = 0.8;
 
     private List<Integer> routine;
     private int currentRoutineIndex = 0;
     int currentAction = 0;
     private int nextPath = -1;
 
-    private Pose startClose = new Pose(126, 123, Math.toRadians(270)),
+    private Pose startClose = new Pose(118, 124, Math.toRadians(45)),
             startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
-            scoreClose = new Pose(110, 110, Math.toRadians(0)),
-            scoreMiddle = new Pose(90, 90, Math.toRadians(0)),
+            scoreClose = new Pose(100, 100, Math.toRadians(0)),
+            scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
             scoreFar = new Pose(84, 12, Math.toRadians(0)),
             balls1 = new Pose(120, 84, Math.toRadians(0)),
             balls2 = new Pose(126, 60, Math.toRadians(0)),
             balls3 = new Pose(126, 36, Math.toRadians(0)),
-            gate1 = new Pose(122, 66, Math.toRadians(0)),
+            gate1 = new Pose(130, 59, Math.toRadians(35)),
             gate2 = new Pose(128.5, 49, Math.toRadians(30)),
 
             hp = new Pose(128, 8, Math.toRadians(0)),
@@ -48,9 +49,9 @@ public class RunAuto extends OpMode {
             endFar = new Pose(105, 33, Math.toRadians(0));
 
     private Pose controlBalls1 = new Pose(95, 82),
-            controlBalls2 = new Pose(80, 60),
-            controlBalls3 = new Pose(80, 36),
-            controlGate = new Pose(80, 61),
+            controlBalls2 = new Pose(90, 60),
+            controlBalls3 = new Pose(85, 36),
+            controlGate = new Pose(90, 61),
             controlHp = new Pose(100, 10);
 
     private Pose startPose;
@@ -267,12 +268,6 @@ public class RunAuto extends OpMode {
 
                     paths.add(path);
 
-                    path = new Path(new BezierLine(gate1, gate2));
-                    path.setLinearHeadingInterpolation(gate1.getHeading(), gate2.getHeading(), 0.7);
-                    path.setBrakingStrength(0.5);
-
-                    paths.add(path);
-
                     lastControlPoint = controlGate;
                     break;
 
@@ -359,6 +354,8 @@ public class RunAuto extends OpMode {
                 intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
+                ShooterConstants.flywheelOffset = 200;
+
                 follower.followPath(getPath());
 
                 setState(state + 1);
@@ -366,6 +363,7 @@ public class RunAuto extends OpMode {
 
             case 1:
                 if (shooter.flywheelUpToSpeed(80) && !ons) {
+                    ShooterConstants.flywheelOffset = 0;
                     intake.setState(Intake.State.INTAKE_LAUNCH);
                     shooter.setState(Shooter.State.LAUNCH);
                     ons = true;
@@ -377,7 +375,6 @@ public class RunAuto extends OpMode {
 
             case 2:
                 if (!shooter.isBusy()) {
-                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.READY);
                     return false;
                 }
@@ -398,13 +395,13 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (robotAtEnd && shooter.flywheelUpToSpeed(80) || ons) {
+                if (robotAtEnd && shooter.isGoalTargeted() || ons) {
                     if (!ons) {
                         timer.resetTimer();
                         ons = true;
                     }
 
-                    if (timer.getElapsedTimeSeconds() > 0.3) {
+                    if (timer.getElapsedTimeSeconds() > 0) {
                         intake.setState(Intake.State.INTAKE_LAUNCH);
                         shooter.setState(Shooter.State.LAUNCH);
 
@@ -415,7 +412,6 @@ public class RunAuto extends OpMode {
 
             case 2:
                 if (!shooter.isBusy()) {
-                    intake.setState(Intake.State.INTAKE);
                     shooter.setState(Shooter.State.READY);
                     return false;
                 }
@@ -428,6 +424,7 @@ public class RunAuto extends OpMode {
     private boolean spikeMarks() {
         switch (state) {
             case 0:
+                intake.setState(Intake.State.INTAKE);
                 follower.followPath(getPath());
                 setState(1);
                 break;
@@ -439,7 +436,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 2:
-                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.5) {
+                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.1) {
                     intake.setState(Intake.State.INTAKE_UP);
                     return false;
                 }
@@ -452,6 +449,7 @@ public class RunAuto extends OpMode {
     private boolean gate() {
         switch (state) {
             case 0:
+                intake.setState(Intake.State.INTAKE);
                 follower.setMaxPower(SLOW_POWER);
                 follower.followPath(getPath());
                 setState(1);
@@ -465,13 +463,6 @@ public class RunAuto extends OpMode {
                 break;
 
             case 2:
-                if (timer.getElapsedTimeSeconds() > 0.2) {
-                    follower.followPath(getPath());
-                    setState(3);
-                }
-                break;
-
-            case 3:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
                     intake.setState(Intake.State.INTAKE_UP);
                     return false;
@@ -485,6 +476,7 @@ public class RunAuto extends OpMode {
     private boolean hp() {
         switch (state) {
             case 0:
+                intake.setState(Intake.State.INTAKE);
                 follower.followPath(getPath());
                 setState(1);
                 break;
