@@ -6,7 +6,6 @@ import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,7 +15,6 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Vision;
 @Configurable
 @TeleOp(name = "test robot", group = "testing")
 public class TestRobot extends OpMode {
-    public static PIDFCoefficients flywheel = ShooterConstants.FLYWHEEL_PIDF;
 
     private Hardware hardware;
     private Vision vision;
@@ -46,7 +44,6 @@ public class TestRobot extends OpMode {
         hardware.parkLeft.setPosition(0.5);
         hardware.parkRight.setPosition(0.5);
 
-        //hardware.intakePivotLeft.setPosition(0.5);
         hardware.intakePivotRight.setPosition(0.5);
 
         hardware.door.setPosition(0.5);
@@ -56,8 +53,8 @@ public class TestRobot extends OpMode {
 
     @Override
     public void loop() {
-        hardware.flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, flywheel);
-        hardware.flywheel2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, flywheel);
+        hardware.flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
+        hardware.flywheel2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
 
         if(gamepad1.optionsWasPressed()) {
             state++;
@@ -107,12 +104,10 @@ public class TestRobot extends OpMode {
                 leftPivot = MathFunctions.clamp(leftPivot, 0, 1);
                 rightPivot = MathFunctions.clamp(rightPivot, 0, 1);
 
-                //hardware.intakePivotLeft.setPosition(leftPivot);
                 hardware.intakePivotRight.setPosition(rightPivot);
 
                 telemetry.addData("intake (g1 left stick y)", hardware.intake.getPower());
 
-                //telemetry.addData("left pivot (g2 left stick y)", hardware.intakePivotLeft.getPosition());
                 telemetry.addData("right pivot (g2 right stick y)", hardware.intakePivotRight.getPosition());
                 break;
 

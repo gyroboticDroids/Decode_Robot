@@ -27,6 +27,7 @@ public class Shooter {
     public double goalYOffset = 0;
 
     public double targetPos;
+    private double error = 0;
 
     private boolean isBusy = false;
 
@@ -36,7 +37,6 @@ public class Shooter {
     private double turretReset;
 
     private Vector launchVector = new Vector();
-    private Pose robotPos;
 
     //Ball detection
     private boolean ball1 = false;
@@ -148,7 +148,7 @@ public class Shooter {
     }
 
     private void targetGoal() {
-        robotPos = hardware.poseTracker.getPose();
+        Pose robotPos = hardware.poseTracker.getPose();
 
         goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
                 + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
@@ -223,7 +223,7 @@ public class Shooter {
         targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
                 * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset;
 
-        double error = targetPos - hardware.turret.getCurrentPosition();
+        error = targetPos - hardware.turret.getCurrentPosition();
 
         turretPIDFController.updateError(error);
 
@@ -293,15 +293,6 @@ public class Shooter {
     }
 
     public boolean isGoalTargeted() {
-        double robotHeading = Math.toDegrees(robotPos.getHeading());
-
-        if (robotHeading > 180) {
-            robotHeading -= 180;
-        } else if (robotHeading < -180) {
-            robotHeading += 180;
-        }
-        return flywheelUpToSpeed() && MathFunctions.roughlyEquals(hardware.turret.getCurrentPosition() /
-                ShooterConstants.TURRET_TICKS_PER_DEGREE - robotHeading, Math.toDegrees(goalToRobotVector.getTheta()),
-                2);
+        return Math.abs(error) < 3 && flywheelUpToSpeed();
     }
 }
