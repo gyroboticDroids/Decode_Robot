@@ -21,7 +21,7 @@ public class ShooterConstants {
     public static double FLYWHEEL_GEAR_RATIO = 1.6;
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 60; //ticks per second
-    public static double FLYWHEEL_RAMP_SPEED = 150;
+    public static double FLYWHEEL_RAMP_SPEED = 250;
     public static double FLYWHEEL_MIN_SPEED = 0;
     public static double FLYWHEEL_MAX_SPEED = 1400 * FLYWHEEL_GEAR_RATIO;
 

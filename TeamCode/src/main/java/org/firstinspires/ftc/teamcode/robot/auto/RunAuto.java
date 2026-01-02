@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
@@ -33,25 +32,25 @@ public class RunAuto extends OpMode {
     int currentAction = 0;
     private int nextPath = -1;
 
-    private Pose startClose = new Pose(118, 124, Math.toRadians(45)),
+    private Pose startClose = new Pose(115.25, 123.25, Math.toRadians(45)),
             startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
             scoreClose = new Pose(100, 100, Math.toRadians(0)),
             scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
-            scoreFar = new Pose(84, 12, Math.toRadians(0)),
-            balls1 = new Pose(120, 84, Math.toRadians(0)),
-            balls2 = new Pose(126, 60, Math.toRadians(0)),
-            balls3 = new Pose(126, 36, Math.toRadians(0)),
-            gate1 = new Pose(130, 59, Math.toRadians(35)),
+            scoreFar = new Pose(84, 19, Math.toRadians(0)),
+            balls1 = new Pose(117, 84, Math.toRadians(0)),
+            balls2 = new Pose(123, 57, Math.toRadians(0)),
+            balls3 = new Pose(123, 33, Math.toRadians(0)),
+            gate1 = new Pose(128, 58, Math.toRadians(35)),
             gate2 = new Pose(128.5, 49, Math.toRadians(30)),
 
             hp = new Pose(128, 8, Math.toRadians(0)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
             endFar = new Pose(105, 33, Math.toRadians(0));
 
-    private Pose controlBalls1 = new Pose(95, 82),
-            controlBalls2 = new Pose(90, 60),
-            controlBalls3 = new Pose(85, 36),
-            controlGate = new Pose(90, 61),
+    private Pose controlBalls1 = new Pose(95, 84),
+            controlBalls2 = new Pose(95, 57),
+            controlBalls3 = new Pose(90, 33),
+            controlGate = new Pose(100, 60),
             controlHp = new Pose(100, 10);
 
     private Pose startPose;
@@ -202,7 +201,7 @@ public class RunAuto extends OpMode {
                     path = new Path((lastControlPoint == null) ? new BezierCurve(lastPose, scoreClose) :
                             new BezierCurve(lastPose, lastControlPoint, scoreClose));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), scoreClose.getHeading(), 0.8);
-                    path.setBrakingStrength(0.6);
+                    path.setBrakingStrength(0.5);
 
                     paths.add(path);
 
@@ -212,8 +211,8 @@ public class RunAuto extends OpMode {
                 case 11:
                     path = new Path((lastControlPoint == null) ? new BezierCurve(lastPose, scoreMiddle) :
                             new BezierCurve(lastPose, lastControlPoint, scoreMiddle));
-                    path.setLinearHeadingInterpolation(lastPose.getHeading(), scoreMiddle.getHeading(), 0.8);
-                    path.setBrakingStrength(0.5);
+                    path.setLinearHeadingInterpolation(lastPose.getHeading(), scoreMiddle.getHeading(), 0.4);
+                    path.setBrakingStrength(0.3);
 
                     paths.add(path);
 
@@ -224,7 +223,7 @@ public class RunAuto extends OpMode {
                     path = new Path((lastControlPoint == null) ? new BezierCurve(lastPose, scoreFar) :
                             new BezierCurve(lastPose, lastControlPoint, scoreFar));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading(), 0.8);
-                    path.setBrakingStrength(0.5);
+                    path.setBrakingStrength(0.4);
 
                     paths.add(path);
 
@@ -244,7 +243,7 @@ public class RunAuto extends OpMode {
                 case 21:
                     path = new Path(new BezierCurve(lastPose, controlBalls2, balls2));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7);
-                    path.setBrakingStrength(0.8);
+                    path.setBrakingStrength(0.7);
 
                     paths.add(path);
 
@@ -254,7 +253,7 @@ public class RunAuto extends OpMode {
                 case 22:
                     path = new Path(new BezierCurve(lastPose, controlBalls3, balls3));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7);
-                    path.setBrakingStrength(0.8);
+                    path.setBrakingStrength(0.7);
 
                     paths.add(path);
 
@@ -264,7 +263,7 @@ public class RunAuto extends OpMode {
                 case 30:
                     path = new Path(new BezierCurve(lastPose, controlGate, gate1));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), gate1.getHeading(), 0.7);
-                    path.setBrakingStrength(0.4);
+                    path.setBrakingStrength(0.3);
 
                     paths.add(path);
 
@@ -354,23 +353,23 @@ public class RunAuto extends OpMode {
                 intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
-                ShooterConstants.flywheelOffset = 200;
-
+                follower.setMaxPower(SLOW_POWER);
                 follower.followPath(getPath());
 
                 setState(state + 1);
                 break;
 
             case 1:
-                if (shooter.flywheelUpToSpeed(80) && !ons) {
-                    ShooterConstants.flywheelOffset = 0;
+                if (follower.getCurrentTValue() > 0.4 && !ons) {
                     intake.setState(Intake.State.INTAKE_LAUNCH);
                     shooter.setState(Shooter.State.LAUNCH);
                     ons = true;
                 }
 
-                if (robotAtEnd && ons)
+                if (robotAtEnd && ons) {
+                    follower.setMaxPower(MAX_POWER);
                     setState(state + 1);
+                }
                 break;
 
             case 2:
@@ -387,37 +386,40 @@ public class RunAuto extends OpMode {
     private boolean score() {
         switch (state) {
             case 0:
-                intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
                 Path path = getPath();
-
                 follower.followPath(path);
 
-                shooter.robotShootPosition = path.endPose();
                 setState(1);
                 break;
 
             case 1:
+                if(timer.getElapsedTimeSeconds() > 0.5) {
+                    intake.setState(Intake.State.INTAKE_UP);
+                    setState(2);
+                }
+                break;
+
+            case 2:
                 if (robotAtEnd && shooter.isGoalTargeted() || ons) {
                     if (!ons) {
                         timer.resetTimer();
                         ons = true;
                     }
 
-                    if (timer.getElapsedTimeSeconds() > 0) {
+                    if (timer.getElapsedTimeSeconds() > 0.1) {
                         intake.setState(Intake.State.INTAKE_LAUNCH);
                         shooter.setState(Shooter.State.LAUNCH);
 
-                        setState(2);
+                        setState(3);
                     }
                 }
                 break;
 
-            case 2:
+            case 3:
                 if (!shooter.isBusy()) {
                     shooter.setState(Shooter.State.READY);
-                    shooter.robotShootPosition = null;
                     return false;
                 }
                 break;
@@ -442,7 +444,7 @@ public class RunAuto extends OpMode {
 
             case 2:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.1) {
-                    intake.setState(Intake.State.INTAKE_UP);
+                    //intake.setState(Intake.State.INTAKE_UP);
                     return false;
                 }
                 break;

@@ -23,8 +23,6 @@ public class Shooter {
 
     private final Vector goalToRobotVector = new Vector();
 
-    public Pose robotShootPosition = null;
-
     public double goalXOffset = 0;
     public double goalYOffset = 0;
 
@@ -142,7 +140,7 @@ public class Shooter {
     }
 
     private void targetGoal() {
-        Pose robotPos = (robotShootPosition == null) ? hardware.poseTracker.getPose() : robotShootPosition;
+        Pose robotPos = hardware.poseTracker.getPose();
 
         goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
                 + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
