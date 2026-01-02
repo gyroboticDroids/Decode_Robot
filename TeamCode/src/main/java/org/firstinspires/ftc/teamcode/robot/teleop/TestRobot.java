@@ -114,7 +114,7 @@ public class TestRobot extends OpMode {
             case 2:
                 telemetry.addLine("----------Shooter---------");
 
-                flywheelSpeed += gamepad1.left_stick_y * 1;
+                flywheelSpeed += gamepad1.left_stick_y * 3;
 
                 if (gamepad1.cross)
                     flywheelSpeed = 0;

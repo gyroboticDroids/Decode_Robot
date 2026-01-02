@@ -18,11 +18,12 @@ public class ShooterConstants {
     }
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(200, 0.7, 0, 0);
+    public static double FLYWHEEL_GEAR_RATIO = 1.6;
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 60; //ticks per second
-    public static double FLYWHEEL_RAMP_SPEED = 175;
+    public static double FLYWHEEL_RAMP_SPEED = 150;
     public static double FLYWHEEL_MIN_SPEED = 0;
-    public static double FLYWHEEL_MAX_SPEED = 1400;
+    public static double FLYWHEEL_MAX_SPEED = 1400 * FLYWHEEL_GEAR_RATIO;
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
             new com.pedropathing.control.PIDFCoefficients(0.025, 0, 0.0012, 0);
@@ -46,7 +47,8 @@ public class ShooterConstants {
     public static double flywheelOffset = 0;
 
     public static double getFlywheelTicksFromVelocity(double velocity, double hoodAngle) {
-        return MathFunctions.clamp((68.041 * velocity / 12 - 243.54) * getFlywheelMultiplier(hoodAngle) + flywheelOffset, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
+        return MathFunctions.clamp((68.041 * velocity / 12 - 243.54) * getFlywheelMultiplier(hoodAngle) *
+                FLYWHEEL_GEAR_RATIO + flywheelOffset, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
     }
 
     public static double getFlywheelMultiplier(double hoodAngle) {

@@ -39,6 +39,8 @@ public class MasterTeleop extends OpMode {
         intake = new Intake(hardware);
         shooter = new Shooter(hardware);
 
+        shooter.robotShootPosition = null;
+
         //Bulk reading
         allHubs = hardwareMap.getAll(LynxModule.class);
 

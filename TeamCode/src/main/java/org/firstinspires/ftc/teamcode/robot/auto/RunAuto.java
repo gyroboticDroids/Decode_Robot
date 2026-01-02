@@ -390,7 +390,11 @@ public class RunAuto extends OpMode {
                 intake.setState(Intake.State.INTAKE_UP);
                 shooter.setState(Shooter.State.READY);
 
-                follower.followPath(getPath());
+                Path path = getPath();
+
+                follower.followPath(path);
+
+                shooter.robotShootPosition = path.endPose();
                 setState(1);
                 break;
 
@@ -413,6 +417,7 @@ public class RunAuto extends OpMode {
             case 2:
                 if (!shooter.isBusy()) {
                     shooter.setState(Shooter.State.READY);
+                    shooter.robotShootPosition = null;
                     return false;
                 }
                 break;
