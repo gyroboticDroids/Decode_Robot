@@ -41,7 +41,7 @@ public class RunAuto extends OpMode {
             balls2 = new Pose(123, 57, Math.toRadians(0)),
             balls3 = new Pose(123, 33, Math.toRadians(0)),
             gate1 = new Pose(128, 58, Math.toRadians(35)),
-            gate2 = new Pose(128.5, 49, Math.toRadians(30)),
+            gate2 = new Pose(128.5, 49, Math.toRadians(29)),
 
             hp = new Pose(128, 8, Math.toRadians(0)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
@@ -322,7 +322,7 @@ public class RunAuto extends OpMode {
     }
 
     private void autonomousPathUpdate() {
-        robotAtEnd = follower.getCurrentTValue() > 0.98;
+        robotAtEnd = follower.getCurrentTValue() > 0.97;
 
         if (!isBusy) {
             nextAction();
@@ -408,7 +408,7 @@ public class RunAuto extends OpMode {
                         ons = true;
                     }
 
-                    if (timer.getElapsedTimeSeconds() > 0.1) {
+                    if (timer.getElapsedTimeSeconds() > 0) {
                         intake.setState(Intake.State.INTAKE_LAUNCH);
                         shooter.setState(Shooter.State.LAUNCH);
 
@@ -443,8 +443,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 2:
-                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0.1) {
-                    //intake.setState(Intake.State.INTAKE_UP);
+                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 0) {
                     return false;
                 }
                 break;
@@ -471,7 +470,6 @@ public class RunAuto extends OpMode {
 
             case 2:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
-                    intake.setState(Intake.State.INTAKE_UP);
                     return false;
                 }
                 break;
