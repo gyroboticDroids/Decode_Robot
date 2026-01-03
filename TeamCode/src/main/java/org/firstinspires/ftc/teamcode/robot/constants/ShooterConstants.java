@@ -27,7 +27,8 @@ public class ShooterConstants {
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
             new com.pedropathing.control.PIDFCoefficients(0.025, 0, 0.0012, 0);
-    public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0;
+    public static double TURRET_GEAR_RATIO = (28.0 / 91) / (22.0 / 97);
+    public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0 * TURRET_GEAR_RATIO;
     public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_MIN_ANGLE = -93;
     public static double TURRET_MAX_ANGLE = 92;

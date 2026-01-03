@@ -32,7 +32,7 @@ public class RunAuto extends OpMode {
     int currentAction = 0;
     private int nextPath = -1;
 
-    private Pose startClose = new Pose(115.25, 123.25, Math.toRadians(45)),
+    private Pose startClose = new Pose(115.75, 124, Math.toRadians(45)),
             startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
             scoreClose = new Pose(100, 100, Math.toRadians(0)),
             scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
@@ -40,8 +40,8 @@ public class RunAuto extends OpMode {
             balls1 = new Pose(117, 84, Math.toRadians(0)),
             balls2 = new Pose(123, 57, Math.toRadians(0)),
             balls3 = new Pose(123, 33, Math.toRadians(0)),
-            gate1 = new Pose(128, 58, Math.toRadians(35)),
-            gate2 = new Pose(128.5, 49, Math.toRadians(29)),
+            gate1 = new Pose(128, 57.5, Math.toRadians(37)),
+            gate2 = new Pose(121, 63.25, Math.toRadians(0)),
 
             hp = new Pose(128, 8, Math.toRadians(0)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
@@ -49,7 +49,7 @@ public class RunAuto extends OpMode {
 
     private Pose controlBalls1 = new Pose(95, 84),
             controlBalls2 = new Pose(95, 57),
-            controlBalls3 = new Pose(90, 33),
+            controlBalls3 = new Pose(92, 33),
             controlGate = new Pose(100, 60),
             controlHp = new Pose(100, 10);
 
@@ -270,6 +270,22 @@ public class RunAuto extends OpMode {
                     lastControlPoint = controlGate;
                     break;
 
+                case 31:
+                    path = new Path(new BezierCurve(lastPose, controlGate, gate1));
+                    path.setLinearHeadingInterpolation(lastPose.getHeading(), gate1.getHeading(), 0.7);
+                    path.setBrakingStrength(0.3);
+
+                    paths.add(path);
+
+                    path = new Path(new BezierLine(gate1, gate2));
+                    path.setLinearHeadingInterpolation(gate1.getHeading(), gate2.getHeading(), 1);
+                    path.setBrakingStrength(0.3);
+
+                    paths.add(path);
+
+                    lastControlPoint = controlGate;
+                    break;
+
                 case 40:
                     path = new Path(new BezierCurve(lastPose, controlHp, hp));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), hp.getHeading(), 0.7);
@@ -458,17 +474,36 @@ public class RunAuto extends OpMode {
                 intake.setState(Intake.State.INTAKE);
                 follower.setMaxPower(SLOW_POWER);
                 follower.followPath(getPath());
-                setState(1);
-                break;
 
-            case 1:
-                if (robotAtEnd) {
-                    follower.setMaxPower(MAX_POWER);
+                if(currentAction == 31) {
+                    setState(1);
+                } else {
                     setState(2);
                 }
                 break;
 
+            case 1:
+                if (robotAtEnd || ons) {
+                    if(!ons) {
+                        timer.resetTimer();
+                        ons = true;
+                    }
+
+                    if (timer.getElapsedTimeSeconds() > 0.5) {
+                        follower.followPath(getPath());
+                        setState(3);
+                    }
+                }
+                break;
+
             case 2:
+                if (robotAtEnd) {
+                    follower.setMaxPower(MAX_POWER);
+                    setState(3);
+                }
+                break;
+
+            case 3:
                 if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
                     return false;
                 }
