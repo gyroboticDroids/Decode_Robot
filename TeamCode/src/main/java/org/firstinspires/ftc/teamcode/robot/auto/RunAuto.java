@@ -37,10 +37,10 @@ public class RunAuto extends OpMode {
             scoreClose = new Pose(100, 100, Math.toRadians(0)),
             scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
             scoreFar = new Pose(84, 19, Math.toRadians(0)),
-            balls1 = new Pose(117, 84, Math.toRadians(0)),
-            balls2 = new Pose(123, 57, Math.toRadians(0)),
-            balls3 = new Pose(123, 33, Math.toRadians(0)),
-            gate1 = new Pose(128, 57.5, Math.toRadians(37)),
+            balls1 = new Pose(115, 84, Math.toRadians(0)),
+            balls2 = new Pose(120, 57, Math.toRadians(0)),
+            balls3 = new Pose(120, 33, Math.toRadians(0)),
+            gate1 = new Pose(129, 58, Math.toRadians(37)),
             gate2 = new Pose(121, 63.25, Math.toRadians(0)),
 
             hp = new Pose(128, 8, Math.toRadians(0)),
@@ -48,7 +48,7 @@ public class RunAuto extends OpMode {
             endFar = new Pose(105, 33, Math.toRadians(0));
 
     private Pose controlBalls1 = new Pose(95, 84),
-            controlBalls2 = new Pose(95, 57),
+            controlBalls2 = new Pose(90, 57),
             controlBalls3 = new Pose(92, 33),
             controlGate = new Pose(100, 60),
             controlHp = new Pose(100, 10);
@@ -212,7 +212,7 @@ public class RunAuto extends OpMode {
                     path = new Path((lastControlPoint == null) ? new BezierCurve(lastPose, scoreMiddle) :
                             new BezierCurve(lastPose, lastControlPoint, scoreMiddle));
                     path.setLinearHeadingInterpolation(lastPose.getHeading(), scoreMiddle.getHeading(), 0.4);
-                    path.setBrakingStrength(0.3);
+                    path.setBrakingStrength(0.4);
 
                     paths.add(path);
 
@@ -382,14 +382,14 @@ public class RunAuto extends OpMode {
                     ons = true;
                 }
 
-                if (robotAtEnd && ons) {
+                if (ons) {
                     follower.setMaxPower(MAX_POWER);
                     setState(state + 1);
                 }
                 break;
 
             case 2:
-                if (!shooter.isBusy()) {
+                if (!shooter.isBusy() && follower.getCurrentTValue() > 0.9) {
                     shooter.setState(Shooter.State.READY);
                     return false;
                 }
@@ -418,18 +418,11 @@ public class RunAuto extends OpMode {
                 break;
 
             case 2:
-                if (robotAtEnd && shooter.isGoalTargeted() || ons) {
-                    if (!ons) {
-                        timer.resetTimer();
-                        ons = true;
-                    }
+                if (robotAtEnd && shooter.isGoalTargeted()) {
+                    intake.setState(Intake.State.INTAKE_LAUNCH);
+                    shooter.setState(Shooter.State.LAUNCH);
 
-                    if (timer.getElapsedTimeSeconds() > 0) {
-                        intake.setState(Intake.State.INTAKE_LAUNCH);
-                        shooter.setState(Shooter.State.LAUNCH);
-
-                        setState(3);
-                    }
+                    setState(3);
                 }
                 break;
 
@@ -504,7 +497,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 3:
-                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 2) {
+                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 1.75) {
                     return false;
                 }
                 break;

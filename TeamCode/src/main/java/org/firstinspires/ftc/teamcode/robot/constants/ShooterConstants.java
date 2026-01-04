@@ -26,13 +26,13 @@ public class ShooterConstants {
     public static double FLYWHEEL_MAX_SPEED = 1400 * FLYWHEEL_GEAR_RATIO;
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
-            new com.pedropathing.control.PIDFCoefficients(0.025, 0, 0.0012, 0);
+            new com.pedropathing.control.PIDFCoefficients(0.02, 0, 0.0012, 0);
     public static double TURRET_GEAR_RATIO = (28.0 / 91) / (22.0 / 97);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0 * TURRET_GEAR_RATIO;
     public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_MIN_ANGLE = -93;
     public static double TURRET_MAX_ANGLE = 92;
-    public static double TURRET_MAX_SPEED = 0.5;
+    public static double TURRET_MAX_SPEED = 0.8;
 
     public static double HOOD_MIN_ANGLE = Math.toRadians(70); //radians
     public static double HOOD_MAX_ANGLE = Math.toRadians(40); //radians
