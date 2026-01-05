@@ -12,6 +12,7 @@ public class ShooterConstants {
     public static double SCORE_HEIGHT = 24; //inches
     public static double SCORE_ANGLE = Math.toRadians(-30); //radians
     public static double PASS_THROUGH_POINT_RADIUS = 5; //inches
+    public static double SCORE_ACCURACY = 6;
 
     public static Pose getGoalPos() {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;

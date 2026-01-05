@@ -283,6 +283,7 @@ public class Shooter {
     }
 
     public boolean isGoalTargeted() {
-        return Math.abs(error) < 3 && flywheelUpToSpeed();
+        return Math.abs(error) < ShooterConstants.TURRET_TICKS_PER_DEGREE * Math.toDegrees(Math.atan(ShooterConstants.SCORE_ACCURACY /
+                goalToRobotVector.getMagnitude())) && flywheelUpToSpeed();
     }
 }
