@@ -37,7 +37,7 @@ public class RunAuto extends OpMode {
             balls1 = new Pose(115, 84, Math.toRadians(0)),
             balls2 = new Pose(120, 57, Math.toRadians(0)),
             balls3 = new Pose(120, 33, Math.toRadians(0)),
-            gate1 = new Pose(100, 63, Math.toRadians(0)),
+            gate1 = new Pose(113, 63, Math.toRadians(0)),
             gate3 = new Pose(129, 58, Math.toRadians(37)),
             gate2 = new Pose(121, 63.25, Math.toRadians(0)),
 
@@ -48,7 +48,7 @@ public class RunAuto extends OpMode {
     private Pose controlBalls1 = new Pose(95, 84),
             controlBalls2 = new Pose(90, 57),
             controlBalls3 = new Pose(92, 33),
-            controlGate = new Pose(100, 60),
+            controlGate = new Pose(100, 63),
             controlHp = new Pose(100, 10);
 
     private Pose startPose;
@@ -374,6 +374,7 @@ public class RunAuto extends OpMode {
         telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("robot at end", robotAtEnd);
         telemetry.addData("is busy", isBusy);
+        telemetry.addData("is goal targeted", shooter.isGoalTargeted());
         telemetry.update();
     }
 
@@ -415,7 +416,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (follower.getCurrentTValue() > 0.4 && !ons) {
+                if (follower.getCurrentTValue() > 0.4 && !ons && shooter.flywheelUpToSpeed(150)) {
                     intake.setState(Intake.State.INTAKE_LAUNCH);
                     shooter.setState(Shooter.State.LAUNCH);
                     ons = true;
@@ -510,7 +511,7 @@ public class RunAuto extends OpMode {
 
             case 1:
                 if (robotAtEnd) {
-                    follower.followPath(getPath());
+                    follower.followPath(getPath(), 0.7,true);
 
                     if (currentAction == 31) {
                         setState(2);

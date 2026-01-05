@@ -206,12 +206,15 @@ public class Shooter {
     }
 
     private void turretMoveTo(double angle) {
+        //for turret accuracy
+        error = angle * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset - hardware.turret.getCurrentPosition();
+
         targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
                 * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset;
 
-        error = targetPos - hardware.turret.getCurrentPosition();
+        double clampedError = targetPos - hardware.turret.getCurrentPosition();
 
-        turretPIDFController.updateError(error);
+        turretPIDFController.updateError(clampedError);
 
         double motorPower = MathFunctions.clamp(turretPIDFController.run(),
                 -ShooterConstants.TURRET_MAX_SPEED, ShooterConstants.TURRET_MAX_SPEED);
@@ -231,10 +234,6 @@ public class Shooter {
         if (hardware.ball3.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
             ball3Timer.resetTimer();
         ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
-    }
-
-    public boolean isLastBall() {
-        return !ball1 && !ball2;
     }
 
     public boolean isNoBalls() {
@@ -284,6 +283,6 @@ public class Shooter {
 
     public boolean isGoalTargeted() {
         return Math.abs(error) < ShooterConstants.TURRET_TICKS_PER_DEGREE * Math.toDegrees(Math.atan(ShooterConstants.SCORE_ACCURACY /
-                goalToRobotVector.getMagnitude())) && flywheelUpToSpeed();
+                goalToRobotVector.getMagnitude())) * 2 && flywheelUpToSpeed();
     }
 }
