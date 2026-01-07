@@ -141,8 +141,8 @@ public class Shooter {
 
         launchVector = calculateShotVectorAndUpdateTurret(robotPos.getHeading());
 
-        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta())));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta())));
+        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
 
         hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
     }
@@ -246,13 +246,13 @@ public class Shooter {
 
     public boolean flywheelUpToSpeed() {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta()),
+                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
                 ShooterConstants.FLYWHEEL_ACCURACY);
     }
 
     public boolean flywheelUpToSpeed(double accuracy) {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude(), launchVector.getTheta()),
+                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
                 accuracy);
     }
 

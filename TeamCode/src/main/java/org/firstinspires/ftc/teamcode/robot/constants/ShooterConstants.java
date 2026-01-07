@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(141, 141);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
-    public static double SCORE_HEIGHT = 24; //inches
+    public static double SCORE_HEIGHT = 26; //inches
     public static double SCORE_ANGLE = Math.toRadians(-30); //radians
     public static double PASS_THROUGH_POINT_RADIUS = 5; //inches
     public static double SCORE_ACCURACY = 6;
@@ -19,12 +19,11 @@ public class ShooterConstants {
     }
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(200, 0.7, 0, 0);
-    public static double FLYWHEEL_GEAR_RATIO = 1.6;
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 60; //ticks per second
     public static double FLYWHEEL_RAMP_SPEED = 250;
     public static double FLYWHEEL_MIN_SPEED = 0;
-    public static double FLYWHEEL_MAX_SPEED = 1400 * FLYWHEEL_GEAR_RATIO;
+    public static double FLYWHEEL_MAX_SPEED = 2300;
 
     public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
             new com.pedropathing.control.PIDFCoefficients(0.02, 0, 0.0012, 0);
@@ -35,8 +34,8 @@ public class ShooterConstants {
     public static double TURRET_MAX_ANGLE = 92;
     public static double TURRET_MAX_SPEED = 0.8;
 
-    public static double HOOD_MIN_ANGLE = Math.toRadians(70); //radians
-    public static double HOOD_MAX_ANGLE = Math.toRadians(40); //radians
+    public static double HOOD_MIN_ANGLE = Math.toRadians(72.8); //radians
+    public static double HOOD_MAX_ANGLE = Math.toRadians(40.7); //radians
 
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
@@ -48,17 +47,12 @@ public class ShooterConstants {
     public static double BALL_DETECTION_DISTANCE = 1;//inches
     public static double flywheelOffset = 0;
 
-    public static double getFlywheelTicksFromVelocity(double velocity, double hoodAngle) {
-        return MathFunctions.clamp((68.041 * velocity / 12 - 243.54) * getFlywheelMultiplier(hoodAngle) *
-                FLYWHEEL_GEAR_RATIO + flywheelOffset, FLYWHEEL_MIN_SPEED, FLYWHEEL_MAX_SPEED);
-    }
-
-    public static double getFlywheelMultiplier(double hoodAngle) {
-        double a = Math.toDegrees(hoodAngle);
-        return 0.0001 * a * a - 0.0074 * a + 1.1323;
+    public static double getFlywheelTicksFromVelocity(double velocity) {
+        return MathFunctions.clamp(94.501 * velocity / 12 - 187.96 + flywheelOffset, FLYWHEEL_MIN_SPEED,
+                FLYWHEEL_MAX_SPEED);
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
-        return 0.0268 * degrees - 0.9569;
+        return 0.0226 * degrees - 0.7443;
     }
 }
