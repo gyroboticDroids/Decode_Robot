@@ -19,7 +19,7 @@ public class ConfigureAuto extends OpMode {
     private final String[] spikeMarkNames = {"spike mark 1","spike mark 2", "spike mark 2 + gate", "spike mark 3"};
     private final String[] gateCollectNames = {"gate fast collect", "gate friendly collect"};
     private final String[] humanPlayerCollectNames = {"human player preset", "human player from gate"};
-    private final String[] waitNames = {"wait (1 second)"};
+    private final String[] waitNames = {"wait (0.5 second)"};
     private final String[][] allTaskNames = {startingNames, shootingNames, spikeMarkNames, gateCollectNames, humanPlayerCollectNames, waitNames};
 
     private int selectedGroup = 0;
@@ -27,6 +27,8 @@ public class ConfigureAuto extends OpMode {
     private boolean dpadOns = false;
     private boolean manageTaskOns = false;
     private boolean isStartSelected = false;
+
+    private int cycles = 0;
 
     @Override
     public void init() {
@@ -88,11 +90,14 @@ public class ConfigureAuto extends OpMode {
 
         telemetry.addLine("selected task = " + allTaskNames[selectedGroup][selectedTaskIndex - selectedGroup * 10]);
 
+        telemetry.addData("# of artifacts", cycles * 3);
+
         telemetry.addLine("\nroutine:");
-        for (int i = 0; i < routine.size(); i ++) {
+        for (int i = 0; i < routine.size(); i++) {
             telemetry.addLine((i) + ". " + allTaskNames[(Math.floorDiv(routine.get(i), 10))]
                     [routine.get(i) - ((Math.floorDiv(routine.get(i), 10)) * 10)]);
 
+            cycles += routine.get(i) >= 10 && routine.get(i) < 20 ? 1 : 0;
         }
 
         telemetry.update();
