@@ -25,7 +25,7 @@ public class Vision {
             if (angle > 360)
                 angle -= 360;
 
-            return new Pose(-robotPos.getPosition().x / 0.0254 + 72, robotPos.getPosition().y / 0.0254 + 72,
+            return new Pose(-robotPos.getPosition().x / 0.0254 + 70.625, robotPos.getPosition().y / 0.0254 + 70.625,
                     Math.toRadians(angle));
         }
 

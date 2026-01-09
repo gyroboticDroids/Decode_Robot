@@ -50,7 +50,7 @@ public class Drive {
                 vision.makeSnapshot(updatedPose.toString());
                 gamepad.rumble(0.5, 0.5, 500);
             } else {
-                poseTracker.setPose(new Pose(72 + 5, 72 - 6.5, TransferConstants.isAllianceColorRed ? 0 : Math.toRadians(180)));
+                poseTracker.setPose(new Pose(70.625, 70.625, TransferConstants.isAllianceColorRed ? 0 : Math.toRadians(180)));
             }
         }
 
