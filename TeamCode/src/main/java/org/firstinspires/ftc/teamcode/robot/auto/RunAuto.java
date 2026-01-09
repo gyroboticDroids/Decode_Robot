@@ -48,8 +48,10 @@ public class RunAuto extends OpMode {
 
     private Pose controlBalls1 = new Pose(95, 84),
             controlBalls2 = new Pose(90, 57),
-            controlBalls2Returning = new Pose(100, 57),
             controlBalls3 = new Pose(92, 33),
+            controlBalls1Far = new Pose(95, 87),
+            controlBalls2Far = new Pose(90, 60),
+            controlBalls3Far = new Pose(92, 36),
             controlGate = new Pose(100, 63),
             controlHp1 = new Pose(105, 10),
             controlHp3 = new Pose(127.5, 9);
@@ -188,8 +190,10 @@ public class RunAuto extends OpMode {
 
         controlBalls1 = controlBalls1.mirror();
         controlBalls2 = controlBalls2.mirror();
-        controlBalls2Returning = controlBalls2Returning.mirror();
         controlBalls3 = controlBalls3.mirror();
+        controlBalls1Far = controlBalls1Far.mirror();
+        controlBalls2Far = controlBalls2Far.mirror();
+        controlBalls3Far = controlBalls3Far.mirror();
         controlGate = controlGate.mirror();
         controlHp1 = controlHp1.mirror();
         controlHp3 = controlHp3.mirror();
@@ -200,6 +204,8 @@ public class RunAuto extends OpMode {
         Pose lastPose = startPose;
 
         PathChain path;
+
+        boolean scoringFar = false;
 
         for (int i = 1; i < routine.size(); i++) {
             switch (routine.get(i)) {
@@ -212,6 +218,7 @@ public class RunAuto extends OpMode {
 
                     paths.add(path);
 
+                    scoringFar = false;
                     lastControlPoint = null;
                     break;
 
@@ -224,65 +231,56 @@ public class RunAuto extends OpMode {
 
                     paths.add(path);
 
+                    scoringFar = false;
                     lastControlPoint = null;
                     break;
 
                 case 12:
-                    if (paths.isEmpty()) {
-                        path = follower.pathBuilder()
-                                .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
-                                        new BezierCurve(lastPose, lastControlPoint, scoreFar))
-                                .setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading())
-                                .setBrakingStart(3.5)
-                                .build();
-                    } else {
-                        path = follower.pathBuilder()
-                                .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
-                                        new BezierCurve(lastPose, lastControlPoint, scoreFar))
-                                .setTangentHeadingInterpolation().setReversed()
-                                .setBrakingStart(3.5)
-                                .build();
-                    }
+                    path = follower.pathBuilder()
+                            .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
+                                    new BezierCurve(lastPose, lastControlPoint, scoreFar))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading())
+                            .setBrakingStart(3.5)
+                            .build();
+
 
                     paths.add(path);
 
+                    scoringFar = true;
                     lastControlPoint = null;
                     break;
 
                 case 20:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlBalls1, balls1))
-                            .setTangentHeadingInterpolation()
-                            //.setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
+                            .addPath(new BezierCurve(lastPose, scoringFar ? controlBalls1Far : controlBalls1, balls1))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
                             .build();
 
                     paths.add(path);
 
-                    lastControlPoint = null;
+                    lastControlPoint = scoringFar ? controlBalls1Far : null;
                     break;
 
                 case 21:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlBalls2, balls2))
-                            .setTangentHeadingInterpolation()
-                            //.setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
+                            .addPath(new BezierCurve(lastPose, scoringFar ? controlBalls2Far : controlBalls2, balls2))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
 
-                    lastControlPoint = null;
+                    lastControlPoint = scoringFar ? controlBalls2Far : null;
                     break;
 
                 case 22:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlBalls3, balls3))
-                            .setTangentHeadingInterpolation()
-                            //.setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
+                            .addPath(new BezierCurve(lastPose, scoringFar ? controlBalls3Far : controlBalls3, balls3))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
 
-                    lastControlPoint = null;
+                    lastControlPoint = scoringFar ? controlBalls3Far : null;
                     break;
 
                 case 30:
@@ -331,7 +329,7 @@ public class RunAuto extends OpMode {
                 case 40:
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlHp1, hp1))
-                            .setTangentHeadingInterpolation()
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp1.getHeading())
                             .build();
 
                     paths.add(path);
@@ -349,7 +347,7 @@ public class RunAuto extends OpMode {
                 case 41:
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlHp1, hp1))
-                            .setTangentHeadingInterpolation()
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp1.getHeading())
                             .build();
 
                     paths.add(path);
