@@ -30,7 +30,7 @@ public class RunAuto extends OpMode {
     private int nextPath = -1;
 
     private Pose startClose = new Pose(115.5, 123, Math.toRadians(45)),
-            startFar = new Pose(77.3, 7.625, Math.toRadians(0)),
+            startFar = new Pose(86.1, 6.75, Math.toRadians(0)),
             scoreClose = new Pose(100, 100, Math.toRadians(0)),
             scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
             scoreFar = new Pose(84, 19, Math.toRadians(0)),
@@ -41,7 +41,9 @@ public class RunAuto extends OpMode {
             gate3 = new Pose(129, 58, Math.toRadians(37)),
             gate2 = new Pose(121, 63.25, Math.toRadians(0)),
 
-    hp = new Pose(128, 8, Math.toRadians(0)),
+            hp1 = new Pose(128, 8, Math.toRadians(0)),
+            hp2 = new Pose(108.25, 8, Math.toRadians(0)),
+            hp3 = new Pose(127.5, 19, Math.toRadians(45)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
             endFar = new Pose(105, 33, Math.toRadians(0));
 
@@ -49,7 +51,8 @@ public class RunAuto extends OpMode {
             controlBalls2 = new Pose(90, 57),
             controlBalls3 = new Pose(92, 33),
             controlGate = new Pose(100, 63),
-            controlHp = new Pose(100, 10);
+            controlHp1 = new Pose(100, 10),
+            controlHp2 = new Pose(100, 10);
 
     private Pose startPose;
 
@@ -177,7 +180,7 @@ public class RunAuto extends OpMode {
         gate1 = gate1.mirror();
         gate2 = gate2.mirror();
         gate3 = gate3.mirror();
-        hp = hp.mirror();
+        hp1 = hp1.mirror();
         endClose = endClose.mirror();
         endFar = endFar.mirror();
 
@@ -185,7 +188,7 @@ public class RunAuto extends OpMode {
         controlBalls2 = controlBalls2.mirror();
         controlBalls3 = controlBalls3.mirror();
         controlGate = controlGate.mirror();
-        controlHp = controlHp.mirror();
+        controlHp1 = controlHp1.mirror();
     }
 
     private void buildPaths() {
@@ -311,13 +314,13 @@ public class RunAuto extends OpMode {
 
                 case 40:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlHp, hp))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp.getHeading(), 0.7)
+                            .addPath(new BezierCurve(lastPose, controlHp1, hp1))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp1.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
 
-                    lastControlPoint = controlHp;
+                    lastControlPoint = controlHp1;
                     break;
             }
 
