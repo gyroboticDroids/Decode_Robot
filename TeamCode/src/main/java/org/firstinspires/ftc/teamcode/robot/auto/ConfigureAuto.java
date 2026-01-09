@@ -18,7 +18,7 @@ public class ConfigureAuto extends OpMode {
     private final String[] shootingNames = {"shoot close","shoot middle","shoot far"};
     private final String[] spikeMarkNames = {"spike mark 1","spike mark 2","spike mark 3"};
     private final String[] gateCollectNames = {"gate fast collect", "gate friendly collect"};
-    private final String[] humanPlayerCollectNames = {"human player collect"};
+    private final String[] humanPlayerCollectNames = {"human player preset", "human player from gate"};
     private final String[] waitNames = {"wait (1 second)"};
     private final String[][] allTaskNames = {startingNames, shootingNames, spikeMarkNames, gateCollectNames, humanPlayerCollectNames, waitNames};
 

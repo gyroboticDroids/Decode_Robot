@@ -34,25 +34,25 @@ public class RunAuto extends OpMode {
             scoreClose = new Pose(100, 100, Math.toRadians(0)),
             scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
             scoreFar = new Pose(84, 19, Math.toRadians(0)),
-            balls1 = new Pose(117, 84, Math.toRadians(0)),
-            balls2 = new Pose(122, 57, Math.toRadians(0)),
-            balls3 = new Pose(123, 33, Math.toRadians(0)),
+            balls1 = new Pose(117, 82.5, Math.toRadians(0)),
+            balls2 = new Pose(122, 59, Math.toRadians(0)),
+            balls3 = new Pose(123, 35, Math.toRadians(0)),
             gate1 = new Pose(113, 63, Math.toRadians(0)),
+            gate2 = new Pose(121, 65, Math.toRadians(0)),
             gate3 = new Pose(129, 58, Math.toRadians(37)),
-            gate2 = new Pose(121, 63.25, Math.toRadians(0)),
-
-            hp1 = new Pose(128, 8, Math.toRadians(0)),
-            hp2 = new Pose(108.25, 8, Math.toRadians(0)),
+            hp1 = new Pose(108.25, 8, Math.toRadians(0)),
+            hp2 = new Pose(128, 8, Math.toRadians(0)),
             hp3 = new Pose(127.5, 19, Math.toRadians(45)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
             endFar = new Pose(105, 33, Math.toRadians(0));
 
     private Pose controlBalls1 = new Pose(95, 84),
             controlBalls2 = new Pose(90, 57),
+            controlBalls2Returning = new Pose(100, 57),
             controlBalls3 = new Pose(92, 33),
             controlGate = new Pose(100, 63),
-            controlHp1 = new Pose(100, 10),
-            controlHp2 = new Pose(100, 10);
+            controlHp1 = new Pose(105, 10),
+            controlHp3 = new Pose(127.5, 9);
 
     private Pose startPose;
 
@@ -181,14 +181,18 @@ public class RunAuto extends OpMode {
         gate2 = gate2.mirror();
         gate3 = gate3.mirror();
         hp1 = hp1.mirror();
+        hp2 = hp2.mirror();
+        hp3 = hp3.mirror();
         endClose = endClose.mirror();
         endFar = endFar.mirror();
 
         controlBalls1 = controlBalls1.mirror();
         controlBalls2 = controlBalls2.mirror();
+        controlBalls2Returning = controlBalls2Returning.mirror();
         controlBalls3 = controlBalls3.mirror();
         controlGate = controlGate.mirror();
         controlHp1 = controlHp1.mirror();
+        controlHp3 = controlHp3.mirror();
     }
 
     private void buildPaths() {
@@ -224,12 +228,21 @@ public class RunAuto extends OpMode {
                     break;
 
                 case 12:
-                    path = follower.pathBuilder()
-                            .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
-                                    new BezierCurve(lastPose, lastControlPoint, scoreFar))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading(), 0.8)
-                            .setBrakingStart(3.5)
-                            .build();
+                    if (paths.isEmpty()) {
+                        path = follower.pathBuilder()
+                                .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
+                                        new BezierCurve(lastPose, lastControlPoint, scoreFar))
+                                .setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading())
+                                .setBrakingStart(3.5)
+                                .build();
+                    } else {
+                        path = follower.pathBuilder()
+                                .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
+                                        new BezierCurve(lastPose, lastControlPoint, scoreFar))
+                                .setTangentHeadingInterpolation().setReversed()
+                                .setBrakingStart(3.5)
+                                .build();
+                    }
 
                     paths.add(path);
 
@@ -239,7 +252,8 @@ public class RunAuto extends OpMode {
                 case 20:
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlBalls1, balls1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
+                            .setTangentHeadingInterpolation()
+                            //.setLinearHeadingInterpolation(lastPose.getHeading(), balls1.getHeading(), 0.5)
                             .build();
 
                     paths.add(path);
@@ -250,7 +264,8 @@ public class RunAuto extends OpMode {
                 case 21:
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlBalls2, balls2))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
+                            .setTangentHeadingInterpolation()
+                            //.setLinearHeadingInterpolation(lastPose.getHeading(), balls2.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
@@ -261,7 +276,8 @@ public class RunAuto extends OpMode {
                 case 22:
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlBalls3, balls3))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
+                            .setTangentHeadingInterpolation()
+                            //.setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
@@ -315,7 +331,32 @@ public class RunAuto extends OpMode {
                 case 40:
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlHp1, hp1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp1.getHeading(), 0.7)
+                            .setTangentHeadingInterpolation()
+                            .build();
+
+                    paths.add(path);
+
+                    path = follower.pathBuilder()
+                            .addPath(new BezierLine(hp1, hp2))
+                            .setLinearHeadingInterpolation(hp1.getHeading(), hp2.getHeading())
+                            .build();
+
+                    paths.add(path);
+
+                    lastControlPoint = controlHp1;
+                    break;
+
+                case 41:
+                    path = follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, controlHp1, hp1))
+                            .setTangentHeadingInterpolation()
+                            .build();
+
+                    paths.add(path);
+
+                    path = follower.pathBuilder()
+                            .addPath(new BezierCurve(hp1, controlHp3, hp3))
+                            .setLinearHeadingInterpolation(hp1.getHeading(), hp3.getHeading())
                             .build();
 
                     paths.add(path);
@@ -446,7 +487,7 @@ public class RunAuto extends OpMode {
                 break;
 
             case 2:
-                if (robotAtEnd && shooter.isGoalTargeted()) {
+                if (!follower.isBusy() && shooter.isGoalTargeted()) {
                     intake.setState(Intake.State.INTAKE_LAUNCH);
                     shooter.setState(Shooter.State.LAUNCH);
 
@@ -549,13 +590,20 @@ public class RunAuto extends OpMode {
                 break;
 
             case 1:
-                if (robotAtEnd || shooter.areBallsCollected()) {
+                if (robotAtEnd) {
+                    follower.followPath(getPath());
                     setState(2);
                 }
                 break;
 
             case 2:
-                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 1.5) {
+                if (robotAtEnd || shooter.areBallsCollected()) {
+                    setState(3);
+                }
+                break;
+
+            case 3:
+                if (shooter.areBallsCollected() || timer.getElapsedTimeSeconds() > 1) {
                     return false;
                 }
                 break;
