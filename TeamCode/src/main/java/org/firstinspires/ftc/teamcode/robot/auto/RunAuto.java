@@ -37,21 +37,21 @@ public class RunAuto extends OpMode {
             balls1 = new Pose(118, 82.5, Math.toRadians(0)),
             balls2 = new Pose(122, 59, Math.toRadians(0)),
             balls3 = new Pose(123, 35, Math.toRadians(0)),
-            gate1 = new Pose(115, 63, Math.toRadians(0)),
-            gate2 = new Pose(121, 65, Math.toRadians(0)),
-            gate3 = new Pose(129, 57.5, Math.toRadians(37)),
-            hp1 = new Pose(108.25, 8, Math.toRadians(0)),
-            hp2 = new Pose(128, 8, Math.toRadians(0)),
-            hp3 = new Pose(127.5, 19, Math.toRadians(45)),
+            gateReady = new Pose(115, 63, Math.toRadians(0)),
+            gateBump = new Pose(121, 65, Math.toRadians(0)),
+            gateCollect = new Pose(129, 57.5, Math.toRadians(37)),
+            hpReady = new Pose(108.25, 8, Math.toRadians(0)),
+            hpPreset = new Pose(128, 8, Math.toRadians(0)),
+            hpGate = new Pose(127.5, 19, Math.toRadians(45)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
             endFar = new Pose(105, 33, Math.toRadians(0));
 
     private Pose controlBalls1 = new Pose(95, 82),
             controlBalls2 = new Pose(90, 55),
             controlBalls3 = new Pose(92, 31),
-            controlBalls1Far = new Pose(95, 87),
-            controlBalls2Far = new Pose(90, 60),
-            controlBalls3Far = new Pose(92, 36),
+            controlBalls1Far = new Pose(95, 89),
+            controlBalls2Far = new Pose(90, 62),
+            controlBalls3Far = new Pose(92, 35),
             controlGate = new Pose(100, 63),
             controlHp1 = new Pose(105, 10),
             controlHp3 = new Pose(127.5, 9);
@@ -179,12 +179,12 @@ public class RunAuto extends OpMode {
         balls1 = balls1.mirror();
         balls2 = balls2.mirror();
         balls3 = balls3.mirror();
-        gate1 = gate1.mirror();
-        gate2 = gate2.mirror();
-        gate3 = gate3.mirror();
-        hp1 = hp1.mirror();
-        hp2 = hp2.mirror();
-        hp3 = hp3.mirror();
+        gateReady = gateReady.mirror();
+        gateBump = gateBump.mirror();
+        gateCollect = gateCollect.mirror();
+        hpReady = hpReady.mirror();
+        hpPreset = hpPreset.mirror();
+        hpGate = hpGate.mirror();
         endClose = endClose.mirror();
         endFar = endFar.mirror();
 
@@ -275,6 +275,17 @@ public class RunAuto extends OpMode {
 
                 case 22:
                     path = follower.pathBuilder()
+                            .addPath(new BezierCurve(lastPose, scoringFar ? controlBalls2Far : controlBalls2, gateBump))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), gateBump.getHeading(), 0.7)
+                            .build();
+
+                    paths.add(path);
+
+                    lastControlPoint = scoringFar ? controlBalls2Far : null;
+                    break;
+
+                case 23:
+                    path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, scoringFar ? controlBalls3Far : controlBalls3, balls3))
                             .setLinearHeadingInterpolation(lastPose.getHeading(), balls3.getHeading(), 0.7)
                             .build();
@@ -286,16 +297,16 @@ public class RunAuto extends OpMode {
 
                 case 30:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlGate, gate1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), gate1.getHeading(), 0.7)
+                            .addPath(new BezierCurve(lastPose, controlGate, gateReady))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), gateReady.getHeading(), 0.7)
                             .setBrakingStrength(1.2)
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierLine(gate1, gate3))
-                            .setLinearHeadingInterpolation(gate1.getHeading(), gate3.getHeading(), 0.7)
+                            .addPath(new BezierLine(gateReady, gateCollect))
+                            .setLinearHeadingInterpolation(gateReady.getHeading(), gateCollect.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
@@ -305,23 +316,23 @@ public class RunAuto extends OpMode {
 
                 case 31:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlGate, gate1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), gate1.getHeading(), 0.7)
+                            .addPath(new BezierCurve(lastPose, controlGate, gateReady))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), gateReady.getHeading(), 0.7)
                             .setBrakingStrength(1.2)
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierLine(gate1, gate2))
-                            .setLinearHeadingInterpolation(gate1.getHeading(), gate2.getHeading(), 0.7)
+                            .addPath(new BezierLine(gateReady, gateBump))
+                            .setLinearHeadingInterpolation(gateReady.getHeading(), gateBump.getHeading(), 0.7)
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierLine(gate2, gate3))
-                            .setLinearHeadingInterpolation(gate2.getHeading(), gate3.getHeading())
+                            .addPath(new BezierLine(gateBump, gateCollect))
+                            .setLinearHeadingInterpolation(gateBump.getHeading(), gateCollect.getHeading())
                             .build();
 
                     paths.add(path);
@@ -331,15 +342,15 @@ public class RunAuto extends OpMode {
 
                 case 40:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlHp1, hp1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp1.getHeading())
+                            .addPath(new BezierCurve(lastPose, controlHp1, hpReady))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady.getHeading())
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierLine(hp1, hp2))
-                            .setLinearHeadingInterpolation(hp1.getHeading(), hp2.getHeading())
+                            .addPath(new BezierLine(hpReady, hpPreset))
+                            .setLinearHeadingInterpolation(hpReady.getHeading(), hpPreset.getHeading())
                             .build();
 
                     paths.add(path);
@@ -349,15 +360,15 @@ public class RunAuto extends OpMode {
 
                 case 41:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlHp1, hp1))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hp1.getHeading())
+                            .addPath(new BezierCurve(lastPose, controlHp1, hpReady))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady.getHeading())
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(hp1, controlHp3, hp3))
-                            .setLinearHeadingInterpolation(hp1.getHeading(), hp3.getHeading())
+                            .addPath(new BezierCurve(hpReady, controlHp3, hpGate))
+                            .setLinearHeadingInterpolation(hpReady.getHeading(), hpGate.getHeading())
                             .build();
 
                     paths.add(path);
