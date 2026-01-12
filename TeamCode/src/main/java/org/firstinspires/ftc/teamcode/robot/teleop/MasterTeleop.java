@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Drive;
@@ -59,8 +60,6 @@ public class MasterTeleop extends OpMode {
 
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
-
-        gamepad2.setLedColor(1, 1, 1, -1);
 
         lastGamepad1.copy(gamepad1);
         lastGamepad2.copy(gamepad2);
@@ -122,7 +121,13 @@ public class MasterTeleop extends OpMode {
     }
 
     private void driveUpdate() {
-        drive.headingLock = gamepad1.cross;
+        if(gamepad1.cross) {
+            drive.headingLock = DriveConstants.getParkHeading();
+        } else if (gamepad1.square) {
+            drive.headingLock = DriveConstants.getGateHeading();
+        } else {
+            drive.headingLock = -1;
+        }
 
         if (gamepad1.touchpad && !lastGamepad1.touchpad && TransferConstants.isAllianceColorRed) {
             TransferConstants.isAllianceColorRed = false;
@@ -176,9 +181,11 @@ public class MasterTeleop extends OpMode {
         if (gamepad2.options && !lastGamepad2.options && shooter.runTurret) {
             shooter.runTurret = false;
             gamepad2.rumble(0.5, 0.5, 500);
+            gamepad2.setLedColor(1, 0, 0, -1);
         } else if (gamepad2.options && !lastGamepad2.options && !shooter.runTurret) {
             shooter.runTurret = true;
             gamepad2.rumble(0.5, 0.5, 500);
+            gamepad2.setLedColor(0, 1, 0, -1);
         }
 
         if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {

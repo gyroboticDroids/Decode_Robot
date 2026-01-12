@@ -21,7 +21,7 @@ public class Drive {
 
     private double speedMultiplier = 1;
 
-    public boolean headingLock = false;
+    public double headingLock = -1;
     private boolean resetHeading = false;
     private boolean prevResetHeading = false;
 
@@ -57,8 +57,8 @@ public class Drive {
         poseTracker.update();
         robotPos = poseTracker.getPose();
 
-        if (headingLock)
-            autoTurn();
+        if (headingLock >= 0)
+            autoTurn(headingLock);
 
         park();
         movement();
@@ -69,7 +69,7 @@ public class Drive {
     private void input() {
         y = (TransferConstants.isAllianceColorRed ? -1 : 1) * gamepad.left_stick_y * speedMultiplier;
         x = (TransferConstants.isAllianceColorRed ? 1 : -1) * gamepad.left_stick_x * speedMultiplier;
-        rx = (headingLock) ? 0 : -gamepad.right_stick_x;
+        rx = (headingLock >= 0) ? 0 : -gamepad.right_stick_x;
 
         if (gamepad.dpad_down)
             park = true;
@@ -79,8 +79,8 @@ public class Drive {
         resetHeading = gamepad.share;
     }
 
-    private void autoTurn() {
-        double error = DriveConstants.getParkHeading() - Math.toDegrees(robotPos.getHeading());
+    private void autoTurn(double angle) {
+        double error = angle - Math.toDegrees(robotPos.getHeading());
 
         if (error > 180) {
             error -= 360;

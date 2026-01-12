@@ -92,6 +92,8 @@ public class ConfigureAuto extends OpMode {
 
         telemetry.addData("# of artifacts", cycles * 3);
 
+        cycles = 0;
+
         telemetry.addLine("\nroutine:");
         for (int i = 0; i < routine.size(); i++) {
             telemetry.addLine((i) + ". " + allTaskNames[(Math.floorDiv(routine.get(i), 10))]
