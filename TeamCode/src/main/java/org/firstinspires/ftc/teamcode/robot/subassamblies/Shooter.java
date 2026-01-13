@@ -21,7 +21,7 @@ public class Shooter {
     private State state;
     private final Timer timer;
 
-    private final Vector goalToRobotVector = new Vector();
+    private final Vector robotToGoalVector = new Vector();
 
     public double goalXOffset = 0;
     public double goalYOffset = 0;
@@ -136,7 +136,7 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        goalToRobotVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
+        robotToGoalVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
                 + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
 
         launchVector = calculateShotVectorAndUpdateTurret(robotPos.getHeading());
@@ -150,7 +150,7 @@ public class Shooter {
     private Vector calculateShotVectorAndUpdateTurret(double robotHeading) {
         //constants
         double g = 32.174 * 12;
-        double x = goalToRobotVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS;
+        double x = robotToGoalVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS;
         double y = ShooterConstants.SCORE_HEIGHT;
         double a = ShooterConstants.SCORE_ANGLE;
 
@@ -163,7 +163,7 @@ public class Shooter {
         //get robot velocity and convert it into parallel and perpendicular components
         Vector robotVelocity = hardware.poseTracker.getVelocity();
 
-        double coordinateTheta = robotVelocity.getTheta() - goalToRobotVector.getTheta();
+        double coordinateTheta = robotVelocity.getTheta() - robotToGoalVector.getTheta();
 
         if(coordinateTheta > 2 * Math.PI)
             coordinateTheta -= 2 * Math.PI;
@@ -188,7 +188,7 @@ public class Shooter {
 
         //update turret
         double turretVelCompOffset = Math.atan(perpendicularComponent / nvr);
-        double turretAngle = Math.toDegrees(robotHeading - goalToRobotVector.getTheta() + turretVelCompOffset);
+        double turretAngle = Math.toDegrees(robotHeading - robotToGoalVector.getTheta() + turretVelCompOffset);
 
         if (turretAngle > 180) {
             turretAngle -= 360;
@@ -274,7 +274,7 @@ public class Shooter {
     }
 
     public Vector getGoalVector() {
-        return goalToRobotVector;
+        return robotToGoalVector;
     }
 
     public double getTurretReset() {
@@ -283,6 +283,6 @@ public class Shooter {
 
     public boolean isGoalTargeted() {
         return Math.abs(error) < ShooterConstants.TURRET_TICKS_PER_DEGREE * Math.toDegrees(Math.atan(ShooterConstants.SCORE_ACCURACY /
-                goalToRobotVector.getMagnitude())) * 2 && flywheelUpToSpeed();
+                robotToGoalVector.getMagnitude())) * 2 && flywheelUpToSpeed();
     }
 }
