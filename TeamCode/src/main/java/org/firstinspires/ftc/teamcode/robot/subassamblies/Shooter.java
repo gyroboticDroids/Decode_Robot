@@ -187,7 +187,7 @@ public class Shooter {
         flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math.pow(Math.cos(hoodAngle), 2) * (ndr * Math.tan(hoodAngle) - y)));
 
         //update turret
-        double turretVelCompOffset = Math.atan(perpendicularComponent / nvr);
+        double turretVelCompOffset = Math.atan(perpendicularComponent / ivr);
         double turretAngle = Math.toDegrees(robotHeading - robotToGoalVector.getTheta() + turretVelCompOffset);
 
         if (turretAngle > 180) {
