@@ -165,11 +165,6 @@ public class Shooter {
 
         double coordinateTheta = robotVelocity.getTheta() - robotToGoalVector.getTheta();
 
-        if(coordinateTheta > 2 * Math.PI)
-            coordinateTheta -= 2 * Math.PI;
-        else if (coordinateTheta < -2 * Math.PI)
-            coordinateTheta += 2 * Math.PI;
-
         double parallelComponent = -Math.cos(coordinateTheta) * robotVelocity.getMagnitude();
         double perpendicularComponent = Math.sin(coordinateTheta) * robotVelocity.getMagnitude();
 
