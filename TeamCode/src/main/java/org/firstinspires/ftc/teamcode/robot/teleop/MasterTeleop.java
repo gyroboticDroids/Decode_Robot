@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
@@ -96,6 +97,14 @@ public class MasterTeleop extends OpMode {
         telemetry.addLine("----------important----------");
         telemetry.addData("goal X offset", shooter.goalXOffset);
         telemetry.addData("goal Y offset", shooter.goalYOffset);
+        telemetry.addLine("----------current draw-------");
+        telemetry.addData("flywheel", "%.2f", (hardware.flywheel.getCurrent(CurrentUnit.AMPS) +
+                hardware.flywheel2.getCurrent(CurrentUnit.AMPS)) / 2);
+        telemetry.addData("intake", "%.2f", hardware.intake.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("turret", "%.2f", hardware.turret.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("dt added up", "%.2f", hardware.leftFront.getCurrent(CurrentUnit.AMPS) +
+                hardware.leftRear.getCurrent(CurrentUnit.AMPS) + hardware.rightFront.getCurrent(CurrentUnit.AMPS) +
+                hardware.rightRear.getCurrent(CurrentUnit.AMPS));
         telemetry.addLine("----------drive--------------");
         telemetry.addData("robot position", hardware.poseTracker.getPose());
         telemetry.addData("is heading lock", drive.headingLock);

@@ -18,10 +18,10 @@ public class Hardware {
     HardwareMap hardwareMap;
 
     //drive
-    public DcMotor leftFront;
-    public DcMotor leftRear;
-    public DcMotor rightFront;
-    public DcMotor rightRear;
+    public DcMotorEx leftFront;
+    public DcMotorEx leftRear;
+    public DcMotorEx rightFront;
+    public DcMotorEx rightRear;
 
     public Servo parkLeft;
     public Servo parkRight;
@@ -29,7 +29,7 @@ public class Hardware {
     public PoseTracker poseTracker;
 
     //intake
-    public DcMotor intake;
+    public DcMotorEx intake;
 
     public Servo intakePivotRight;
 
@@ -57,7 +57,7 @@ public class Hardware {
         parkRight = this.hardwareMap.get(Servo.class, "parkRight");
 
         //intake
-        intake = this.hardwareMap.get(DcMotor.class, "intake");
+        intake = this.hardwareMap.get(DcMotorEx.class, "intake");
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -97,10 +97,10 @@ public class Hardware {
 
     public void configureTeleop() {
         //drive
-        leftFront = hardwareMap.get(DcMotor.class, "lf");
-        leftRear = hardwareMap.get(DcMotor.class, "lr");
-        rightFront = hardwareMap.get(DcMotor.class, "rf");
-        rightRear = hardwareMap.get(DcMotor.class, "rr");
+        leftFront = hardwareMap.get(DcMotorEx.class, "lf");
+        leftRear = hardwareMap.get(DcMotorEx.class, "lr");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rf");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rr");
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftRear.setDirection(DcMotor.Direction.FORWARD);
