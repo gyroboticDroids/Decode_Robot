@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.constants;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Configurable
 public class ShooterConstants {
@@ -18,15 +18,14 @@ public class ShooterConstants {
         return (TransferConstants.isAllianceColorRed) ? ShooterConstants.GOAL_POS_RED : ShooterConstants.GOAL_POS_BLUE;
     }
 
-    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(200, 0.7, 0, 0);
+    public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(0.006, 0.0015, 0, 0.091);
     public static double FLYWHEEL_OFF = 0; //ticks per second
     public static double FLYWHEEL_ACCURACY = 60; //ticks per second
     public static double FLYWHEEL_RAMP_SPEED = 250;
     public static double FLYWHEEL_MIN_SPEED = 0;
     public static double FLYWHEEL_MAX_SPEED = 2300;
 
-    public static com.pedropathing.control.PIDFCoefficients TURRET_PIDF =
-            new com.pedropathing.control.PIDFCoefficients(0.02, 0, 0.0012, 0);
+    public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.02, 0, 0.0012, 0);
     public static double TURRET_GEAR_RATIO = (28.0 / 91) / (22.0 / 97);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0 * TURRET_GEAR_RATIO;
     public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks

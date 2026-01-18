@@ -58,6 +58,7 @@ public class MasterTeleop extends OpMode {
     public void start() {
         intake.setState(Intake.State.INTAKE);
         shooter.setState(Shooter.State.OFF);
+        shooter.resetPIDFS();
 
         prevIntakeState = intake.getState();
         prevShooterState = shooter.getState();
@@ -98,8 +99,8 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("goal X offset", shooter.goalXOffset);
         telemetry.addData("goal Y offset", shooter.goalYOffset);
         telemetry.addLine("----------current draw-------");
-        telemetry.addData("flywheel", "%.2f", (hardware.flywheel.getCurrent(CurrentUnit.AMPS) +
-                hardware.flywheel2.getCurrent(CurrentUnit.AMPS)) / 2);
+        telemetry.addData("flywheel1", "%.2f", hardware.flywheel.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("flywheel2", "%.2f", hardware.flywheel2.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("intake", "%.2f", hardware.intake.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("turret", "%.2f", hardware.turret.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("dt added up", "%.2f", hardware.leftFront.getCurrent(CurrentUnit.AMPS) +
@@ -123,7 +124,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("turret target pos (degrees)", shooter.targetPos);
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
         telemetry.addData("hood angle", Math.toDegrees(shooter.getHoodAngle()));
-        telemetry.addData("flywheel speed in/s", shooter.getFlywheelSpeed());
+        telemetry.addData("flywheel speed setpoint", ShooterConstants.getFlywheelTicksFromVelocity(shooter.getFlywheelSpeed()));
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
         telemetry.addData("shooter ready", shooter.isGoalTargeted());
         telemetry.update();

@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.robot.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.subassamblies.Vision;
 @Configurable
 @TeleOp(name = "test robot", group = "testing")
 public class TestRobot extends OpMode {
+    private PIDFController flywheelPIDFController;
 
     private Hardware hardware;
     private Vision vision;
@@ -49,12 +50,13 @@ public class TestRobot extends OpMode {
         hardware.door.setPosition(0.5);
         hardware.hood.setPosition(0.5);
         hardware.launcher.setPosition(0.5);
+
+        flywheelPIDFController = new PIDFController(ShooterConstants.FLYWHEEL_PIDF);
     }
 
     @Override
     public void loop() {
-        hardware.flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
-        hardware.flywheel2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ShooterConstants.FLYWHEEL_PIDF);
+        flywheelPIDFController.setCoefficients(ShooterConstants.FLYWHEEL_PIDF);
 
         if(gamepad1.optionsWasPressed()) {
             state++;
@@ -116,11 +118,12 @@ public class TestRobot extends OpMode {
 
                 flywheelSpeed += gamepad1.left_stick_y * 3;
 
-                if (gamepad1.cross)
+                if (gamepad1.cross) {
                     flywheelSpeed = 0;
+                    flywheelPIDFController.reset();
+                }
 
-                hardware.flywheel.setVelocity(flywheelSpeed);
-                hardware.flywheel2.setVelocity(flywheelSpeed);
+                setFlywheelSpeed(flywheelSpeed);
 
                 hardware.turret.setPower(((gamepad1.dpad_left ? 1 : 0) - (gamepad1.dpad_right ? 1 : 0)) * 0.2);
 
@@ -138,6 +141,7 @@ public class TestRobot extends OpMode {
 
                 telemetry.addData("flywheel setpoint", flywheelSpeed);
                 telemetry.addData("flywheel (g1 left stick y, cross to reset)", hardware.flywheel.getVelocity());
+                telemetry.addData("flywheel power", hardware.flywheel.getPower());
                 telemetry.addData("flywheel2 power", hardware.flywheel2.getPower());
                 telemetry.addData("turret degrees (g1 dpad left right)", hardware.turret.getCurrentPosition()
                         / ShooterConstants.TURRET_TICKS_PER_DEGREE);
@@ -159,5 +163,17 @@ public class TestRobot extends OpMode {
 
         telemetry.update();
         panelsTelemetry.update();
+    }
+
+    private void setFlywheelSpeed(double speed) {
+        double flywheelError = speed - hardware.flywheel.getVelocity();
+
+        flywheelPIDFController.updateFeedForwardInput(1);
+        flywheelPIDFController.updateError(flywheelError);
+
+        double flywheelPower = MathFunctions.clamp(flywheelPIDFController.run(), -1, 1);
+
+        hardware.flywheel.setPower(flywheelPower);
+        hardware.flywheel2.setPower(flywheelPower);
     }
 }

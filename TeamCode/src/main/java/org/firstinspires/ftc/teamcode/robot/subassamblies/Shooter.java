@@ -16,6 +16,7 @@ public class Shooter {
     }
 
     private final PIDFController turretPIDFController;
+    private final PIDFController flywheelPIDFController;
     private final Hardware hardware;
 
     private State state;
@@ -63,6 +64,8 @@ public class Shooter {
 
         turretReset = -TransferConstants.endTurretPos;
         turretPIDFController = new PIDFController(ShooterConstants.TURRET_PIDF);
+        flywheelPIDFController = new PIDFController(ShooterConstants.FLYWHEEL_PIDF);
+        flywheelPIDFController.updateFeedForwardInput(1);
     }
 
     public void update() {
@@ -114,9 +117,10 @@ public class Shooter {
         if (state != State.OFF && state != State.RESET) {
             targetGoal();
         } else {
-            hardware.flywheel.setVelocity(ShooterConstants.FLYWHEEL_OFF);
-            hardware.flywheel2.setVelocity(ShooterConstants.FLYWHEEL_OFF);
+            hardware.flywheel.setPower(ShooterConstants.FLYWHEEL_OFF);
+            hardware.flywheel2.setPower(ShooterConstants.FLYWHEEL_OFF);
             hardware.hood.setPosition(ShooterConstants.HOOD_MIN_ANGLE);
+            flywheelPIDFController.reset();
         }
 
         ballDetectionUpdate();
@@ -141,8 +145,7 @@ public class Shooter {
 
         launchVector = calculateShotVectorAndUpdateTurret(robotPos.getHeading());
 
-        hardware.flywheel.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
-        hardware.flywheel2.setVelocity(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+        setFlywheelSpeed(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
 
         hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
     }
@@ -217,6 +220,17 @@ public class Shooter {
         hardware.turret.setPower(runTurret ? motorPower : 0);
     }
 
+    private void setFlywheelSpeed(double speed) {
+        double flywheelError = speed - hardware.flywheel.getVelocity();
+
+        flywheelPIDFController.updateError(flywheelError);
+
+        double flywheelPower = MathFunctions.clamp(flywheelPIDFController.run(), -1, 1);
+
+        hardware.flywheel.setPower(flywheelPower);
+        hardware.flywheel2.setPower(flywheelPower);
+    }
+
     private void ballDetectionUpdate() {
         if (hardware.ball1.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
             ball1Timer.resetTimer();
@@ -229,6 +243,16 @@ public class Shooter {
         if (hardware.ball3.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
             ball3Timer.resetTimer();
         ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
+    }
+
+    public void resetPIDFS() {
+        flywheelPIDFController.reset();
+        turretPIDFController.reset();
+    }
+
+    private double rampUpFlywheel(double speed) {
+        return MathFunctions.clamp(speed, hardware.flywheel.getVelocity() - ShooterConstants.FLYWHEEL_RAMP_SPEED,
+                hardware.flywheel.getVelocity() + ShooterConstants.FLYWHEEL_RAMP_SPEED);
     }
 
     public boolean isNoBalls() {
@@ -261,11 +285,6 @@ public class Shooter {
 
     public boolean isBusy() {
         return isBusy;
-    }
-
-    private double rampUpFlywheel(double speed) {
-        return MathFunctions.clamp(speed, hardware.flywheel.getVelocity() - ShooterConstants.FLYWHEEL_RAMP_SPEED,
-                hardware.flywheel.getVelocity() + ShooterConstants.FLYWHEEL_RAMP_SPEED);
     }
 
     public Vector getGoalVector() {
