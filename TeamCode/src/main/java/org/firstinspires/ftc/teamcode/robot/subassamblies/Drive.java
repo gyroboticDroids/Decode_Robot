@@ -19,7 +19,7 @@ public class Drive {
     private double y;
     private double rx;
 
-    private double speedMultiplier = 1;
+    private double speedMultiplier = DriveConstants.DRIVE_SPEED;
 
     public double headingLock = -1;
     private boolean resetHeading = false;
@@ -126,7 +126,7 @@ public class Drive {
             hardware.parkLeft.setPosition(DriveConstants.PARK_LEFT_UP_POS);
             hardware.parkRight.setPosition(DriveConstants.PARK_RIGHT_UP_POS);
 
-            speedMultiplier = DriveConstants.DRIVE_SPEED;
+            speedMultiplier = gamepad.left_bumper ? DriveConstants.SLOW_SPEED : DriveConstants.DRIVE_SPEED;
         }
     }
 
