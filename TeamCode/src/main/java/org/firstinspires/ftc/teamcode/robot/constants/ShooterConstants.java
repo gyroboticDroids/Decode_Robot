@@ -33,8 +33,8 @@ public class ShooterConstants {
     public static double TURRET_MAX_ANGLE = 92;
     public static double TURRET_MAX_SPEED = 0.8;
 
-    public static double HOOD_MIN_ANGLE = Math.toRadians(72.8); //radians
-    public static double HOOD_MAX_ANGLE = Math.toRadians(40.7); //radians
+    public static double HOOD_MIN_ANGLE = Math.toRadians(74.5); //radians
+    public static double HOOD_MAX_ANGLE = Math.toRadians(42.4); //radians
 
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
@@ -47,11 +47,11 @@ public class ShooterConstants {
     public static double flywheelOffset = 0;
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return MathFunctions.clamp(94.501 * velocity / 12 - 187.96 + flywheelOffset, FLYWHEEL_MIN_SPEED,
+        return MathFunctions.clamp(94.45 * velocity / 12 - 187.96 + flywheelOffset, FLYWHEEL_MIN_SPEED,
                 FLYWHEEL_MAX_SPEED);
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
-        return 0.0226 * degrees - 0.7443;
+        return 0.0213 * degrees - 0.6807;
     }
 }
