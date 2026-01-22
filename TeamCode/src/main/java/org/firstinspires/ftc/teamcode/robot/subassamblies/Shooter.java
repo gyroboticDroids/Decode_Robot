@@ -119,7 +119,7 @@ public class Shooter {
         } else {
             hardware.flywheel.setPower(ShooterConstants.FLYWHEEL_OFF);
             hardware.flywheel2.setPower(ShooterConstants.FLYWHEEL_OFF);
-            hardware.hood.setPosition(ShooterConstants.HOOD_MIN_ANGLE);
+            hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(ShooterConstants.HOOD_MIN_ANGLE)));
             flywheelPIDFController.reset();
         }
 

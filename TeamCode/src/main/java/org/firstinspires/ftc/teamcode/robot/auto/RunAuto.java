@@ -40,7 +40,7 @@ public class RunAuto extends OpMode {
             gateReady = new Pose(115, 63, Math.toRadians(0)),
             gateBump = new Pose(121, 65, Math.toRadians(0)),
             gateCollect = new Pose(129, 57.5, Math.toRadians(37)),
-            hpReady1 = new Pose(108.25, 12, Math.toRadians(0)),
+            hpReady1 = new Pose(128, 12, Math.toRadians(0)),
             hpReady2 = new Pose(108.25, 8, Math.toRadians(0)),
             hpPreset = new Pose(128, 8, Math.toRadians(0)),
             hpGate = new Pose(127.5, 19, Math.toRadians(45)),
@@ -346,6 +346,7 @@ public class RunAuto extends OpMode {
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlHp1, hpReady1))
                             .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady1.getHeading())
+                            .setBrakingStart(3.5)
                             .build();
 
                     paths.add(path);

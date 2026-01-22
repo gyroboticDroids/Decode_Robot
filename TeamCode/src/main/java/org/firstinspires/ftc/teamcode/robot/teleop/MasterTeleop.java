@@ -124,6 +124,7 @@ public class MasterTeleop extends OpMode {
         telemetry.addData("turret target pos (degrees)", shooter.targetPos);
         telemetry.addData("turret pos (ticks)", hardware.turret.getCurrentPosition());
         telemetry.addData("hood angle", Math.toDegrees(shooter.getHoodAngle()));
+        telemetry.addData("hood ticks", hardware.hood.getPosition());
         telemetry.addData("flywheel speed setpoint", ShooterConstants.getFlywheelTicksFromVelocity(shooter.getFlywheelSpeed()));
         telemetry.addData("flywheel speed (ticks per second)", hardware.flywheel.getVelocity());
         telemetry.addData("shooter ready", shooter.isGoalTargeted());

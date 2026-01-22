@@ -26,7 +26,7 @@ public class ShooterConstants {
     public static double FLYWHEEL_MAX_SPEED = 2300;
 
     public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.01, 0, 0.0012, 0.04);
-    public static double TURRET_F_ERROR = 1;
+    public static double TURRET_F_ERROR = 3;
     public static double TURRET_GEAR_RATIO = (28.0 / 91) / (22.0 / 97);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0 * TURRET_GEAR_RATIO;
     public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks
@@ -48,11 +48,12 @@ public class ShooterConstants {
     public static double flywheelOffset = 0;
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
-        return MathFunctions.clamp(94.45 * velocity / 12 - 187.96 + flywheelOffset, FLYWHEEL_MIN_SPEED,
+        double v = velocity / 12;
+        return MathFunctions.clamp(4.2075 * v * v - 58.494 * v + 1164 + flywheelOffset, FLYWHEEL_MIN_SPEED,
                 FLYWHEEL_MAX_SPEED);
     }
 
     public static double getHoodTicksFromDegrees(double degrees) {
-        return 0.0213 * degrees - 0.6807;
+        return 0.0215 * degrees - 0.6937;
     }
 }
