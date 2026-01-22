@@ -8,7 +8,7 @@ import com.pedropathing.math.MathFunctions;
 @Configurable
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(138, 138);
-    public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
+    public static Pose GOAL_POS_BLUE = mirror(GOAL_POS_RED);
     public static double SCORE_HEIGHT = 29; //inches
     public static double SCORE_ANGLE = Math.toRadians(-30); //radians
     public static double PASS_THROUGH_POINT_RADIUS = 5; //inches
@@ -55,5 +55,9 @@ public class ShooterConstants {
 
     public static double getHoodTicksFromDegrees(double degrees) {
         return 0.0215 * degrees - 0.6937;
+    }
+
+    public static Pose mirror(Pose oldPose) {
+        return new Pose(141.5 - oldPose.getX(), oldPose.getY(), MathFunctions.normalizeAngle(Math.PI - oldPose.getHeading()));
     }
 }
