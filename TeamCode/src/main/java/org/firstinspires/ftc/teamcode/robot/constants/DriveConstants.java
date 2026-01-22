@@ -12,7 +12,7 @@ public class DriveConstants {
     public static double PARK_LEFT_UP_POS = 0;
     public static double PARK_RIGHT_UP_POS = 0;
 
-    public static double DRIVE_SPEED = 1;
+    public static double DRIVE_SPEED = 0.8;
     public static double PARK_SPEED = 0;
     public static double SLOW_SPEED = 0.5;
 }

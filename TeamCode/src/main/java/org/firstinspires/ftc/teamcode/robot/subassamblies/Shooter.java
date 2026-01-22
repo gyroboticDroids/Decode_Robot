@@ -212,6 +212,8 @@ public class Shooter {
 
         double clampedError = targetPos - hardware.turret.getCurrentPosition();
 
+        turretPIDFController.updateFeedForwardInput(Math.signum(Math.abs(clampedError) < ShooterConstants.TURRET_F_ERROR ?
+                0 : clampedError));
         turretPIDFController.updateError(clampedError);
 
         double motorPower = MathFunctions.clamp(turretPIDFController.run(),

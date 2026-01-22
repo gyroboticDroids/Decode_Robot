@@ -30,7 +30,7 @@ public class RunAuto extends OpMode {
     private int nextPath = -1;
 
     private Pose startClose = new Pose(115.5, 123, Math.toRadians(45)),
-            startFar = new Pose(86.1, 6.75, Math.toRadians(0)),
+            startFar = new Pose(85.5, 6.5, Math.toRadians(0)),
             scoreClose = new Pose(100, 100, Math.toRadians(0)),
             scoreMiddle = new Pose(86, 78, Math.toRadians(0)),
             scoreFar = new Pose(84, 19, Math.toRadians(0)),
@@ -40,7 +40,8 @@ public class RunAuto extends OpMode {
             gateReady = new Pose(115, 63, Math.toRadians(0)),
             gateBump = new Pose(121, 65, Math.toRadians(0)),
             gateCollect = new Pose(129, 57.5, Math.toRadians(37)),
-            hpReady = new Pose(108.25, 8, Math.toRadians(0)),
+            hpReady1 = new Pose(108.25, 12, Math.toRadians(0)),
+            hpReady2 = new Pose(108.25, 8, Math.toRadians(0)),
             hpPreset = new Pose(128, 8, Math.toRadians(0)),
             hpGate = new Pose(127.5, 19, Math.toRadians(45)),
             endClose = new Pose(120, 70, Math.toRadians(270)),
@@ -182,7 +183,8 @@ public class RunAuto extends OpMode {
         gateReady = gateReady.mirror();
         gateBump = gateBump.mirror();
         gateCollect = gateCollect.mirror();
-        hpReady = hpReady.mirror();
+        hpReady1 = hpReady1.mirror();
+        hpReady2 = hpReady2.mirror();
         hpPreset = hpPreset.mirror();
         hpGate = hpGate.mirror();
         endClose = endClose.mirror();
@@ -342,15 +344,15 @@ public class RunAuto extends OpMode {
 
                 case 40:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlHp1, hpReady))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady.getHeading())
+                            .addPath(new BezierCurve(lastPose, controlHp1, hpReady1))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady1.getHeading())
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierLine(hpReady, hpPreset))
-                            .setLinearHeadingInterpolation(hpReady.getHeading(), hpPreset.getHeading())
+                            .addPath(new BezierLine(hpReady1, hpPreset))
+                            .setLinearHeadingInterpolation(hpReady1.getHeading(), hpPreset.getHeading())
                             .build();
 
                     paths.add(path);
@@ -360,15 +362,15 @@ public class RunAuto extends OpMode {
 
                 case 41:
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(lastPose, controlHp1, hpReady))
-                            .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady.getHeading())
+                            .addPath(new BezierCurve(lastPose, controlHp1, hpReady2))
+                            .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady2.getHeading())
                             .build();
 
                     paths.add(path);
 
                     path = follower.pathBuilder()
-                            .addPath(new BezierCurve(hpReady, controlHp3, hpGate))
-                            .setLinearHeadingInterpolation(hpReady.getHeading(), hpGate.getHeading())
+                            .addPath(new BezierCurve(hpReady2, controlHp3, hpGate))
+                            .setLinearHeadingInterpolation(hpReady2.getHeading(), hpGate.getHeading())
                             .build();
 
                     paths.add(path);

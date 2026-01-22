@@ -25,7 +25,8 @@ public class ShooterConstants {
     public static double FLYWHEEL_MIN_SPEED = 0;
     public static double FLYWHEEL_MAX_SPEED = 2300;
 
-    public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.02, 0, 0.0012, 0);
+    public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.01, 0, 0.0012, 0.04);
+    public static double TURRET_F_ERROR = 1;
     public static double TURRET_GEAR_RATIO = (28.0 / 91) / (22.0 / 97);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0 * TURRET_GEAR_RATIO;
     public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks

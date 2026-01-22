@@ -69,7 +69,7 @@ public class Drive {
     private void input() {
         y = (TransferConstants.isAllianceColorRed ? -1 : 1) * gamepad.left_stick_y * speedMultiplier;
         x = (TransferConstants.isAllianceColorRed ? 1 : -1) * gamepad.left_stick_x * speedMultiplier;
-        rx = (headingLock >= 0) ? 0 : -gamepad.right_stick_x;
+        rx = (headingLock >= 0) ? 0 : -gamepad.right_stick_x * speedMultiplier;
 
         if (gamepad.dpad_down)
             park = true;
