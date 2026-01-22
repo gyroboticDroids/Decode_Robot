@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Intake;
@@ -172,33 +173,33 @@ public class RunAuto extends OpMode {
     }
 
     private void mirrorPoses() {
-        startClose = startClose.mirror();
-        startFar = startFar.mirror();
-        scoreClose = scoreClose.mirror();
-        scoreMiddle = scoreMiddle.mirror();
-        scoreFar = scoreFar.mirror();
-        balls1 = balls1.mirror();
-        balls2 = balls2.mirror();
-        balls3 = balls3.mirror();
-        gateReady = gateReady.mirror();
-        gateBump = gateBump.mirror();
-        gateCollect = gateCollect.mirror();
-        hpReady1 = hpReady1.mirror();
-        hpReady2 = hpReady2.mirror();
-        hpPreset = hpPreset.mirror();
-        hpGate = hpGate.mirror();
-        endClose = endClose.mirror();
-        endFar = endFar.mirror();
+        startClose = ShooterConstants.mirror(startClose);
+        startFar = ShooterConstants.mirror(startFar);
+        scoreClose = ShooterConstants.mirror(scoreClose);
+        scoreMiddle = ShooterConstants.mirror(scoreMiddle);
+        scoreFar = ShooterConstants.mirror(scoreFar);
+        balls1 = ShooterConstants.mirror(balls1);
+        balls2 = ShooterConstants.mirror(balls2);
+        balls3 = ShooterConstants.mirror(balls3);
+        gateReady = ShooterConstants.mirror(gateReady);
+        gateBump = ShooterConstants.mirror(gateBump);
+        gateCollect = ShooterConstants.mirror(gateCollect);
+        hpReady1 = ShooterConstants.mirror(hpReady1);
+        hpReady2 = ShooterConstants.mirror(hpReady2);
+        hpPreset = ShooterConstants.mirror(hpPreset);
+        hpGate = ShooterConstants.mirror(hpGate);
+        endClose = ShooterConstants.mirror(endClose);
+        endFar = ShooterConstants.mirror(endFar);
 
-        controlBalls1 = controlBalls1.mirror();
-        controlBalls2 = controlBalls2.mirror();
-        controlBalls3 = controlBalls3.mirror();
-        controlBalls1Far = controlBalls1Far.mirror();
-        controlBalls2Far = controlBalls2Far.mirror();
-        controlBalls3Far = controlBalls3Far.mirror();
-        controlGate = controlGate.mirror();
-        controlHp1 = controlHp1.mirror();
-        controlHp3 = controlHp3.mirror();
+        controlBalls1 = ShooterConstants.mirror(controlBalls1);
+        controlBalls2 = ShooterConstants.mirror(controlBalls2);
+        controlBalls3 = ShooterConstants.mirror(controlBalls3);
+        controlBalls1Far = ShooterConstants.mirror(controlBalls1Far);
+        controlBalls2Far = ShooterConstants.mirror(controlBalls2Far);
+        controlBalls3Far = ShooterConstants.mirror(controlBalls3Far);
+        controlGate = ShooterConstants.mirror(controlGate);
+        controlHp1 = ShooterConstants.mirror(controlHp1);
+        controlHp3 = ShooterConstants.mirror(controlHp3);
     }
 
     private void buildPaths() {
