@@ -9,7 +9,7 @@ import com.pedropathing.math.MathFunctions;
 public class ShooterConstants {
     public static Pose GOAL_POS_RED = new Pose(138, 138);
     public static Pose GOAL_POS_BLUE = GOAL_POS_RED.mirror();
-    public static double SCORE_HEIGHT = 26; //inches
+    public static double SCORE_HEIGHT = 29; //inches
     public static double SCORE_ANGLE = Math.toRadians(-30); //radians
     public static double PASS_THROUGH_POINT_RADIUS = 5; //inches
     public static double SCORE_ACCURACY = 6;
@@ -25,14 +25,14 @@ public class ShooterConstants {
     public static double FLYWHEEL_MIN_SPEED = 0;
     public static double FLYWHEEL_MAX_SPEED = 2300;
 
-    public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.01, 0, 0.0012, 0.04);
+    public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.015, 0, 0.0008, 0);
     public static double TURRET_F_ERROR = 3;
     public static double TURRET_GEAR_RATIO = (28.0 / 91) / (22.0 / 97);
     public static double TURRET_TICKS_PER_DEGREE = 303 / 180.0 * TURRET_GEAR_RATIO;
-    public static double TURRET_RESET_POS = -95 * TURRET_TICKS_PER_DEGREE;//ticks
+    public static double TURRET_RESET_POS = -93 * TURRET_TICKS_PER_DEGREE;//ticks
     public static double TURRET_MIN_ANGLE = -93;
     public static double TURRET_MAX_ANGLE = 92;
-    public static double TURRET_MAX_SPEED = 0.8;
+    public static double TURRET_MAX_SPEED = 0.7;
 
     public static double HOOD_MIN_ANGLE = Math.toRadians(74.5); //radians
     public static double HOOD_MAX_ANGLE = Math.toRadians(42.4); //radians
@@ -49,7 +49,7 @@ public class ShooterConstants {
 
     public static double getFlywheelTicksFromVelocity(double velocity) {
         double v = velocity / 12;
-        return MathFunctions.clamp(4.2075 * v * v - 58.494 * v + 1164 + flywheelOffset, FLYWHEEL_MIN_SPEED,
+        return MathFunctions.clamp(8.535 * v * v - 200.28 * v + 2310 + flywheelOffset, FLYWHEEL_MIN_SPEED,
                 FLYWHEEL_MAX_SPEED);
     }
 

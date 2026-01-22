@@ -242,7 +242,7 @@ public class RunAuto extends OpMode {
                             .addPath((lastControlPoint == null) ? new BezierLine(lastPose, scoreFar) :
                                     new BezierCurve(lastPose, lastControlPoint, scoreFar))
                             .setLinearHeadingInterpolation(lastPose.getHeading(), scoreFar.getHeading())
-                            .setBrakingStart(3.5)
+                            .setBrakingStart(4)
                             .setBrakingStrength(0.7)
                             .build();
 
@@ -346,7 +346,8 @@ public class RunAuto extends OpMode {
                     path = follower.pathBuilder()
                             .addPath(new BezierCurve(lastPose, controlHp1, hpReady1))
                             .setLinearHeadingInterpolation(lastPose.getHeading(), hpReady1.getHeading())
-                            .setBrakingStart(3.5)
+                            .setBrakingStart(4)
+                            .setBrakingStrength(0.5)
                             .build();
 
                     paths.add(path);

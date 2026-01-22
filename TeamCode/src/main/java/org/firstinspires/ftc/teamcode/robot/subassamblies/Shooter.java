@@ -109,7 +109,7 @@ public class Shooter {
                     turretReset = hardware.turret.getCurrentPosition() - ShooterConstants.TURRET_RESET_POS;
                     isBusy = false;
                 } else {
-                    hardware.turret.setPower(-0.45);
+                    hardware.turret.setPower(-0.4);
                 }
                 break;
         }
