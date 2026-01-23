@@ -104,10 +104,10 @@ public class Hardware {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         Localizer localizer = new PinpointLocalizer(hardwareMap, Constants.localizerConstants);
         poseTracker = new PoseTracker(localizer);
