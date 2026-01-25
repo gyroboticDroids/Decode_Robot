@@ -20,10 +20,10 @@ public class ShooterConstants {
 
     public static PIDFCoefficients FLYWHEEL_PIDF = new PIDFCoefficients(0.006, 0.0015, 0, 0.091);
     public static double FLYWHEEL_OFF = 0; //ticks per second
-    public static double FLYWHEEL_ACCURACY = 60; //ticks per second
+    public static double FLYWHEEL_ACCURACY = 70; //ticks per second
     public static double FLYWHEEL_RAMP_SPEED = 250;
     public static double FLYWHEEL_MIN_SPEED = 0;
-    public static double FLYWHEEL_MAX_SPEED = 2300;
+    public static double FLYWHEEL_MAX_SPEED = 2200;
 
     public static PIDFCoefficients TURRET_PIDF = new PIDFCoefficients(0.015, 0, 0.0008, 0);
     public static double TURRET_F_ERROR = 3;
@@ -40,8 +40,8 @@ public class ShooterConstants {
     public static double LAUNCHER_UP = 0.456;//
     public static double LAUNCHER_DOWN = 0.126;//
 
-    public static double DOOR_OPEN = 0.653;//
-    public static double DOOR_CLOSED = 0.452;//
+    public static double DOOR_OPEN = 0.576;//
+    public static double DOOR_CLOSED = 0.428;//
 
     public static double BALL_DETECTION_TIME = 0.05;
     public static double BALL_DETECTION_DISTANCE = 1;//inches
