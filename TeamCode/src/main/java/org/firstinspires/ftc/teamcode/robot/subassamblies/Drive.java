@@ -34,7 +34,12 @@ public class Drive extends DriveConstants {
 
     private boolean autoDriveIsActive = false;
 
+    private Pose targetPose = new Pose();
+
     private final PIDFController drivePIDF;
+    private final PIDFController turnPIDF;
+
+    private int state = 0;
 
     public Drive(Hardware hardware, Gamepad gamepad) {
         this.hardware = hardware;
@@ -48,6 +53,7 @@ public class Drive extends DriveConstants {
         poseTracker.setStartingPose(TransferConstants.endPose);
 
         drivePIDF = new PIDFController(DRIVE_PIDF);
+        turnPIDF = new PIDFController(TURN_PIDF);
     }
 
     public void update() {
@@ -56,6 +62,7 @@ public class Drive extends DriveConstants {
         robotPos = poseTracker.getPose();
 
         if (!autoDriveIsActive) {
+            state = 0;
             input();
 
             if (resetHeading && !prevResetHeading) {
@@ -74,6 +81,8 @@ public class Drive extends DriveConstants {
 
             if (headingLock >= 0 && !park)
                 autoTurn(headingLock);
+        } else {
+            autoDriveUpdate();
         }
 
         updateMovement();
@@ -104,8 +113,9 @@ public class Drive extends DriveConstants {
             error += 360;
         }
 
-        rx = DriveConstants.TURN_P_GAIN * error;
-        rx = Math.min(Math.max(rx, -0.4), 0.4);
+        turnPIDF.updateError(error);
+
+        rx = MathFunctions.clamp(turnPIDF.run(), -0.4, 0.4);
     }
 
     private void updateMovement() {
@@ -150,19 +160,39 @@ public class Drive extends DriveConstants {
         goalOffset = pose;
     }
 
-    public void driveToPose(Pose pose) {
+    public void driveToGate() {
         autoDriveIsActive = true;
 
-        Vector lineToPointTotal = new Vector(robotPos.minus(pose));
+        switch (state) {
+            case 0:
+                driveToPose(gateReady);
+                if(robotPos.getY() < gateReady.getY() + 2) {
+                    state++;
+                }
+                break;
+
+            case 1:
+                driveToPose(gateCollect);
+                state++;
+                break;
+        }
+    }
+
+    public void driveToPose(Pose pose) {
+        targetPose = pose;
+    }
+
+    private void autoDriveUpdate() {
+        Vector lineToPointTotal = new Vector(robotPos.minus(targetPose));
 
         drivePIDF.updateError(lineToPointTotal.getMagnitude());
 
         double motorPower = MathFunctions.clamp(drivePIDF.run(), -DRIVE_MAX_POWER, DRIVE_MAX_POWER);
 
-        x = Math.cos(lineToPointTotal.getTheta()) * motorPower;
-        y = Math.sin(lineToPointTotal.getTheta()) * motorPower;
+        x = Math.sin(lineToPointTotal.getTheta()) * motorPower;
+        y = -Math.cos(lineToPointTotal.getTheta()) * motorPower;
 
-        autoTurn(Math.toDegrees(pose.getHeading()));
+        autoTurn(Math.toDegrees(targetPose.getHeading()));
     }
 
     public boolean isPark() {
