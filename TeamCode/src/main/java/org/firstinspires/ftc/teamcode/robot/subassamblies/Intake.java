@@ -4,7 +4,7 @@ import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.teamcode.robot.constants.IntakeConstants;
 
-public class Intake {
+public class Intake extends IntakeConstants {
     public enum State{
         INTAKE, INTAKE_LAUNCH, CLEAR, INTAKE_UP, INTAKE_AUTO_READY
     }
@@ -23,37 +23,37 @@ public class Intake {
     public void update(){
         switch (state){
             case INTAKE:
-                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                hardware.intakePivotRight.setPosition(INTAKE_PIVOT_RIGHT_DOWN);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_FORWARD);
+                hardware.intake.setPower(INTAKE_FORWARD);
                 isBusy = false;
                 break;
 
             case INTAKE_LAUNCH:
-                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                hardware.intakePivotRight.setPosition(INTAKE_PIVOT_RIGHT_DOWN);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_LAUNCH);
+                hardware.intake.setPower(INTAKE_LAUNCH);
                 isBusy = false;
                 break;
 
             case CLEAR:
-                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                hardware.intakePivotRight.setPosition(INTAKE_PIVOT_RIGHT_DOWN);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_BACKWARD);
+                hardware.intake.setPower(INTAKE_BACKWARD);
                 isBusy = false;
                 break;
 
             case INTAKE_UP:
-                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_UP);
+                hardware.intakePivotRight.setPosition(INTAKE_PIVOT_RIGHT_UP);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_OFF);
+                hardware.intake.setPower(INTAKE_OFF);
                 isBusy = false;
                 break;
 
             case INTAKE_AUTO_READY:
-                hardware.intakePivotRight.setPosition(IntakeConstants.INTAKE_PIVOT_RIGHT_DOWN);
+                hardware.intakePivotRight.setPosition(INTAKE_PIVOT_RIGHT_DOWN);
 
-                hardware.intake.setPower(IntakeConstants.INTAKE_OFF);
+                hardware.intake.setPower(INTAKE_OFF);
                 isBusy = false;
                 break;
         }

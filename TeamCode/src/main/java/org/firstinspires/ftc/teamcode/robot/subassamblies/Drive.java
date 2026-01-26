@@ -1,31 +1,40 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.PoseTracker;
+import com.pedropathing.math.MathFunctions;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 
-public class Drive {
+public class Drive extends DriveConstants {
     private final Hardware hardware;
     private final Gamepad gamepad;
     private final PoseTracker poseTracker;
     private final Vision vision;
 
-    Pose robotPos;
+    public Pose robotPos;
+
+    private Pose goalOffset = new Pose(0, 0, 0);
 
     private double x;
     private double y;
     private double rx;
 
-    private double speedMultiplier = DriveConstants.DRIVE_SPEED;
+    private double speedMultiplier = DRIVE_SPEED;
 
     public double headingLock = -1;
     private boolean resetHeading = false;
     private boolean prevResetHeading = false;
 
     private boolean park = false;
+
+    private boolean autoDriveIsActive = false;
+
+    private final PIDFController drivePIDF;
 
     public Drive(Hardware hardware, Gamepad gamepad) {
         this.hardware = hardware;
@@ -37,33 +46,40 @@ public class Drive {
 
         poseTracker = hardware.poseTracker;
         poseTracker.setStartingPose(TransferConstants.endPose);
+
+        drivePIDF = new PIDFController(DRIVE_PIDF);
     }
 
     public void update() {
-        input();
-
-        if (resetHeading && !prevResetHeading) {
-            Pose updatedPose = vision.getRobotPosFromTarget();
-
-            if (updatedPose != null) {
-                poseTracker.setPose(updatedPose);
-                vision.makeSnapshot(updatedPose.toString());
-                gamepad.rumble(0.5, 0.5, 500);
-            } else {
-                poseTracker.setPose(new Pose(70.625, 70.625, TransferConstants.isAllianceColorRed ? 0 : Math.toRadians(180)));
-            }
-        }
-
+        poseTracker.applyOffset(goalOffset);
         poseTracker.update();
         robotPos = poseTracker.getPose();
 
-        if (headingLock >= 0)
-            autoTurn(headingLock);
+        if (!autoDriveIsActive) {
+            input();
 
-        park();
-        movement();
+            if (resetHeading && !prevResetHeading) {
+                Pose updatedPose = vision.getRobotPosFromTarget();
+
+                if (updatedPose != null) {
+                    poseTracker.setPose(updatedPose);
+                    vision.makeSnapshot(updatedPose.toString());
+                    gamepad.rumble(0.5, 0.5, 500);
+                } else {
+                    poseTracker.setPose(new Pose(70.625, 70.625, TransferConstants.isAllianceColorRed ? 0 : Math.toRadians(180)));
+                }
+            }
+
+            updatePark();
+
+            if (headingLock >= 0 && !park)
+                autoTurn(headingLock);
+        }
+
+        updateMovement();
 
         prevResetHeading = resetHeading;
+        autoDriveIsActive = false;
     }
 
     private void input() {
@@ -92,7 +108,7 @@ public class Drive {
         rx = Math.min(Math.max(rx, -0.4), 0.4);
     }
 
-    private void movement() {
+    private void updateMovement() {
         double botHeading = robotPos.getHeading();
 
         // Rotate the movement direction counter to the bot's rotation
@@ -116,18 +132,37 @@ public class Drive {
         hardware.rightRear.setPower(rightRearPower);
     }
 
-    private void park() {
+    private void updatePark() {
         if (park) {
-            hardware.parkLeft.setPosition(DriveConstants.PARK_LEFT_DOWN_POS);
-            hardware.parkRight.setPosition(DriveConstants.PARK_RIGHT_DOWN_POS);
+            hardware.parkLeft.setPosition(PARK_LEFT_DOWN_POS);
+            hardware.parkRight.setPosition(PARK_RIGHT_DOWN_POS);
 
-            speedMultiplier = DriveConstants.PARK_SPEED;
+            speedMultiplier = PARK_SPEED;
         } else {
-            hardware.parkLeft.setPosition(DriveConstants.PARK_LEFT_UP_POS);
-            hardware.parkRight.setPosition(DriveConstants.PARK_RIGHT_UP_POS);
+            hardware.parkLeft.setPosition(PARK_LEFT_UP_POS);
+            hardware.parkRight.setPosition(PARK_RIGHT_UP_POS);
 
-            speedMultiplier = gamepad.left_bumper ? DriveConstants.SLOW_SPEED : DriveConstants.DRIVE_SPEED;
+            speedMultiplier = gamepad.left_bumper ? SLOW_SPEED : DRIVE_SPEED;
         }
+    }
+
+    public void setGoalOffset(Pose pose) {
+        goalOffset = pose;
+    }
+
+    public void driveToPose(Pose pose) {
+        autoDriveIsActive = true;
+
+        Vector lineToPointTotal = new Vector(robotPos.minus(pose));
+
+        drivePIDF.updateError(lineToPointTotal.getMagnitude());
+
+        double motorPower = MathFunctions.clamp(drivePIDF.run(), -DRIVE_MAX_POWER, DRIVE_MAX_POWER);
+
+        x = Math.cos(lineToPointTotal.getTheta()) * motorPower;
+        y = Math.sin(lineToPointTotal.getTheta()) * motorPower;
+
+        autoTurn(Math.toDegrees(pose.getHeading()));
     }
 
     public boolean isPark() {

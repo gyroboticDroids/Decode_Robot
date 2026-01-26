@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 
-public class Shooter {
+public class Shooter extends ShooterConstants{
     public enum State {
         READY, LAUNCH, OFF, RESET
     }
@@ -23,9 +23,6 @@ public class Shooter {
     private final Timer timer;
 
     private final Vector robotToGoalVector = new Vector();
-
-    public double goalXOffset = 0;
-    public double goalYOffset = 0;
 
     public double targetPos;
     private double error = 0;
@@ -63,16 +60,16 @@ public class Shooter {
         ball3Timer.resetTimer();
 
         turretReset = -TransferConstants.endTurretPos;
-        turretPIDFController = new PIDFController(ShooterConstants.TURRET_PIDF);
-        flywheelPIDFController = new PIDFController(ShooterConstants.FLYWHEEL_PIDF);
+        turretPIDFController = new PIDFController(TURRET_PIDF);
+        flywheelPIDFController = new PIDFController(FLYWHEEL_PIDF);
         flywheelPIDFController.updateFeedForwardInput(1);
     }
 
     public void update() {
         switch (state) {
             case READY:
-                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                hardware.launcher.setPosition(LAUNCHER_DOWN);
+                hardware.door.setPosition(DOOR_CLOSED);
 
                 isBusy = false;
                 break;
@@ -84,29 +81,29 @@ public class Shooter {
                 }
 
                 if (timerReset && timer.getElapsedTimeSeconds() > 0.1) {
-                    hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                    hardware.door.setPosition(DOOR_CLOSED);
                     isBusy = false;
                 } else {
-                    hardware.door.setPosition(ShooterConstants.DOOR_OPEN);
+                    hardware.door.setPosition(DOOR_OPEN);
                 }
                 break;
 
             case OFF:
                 turretMoveTo(0);
 
-                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                hardware.launcher.setPosition(LAUNCHER_DOWN);
+                hardware.door.setPosition(DOOR_CLOSED);
 
                 isBusy = false;
                 break;
 
             case RESET:
-                hardware.launcher.setPosition(ShooterConstants.LAUNCHER_DOWN);
-                hardware.door.setPosition(ShooterConstants.DOOR_CLOSED);
+                hardware.launcher.setPosition(LAUNCHER_DOWN);
+                hardware.door.setPosition(DOOR_CLOSED);
 
                 if (timer.getElapsedTimeSeconds() > 1) {
                     hardware.turret.setPower(0);
-                    turretReset = hardware.turret.getCurrentPosition() - ShooterConstants.TURRET_RESET_POS;
+                    turretReset = hardware.turret.getCurrentPosition() - TURRET_RESET_POS;
                     isBusy = false;
                 } else {
                     hardware.turret.setPower(-0.4);
@@ -117,9 +114,9 @@ public class Shooter {
         if (state != State.OFF && state != State.RESET) {
             targetGoal();
         } else {
-            hardware.flywheel.setPower(ShooterConstants.FLYWHEEL_OFF);
-            hardware.flywheel2.setPower(ShooterConstants.FLYWHEEL_OFF);
-            hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(ShooterConstants.HOOD_MIN_ANGLE)));
+            hardware.flywheel.setPower(FLYWHEEL_OFF);
+            hardware.flywheel2.setPower(FLYWHEEL_OFF);
+            hardware.hood.setPosition(getHoodTicksFromDegrees(Math.toDegrees(HOOD_MIN_ANGLE)));
             flywheelPIDFController.reset();
         }
 
@@ -140,26 +137,26 @@ public class Shooter {
     private void targetGoal() {
         Pose robotPos = hardware.poseTracker.getPose();
 
-        robotToGoalVector.setOrthogonalComponents(ShooterConstants.getGoalPos().getX() - robotPos.getX()
-                + goalXOffset, ShooterConstants.getGoalPos().getY() - robotPos.getY() + goalYOffset);
+        robotToGoalVector.setOrthogonalComponents(getGoalPos().getX() - robotPos.getX(),
+                getGoalPos().getY() - robotPos.getY());
 
         launchVector = calculateShotVectorAndUpdateTurret(robotPos.getHeading());
 
-        setFlywheelSpeed(rampUpFlywheel(ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
+        setFlywheelSpeed(rampUpFlywheel(getFlywheelTicksFromVelocity(launchVector.getMagnitude())));
 
-        hardware.hood.setPosition(ShooterConstants.getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
+        hardware.hood.setPosition(getHoodTicksFromDegrees(Math.toDegrees(launchVector.getTheta())));
     }
 
     private Vector calculateShotVectorAndUpdateTurret(double robotHeading) {
         //constants
         double g = 32.174 * 12;
-        double x = robotToGoalVector.getMagnitude() - ShooterConstants.PASS_THROUGH_POINT_RADIUS;
-        double y = ShooterConstants.SCORE_HEIGHT;
-        double a = ShooterConstants.SCORE_ANGLE;
+        double x = robotToGoalVector.getMagnitude() - PASS_THROUGH_POINT_RADIUS;
+        double y = SCORE_HEIGHT;
+        double a = SCORE_ANGLE;
 
         //calculate initial launch components
-        double hoodAngle = MathFunctions.clamp(Math.atan(2 * y / x - Math.tan(a)), ShooterConstants.HOOD_MAX_ANGLE,
-                ShooterConstants.HOOD_MIN_ANGLE);
+        double hoodAngle = MathFunctions.clamp(Math.atan(2 * y / x - Math.tan(a)), HOOD_MAX_ANGLE,
+                HOOD_MIN_ANGLE);
 
         double flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
 
@@ -179,8 +176,7 @@ public class Shooter {
         double ndr = nvr * time;
 
         //recalculate launch components
-        hoodAngle = MathFunctions.clamp(Math.atan(vz / nvr), ShooterConstants.HOOD_MAX_ANGLE,
-                ShooterConstants.HOOD_MIN_ANGLE);
+        hoodAngle = MathFunctions.clamp(Math.atan(vz / nvr), HOOD_MAX_ANGLE, HOOD_MIN_ANGLE);
 
         flywheelSpeed = Math.sqrt(g * ndr * ndr / (2 * Math.pow(Math.cos(hoodAngle), 2) * (ndr * Math.tan(hoodAngle) - y)));
 
@@ -205,19 +201,16 @@ public class Shooter {
 
     private void turretMoveTo(double angle) {
         //for turret accuracy
-        error = angle * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset - hardware.turret.getCurrentPosition();
+        error = angle * TURRET_TICKS_PER_DEGREE + turretReset - hardware.turret.getCurrentPosition();
 
-        targetPos = MathFunctions.clamp(angle, ShooterConstants.TURRET_MIN_ANGLE, ShooterConstants.TURRET_MAX_ANGLE)
-                * ShooterConstants.TURRET_TICKS_PER_DEGREE + turretReset;
+        targetPos = MathFunctions.clamp(angle, TURRET_MIN_ANGLE, TURRET_MAX_ANGLE) * TURRET_TICKS_PER_DEGREE + turretReset;
 
         double clampedError = targetPos - hardware.turret.getCurrentPosition();
 
-        turretPIDFController.updateFeedForwardInput(Math.signum(Math.abs(clampedError) < ShooterConstants.TURRET_F_ERROR ?
-                0 : clampedError));
+        turretPIDFController.updateFeedForwardInput(Math.signum(Math.abs(clampedError) < TURRET_F_ERROR ? 0 : clampedError));
         turretPIDFController.updateError(clampedError);
 
-        double motorPower = MathFunctions.clamp(turretPIDFController.run(),
-                -ShooterConstants.TURRET_MAX_SPEED, ShooterConstants.TURRET_MAX_SPEED);
+        double motorPower = MathFunctions.clamp(turretPIDFController.run(), -TURRET_MAX_SPEED, TURRET_MAX_SPEED);
 
         hardware.turret.setPower(runTurret ? motorPower : 0);
     }
@@ -234,17 +227,17 @@ public class Shooter {
     }
 
     private void ballDetectionUpdate() {
-        if (hardware.ball1.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
+        if (hardware.ball1.getDistance(DistanceUnit.INCH) < BALL_DETECTION_DISTANCE)
             ball1Timer.resetTimer();
-        ball1 = ball1Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
+        ball1 = ball1Timer.getElapsedTimeSeconds() < BALL_DETECTION_TIME;
 
-        if (hardware.ball2.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
+        if (hardware.ball2.getDistance(DistanceUnit.INCH) < BALL_DETECTION_DISTANCE)
             ball2Timer.resetTimer();
-        ball2 = ball2Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
+        ball2 = ball2Timer.getElapsedTimeSeconds() < BALL_DETECTION_TIME;
 
-        if (hardware.ball3.getDistance(DistanceUnit.INCH) < ShooterConstants.BALL_DETECTION_DISTANCE)
+        if (hardware.ball3.getDistance(DistanceUnit.INCH) < BALL_DETECTION_DISTANCE)
             ball3Timer.resetTimer();
-        ball3 = ball3Timer.getElapsedTimeSeconds() < ShooterConstants.BALL_DETECTION_TIME;
+        ball3 = ball3Timer.getElapsedTimeSeconds() < BALL_DETECTION_TIME;
     }
 
     public void resetPIDFS() {
@@ -253,8 +246,8 @@ public class Shooter {
     }
 
     private double rampUpFlywheel(double speed) {
-        return MathFunctions.clamp(speed, hardware.flywheel.getVelocity() - ShooterConstants.FLYWHEEL_RAMP_SPEED,
-                hardware.flywheel.getVelocity() + ShooterConstants.FLYWHEEL_RAMP_SPEED);
+        return MathFunctions.clamp(speed, hardware.flywheel.getVelocity() - FLYWHEEL_RAMP_SPEED,
+                hardware.flywheel.getVelocity() + FLYWHEEL_RAMP_SPEED);
     }
 
     public boolean isNoBalls() {
@@ -267,14 +260,12 @@ public class Shooter {
 
     public boolean flywheelUpToSpeed() {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
-                ShooterConstants.FLYWHEEL_ACCURACY);
+                getFlywheelTicksFromVelocity(launchVector.getMagnitude()), FLYWHEEL_ACCURACY);
     }
 
     public boolean flywheelUpToSpeed(double accuracy) {
         return MathFunctions.roughlyEquals(hardware.flywheel.getVelocity(),
-                ShooterConstants.getFlywheelTicksFromVelocity(launchVector.getMagnitude()),
-                accuracy);
+                getFlywheelTicksFromVelocity(launchVector.getMagnitude()), accuracy);
     }
 
     public double getHoodAngle() {
@@ -298,7 +289,7 @@ public class Shooter {
     }
 
     public boolean isGoalTargeted() {
-        return Math.abs(error) < ShooterConstants.TURRET_TICKS_PER_DEGREE * Math.toDegrees(Math.atan(ShooterConstants.SCORE_ACCURACY /
+        return Math.abs(error) < TURRET_TICKS_PER_DEGREE * Math.toDegrees(Math.atan(SCORE_ACCURACY /
                 robotToGoalVector.getMagnitude())) * 2 && flywheelUpToSpeed();
     }
 }

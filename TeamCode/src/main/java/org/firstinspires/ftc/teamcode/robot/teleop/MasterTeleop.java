@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.teleop;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -95,9 +96,6 @@ public class MasterTeleop extends OpMode {
     }
 
     private void telemetryUpdate() {
-        telemetry.addLine("----------important----------");
-        telemetry.addData("goal X offset", shooter.goalXOffset);
-        telemetry.addData("goal Y offset", shooter.goalYOffset);
         telemetry.addLine("----------current draw-------");
         telemetry.addData("flywheel1", "%.2f", hardware.flywheel.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("flywheel2", "%.2f", hardware.flywheel2.getCurrent(CurrentUnit.AMPS));
@@ -132,10 +130,14 @@ public class MasterTeleop extends OpMode {
     }
 
     private void driveUpdate() {
+        drive.setGoalOffset(new Pose(((gamepad2.dpad_up ? 1 : 0) - (gamepad2.dpad_down ? 1 : 0)) *
+                (TransferConstants.isAllianceColorRed ? 1 : -1), ((gamepad2.dpad_left ? 1 : 0) -
+                (gamepad2.dpad_right ? 1 : 0)) * (TransferConstants.isAllianceColorRed ? 1 : -1)));
+
         if(gamepad1.cross) {
             drive.headingLock = DriveConstants.getParkHeading();
         } else if (gamepad1.square) {
-            drive.headingLock = DriveConstants.getGateHeading();
+            drive.driveToPose(new Pose(72, 72, 0));
         } else {
             drive.headingLock = -1;
         }
@@ -197,18 +199,6 @@ public class MasterTeleop extends OpMode {
             shooter.runTurret = true;
             gamepad2.rumble(0.5, 0.5, 500);
             gamepad2.setLedColor(0, 1, 0, -1);
-        }
-
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            shooter.goalXOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
-        } else if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
-            shooter.goalXOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
-        }
-
-        if (gamepad2.dpad_right && !lastGamepad2.dpad_right) {
-            shooter.goalYOffset -= (TransferConstants.isAllianceColorRed) ? 1 : -1;
-        } else if (gamepad2.dpad_left && !lastGamepad2.dpad_left) {
-            shooter.goalYOffset += (TransferConstants.isAllianceColorRed) ? 1 : -1;
         }
 
         prevShooterState = shooter.getState();
