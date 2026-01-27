@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.robot.constants.TransferConstants;
 import org.firstinspires.ftc.teamcode.robot.subassamblies.Hardware;
@@ -83,11 +82,11 @@ public class RunAuto extends OpMode {
     @Override
     public void init() {
         timer = new Timer();
-        follower = Constants.createFollower(hardwareMap);
-        follower.setMaxPower(0.95);
 
         hardware = new Hardware(hardwareMap);
-        hardware.setPoseTrackerInAuto(follower.poseTracker);
+
+        follower = hardware.follower;
+        follower.setMaxPower(0.95);
 
         intake = new Intake(hardware);
         shooter = new Shooter(hardware);

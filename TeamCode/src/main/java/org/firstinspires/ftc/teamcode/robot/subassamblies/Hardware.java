@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
-import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
-import com.pedropathing.localization.Localizer;
-import com.pedropathing.localization.PoseTracker;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,7 +23,7 @@ public class Hardware {
     public Servo parkLeft;
     public Servo parkRight;
 
-    public PoseTracker poseTracker;
+    public Follower follower;
 
     //intake
     public DcMotorEx intake;
@@ -48,44 +46,46 @@ public class Hardware {
     //vision
     public Limelight3A limelight;
 
-    public Hardware(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
+    public Hardware(HardwareMap h) {
+        hardwareMap = h;
 
         //drive
-        parkLeft = this.hardwareMap.get(Servo.class, "parkLeft");
-        parkRight = this.hardwareMap.get(Servo.class, "parkRight");
+        parkLeft = hardwareMap.get(Servo.class, "parkLeft");
+        parkRight = hardwareMap.get(Servo.class, "parkRight");
+
+        follower = Constants.createFollower(hardwareMap);
 
         //intake
-        intake = this.hardwareMap.get(DcMotorEx.class, "intake");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        intakePivotRight = this.hardwareMap.get(Servo.class, "intakeRight");
+        intakePivotRight = hardwareMap.get(Servo.class, "intakeRight");
 
         //shooter
-        flywheel = this.hardwareMap.get(DcMotorEx.class, "shooter");
+        flywheel = hardwareMap.get(DcMotorEx.class, "shooter");
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        flywheel2 = this.hardwareMap.get(DcMotorEx.class, "shooter2");
+        flywheel2 = hardwareMap.get(DcMotorEx.class, "shooter2");
         flywheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        turret = this.hardwareMap.get(DcMotorEx.class, "turret");
+        turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        hood = this.hardwareMap.get(Servo.class, "hood");
-        launcher = this.hardwareMap.get(Servo.class, "launcher");
-        door = this.hardwareMap.get(Servo.class, "door");
+        hood = hardwareMap.get(Servo.class, "hood");
+        launcher = hardwareMap.get(Servo.class, "launcher");
+        door = hardwareMap.get(Servo.class, "door");
 
-        ball1 = this.hardwareMap.get(RevColorSensorV3.class, "ball1");
-        ball2 = this.hardwareMap.get(RevColorSensorV3.class, "ball2");
-        ball3 = this.hardwareMap.get(RevColorSensorV3.class, "ball3");
+        ball1 = hardwareMap.get(RevColorSensorV3.class, "ball1");
+        ball2 = hardwareMap.get(RevColorSensorV3.class, "ball2");
+        ball3 = hardwareMap.get(RevColorSensorV3.class, "ball3");
 
         //vision
-        limelight = this.hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
 
@@ -108,12 +108,5 @@ public class Hardware {
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        Localizer localizer = new PinpointLocalizer(hardwareMap, Constants.localizerConstants);
-        poseTracker = new PoseTracker(localizer);
-    }
-
-    public void setPoseTrackerInAuto(PoseTracker poseTracker) {
-        this.poseTracker = poseTracker;
     }
 }

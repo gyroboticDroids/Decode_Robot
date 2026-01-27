@@ -21,8 +21,8 @@ public class RobotAutoTurn extends OpMode {
     @Override
     public void loop() {
         //Gets heading of robot
-        hardware.poseTracker.update();
-        double botHeading = hardware.poseTracker.getPose().getHeading();
+        hardware.follower.update();
+        double botHeading = hardware.follower.getPose().getHeading();
 
         //Gets driver input
         double y = -gamepad1.left_stick_y;

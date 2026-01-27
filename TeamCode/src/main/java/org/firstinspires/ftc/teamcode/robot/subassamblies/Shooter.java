@@ -135,7 +135,7 @@ public class Shooter extends ShooterConstants{
     }
 
     private void targetGoal() {
-        Pose robotPos = hardware.poseTracker.getPose();
+        Pose robotPos = hardware.follower.getPose();
 
         robotToGoalVector.setOrthogonalComponents(getGoalPos().getX() - robotPos.getX(),
                 getGoalPos().getY() - robotPos.getY());
@@ -161,7 +161,7 @@ public class Shooter extends ShooterConstants{
         double flywheelSpeed = Math.sqrt(g * x * x / (2 * Math.pow(Math.cos(hoodAngle), 2) * (x * Math.tan(hoodAngle) - y)));
 
         //get robot velocity and convert it into parallel and perpendicular components
-        Vector robotVelocity = hardware.poseTracker.getVelocity();
+        Vector robotVelocity = hardware.follower.getVelocity();
 
         double coordinateTheta = robotVelocity.getTheta() - robotToGoalVector.getTheta();
 

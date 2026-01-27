@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.teleop;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -96,6 +95,9 @@ public class MasterTeleop extends OpMode {
     }
 
     private void telemetryUpdate() {
+        telemetry.addLine("----------offsets------------");
+        telemetry.addData("x offset", hardware.follower.poseTracker.getXOffset());
+        telemetry.addData("y offset", hardware.follower.poseTracker.getYOffset());
         telemetry.addLine("----------current draw-------");
         telemetry.addData("flywheel1", "%.2f", hardware.flywheel.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("flywheel2", "%.2f", hardware.flywheel2.getCurrent(CurrentUnit.AMPS));
@@ -105,10 +107,10 @@ public class MasterTeleop extends OpMode {
                 hardware.leftRear.getCurrent(CurrentUnit.AMPS) + hardware.rightFront.getCurrent(CurrentUnit.AMPS) +
                 hardware.rightRear.getCurrent(CurrentUnit.AMPS));
         telemetry.addLine("----------drive--------------");
-        telemetry.addData("robot position", hardware.poseTracker.getPose());
+        telemetry.addData("robot position", hardware.follower.getPose());
         telemetry.addData("is heading lock", drive.headingLock);
-        telemetry.addLine("robot velocity: " + hardware.poseTracker.getVelocity().getMagnitude()
-                + ", angular velocity: " + hardware.poseTracker.getAngularVelocity());
+        telemetry.addLine("robot velocity: " + hardware.follower.getVelocity().getMagnitude()
+                + ", angular velocity: " + hardware.follower.getAngularVelocity());
         telemetry.addLine("----------intake-------------");
         telemetry.addData("state", intake.getState());
         telemetry.addData("is busy", intake.isBusy());
@@ -130,9 +132,11 @@ public class MasterTeleop extends OpMode {
     }
 
     private void driveUpdate() {
-        drive.setGoalOffset(new Pose(((gamepad2.dpad_up ? 1 : 0) - (gamepad2.dpad_down ? 1 : 0)) *
-                (TransferConstants.isAllianceColorRed ? 1 : -1), ((gamepad2.dpad_left ? 1 : 0) -
-                (gamepad2.dpad_right ? 1 : 0)) * (TransferConstants.isAllianceColorRed ? 1 : -1)));
+        if(gamepad2.dpad_up && !lastGamepad2.dpad_up || gamepad2.dpad_down && !lastGamepad2.dpad_down) {
+            drive.offsetRobotPos(gamepad2.dpad_up ? 1 : gamepad2.dpad_down ? -1 : 0, 0);
+        } else if(gamepad2.dpad_left && !lastGamepad2.dpad_left || gamepad2.dpad_right && !lastGamepad2.dpad_right) {
+            drive.offsetRobotPos(0, gamepad2.dpad_left ? 1 : gamepad2.dpad_right ? -1 : 0);
+        }
 
         if (!drive.isPark()) {
             if (gamepad1.cross) {
