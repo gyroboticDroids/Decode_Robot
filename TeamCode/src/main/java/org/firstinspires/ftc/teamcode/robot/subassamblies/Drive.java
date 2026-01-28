@@ -35,6 +35,7 @@ public class Drive extends DriveConstants {
     private final PIDFController turnPIDF;
 
     private int state = 0;
+    private int prevIdentifier = 0;
 
     public Drive(Hardware h, Gamepad g) {
         hardware = h;
@@ -56,6 +57,8 @@ public class Drive extends DriveConstants {
         if (!autoDriveIsActive) {
             if (prevAutoDriveIsActive) {
                 hardware.follower.breakFollowing();
+                hardware.follower.update();
+                hardware.resetBrakeMode();
                 state = 0;
             }
 
@@ -160,13 +163,18 @@ public class Drive extends DriveConstants {
     }
 
     public void driveToGate() {
+        if (prevIdentifier != 0) {
+            state = 0;
+            prevIdentifier = 0;
+        }
+
         autoDriveIsActive = true;
 
         switch (state) {
             case 0:
                 Path test = new Path(new BezierLine(hardware.follower.getPose(), new Pose(72, 72)));
                 test.setLinearHeadingInterpolation(hardware.follower.getHeading(), 0);
-                hardware.follower.followPath(test);
+                hardware.follower.followPath(test, false);
                 state++;
                 break;
         }
