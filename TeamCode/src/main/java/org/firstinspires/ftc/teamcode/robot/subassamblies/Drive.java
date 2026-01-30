@@ -15,8 +15,6 @@ public class Drive extends DriveConstants {
     private final Gamepad gamepad;
     private final Vision vision;
 
-    public Pose robotPos;
-
     private double x;
     private double y;
     private double rx;
@@ -51,12 +49,10 @@ public class Drive extends DriveConstants {
     }
 
     public void update() {
-        hardware.follower.update();
-        robotPos = hardware.follower.getPose();
-
         if (!autoDriveIsActive) {
+            hardware.follower.poseTracker.update();
+
             if (prevAutoDriveIsActive) {
-                hardware.follower.followPath((Path) null);
                 hardware.follower.breakFollowing();
                 hardware.resetBrakeMode();
                 state = 0;
@@ -84,6 +80,8 @@ public class Drive extends DriveConstants {
                 autoTurn(headingLock);
 
             updateMovement();
+        } else {
+            hardware.follower.update();
         }
 
         prevResetHeading = resetHeading;
@@ -111,7 +109,7 @@ public class Drive extends DriveConstants {
     }
 
     private void autoTurn(double angle) {
-        double error = angle - Math.toDegrees(robotPos.getHeading());
+        double error = angle - Math.toDegrees(hardware.follower.getHeading());
 
         if (error > 180) {
             error -= 360;
@@ -125,7 +123,7 @@ public class Drive extends DriveConstants {
     }
 
     private void updateMovement() {
-        double botHeading = robotPos.getHeading();
+        double botHeading = hardware.follower.getHeading();
 
         // Rotate the movement direction counter to the bot's rotation
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -172,10 +170,19 @@ public class Drive extends DriveConstants {
 
         switch (state) {
             case 0:
-                Path test = new Path(new BezierLine(hardware.follower.getPose(), new Pose(72, 72)));
-                test.setLinearHeadingInterpolation(hardware.follower.getHeading(), 0);
-                hardware.follower.followPath(test, false);
+                Path gateBump = new Path(new BezierLine(hardware.follower.getPose(), new Pose(115, 63, Math.toRadians(0))));
+                gateBump.setLinearHeadingInterpolation(hardware.follower.getHeading(), 0);
+                hardware.follower.followPath(gateBump);
                 state++;
+                break;
+
+            case 1:
+                if(hardware.follower.getCurrentTValue() > 0.97){
+                    Path gateCollect = new Path(new BezierLine(new Pose(115, 63, Math.toRadians(0)), new Pose(130, 56, Math.toRadians(36))));
+                    gateCollect.setLinearHeadingInterpolation(0, Math.toRadians(36));
+                    hardware.follower.followPath(gateCollect);
+                    state++;
+                }
                 break;
         }
     }
