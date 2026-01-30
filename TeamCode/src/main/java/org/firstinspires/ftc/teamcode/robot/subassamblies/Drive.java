@@ -56,8 +56,8 @@ public class Drive extends DriveConstants {
 
         if (!autoDriveIsActive) {
             if (prevAutoDriveIsActive) {
+                hardware.follower.followPath((Path) null);
                 hardware.follower.breakFollowing();
-                hardware.follower.update();
                 hardware.resetBrakeMode();
                 state = 0;
             }
