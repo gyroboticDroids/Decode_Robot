@@ -5,10 +5,10 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 
 public class AutoDrive {
-    private Drive drive;
-    private Intake intake;
-    private Shooter shooter;
-    private Hardware hardware;
+    private final Drive drive;
+    private final Intake intake;
+    private final Shooter shooter;
+    private final Hardware hardware;
 
     private int state = -1;
     private boolean isBusy = false;
