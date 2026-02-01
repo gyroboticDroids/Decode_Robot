@@ -138,14 +138,12 @@ public class MasterTeleop extends OpMode {
             drive.offsetRobotPos(0, gamepad2.dpad_left ? 1 : gamepad2.dpad_right ? -1 : 0);
         }
 
-        if (!drive.isPark()) {
-            if (gamepad1.cross) {
-                drive.headingLock = DriveConstants.getParkHeading();
-            } else if (gamepad1.square) {
-                drive.driveToGate();
-            } else {
-                drive.headingLock = -1;
-            }
+        if (gamepad1.cross) {
+            drive.headingLock = DriveConstants.getParkHeading();
+        } else if (gamepad1.square) {
+            drive.headingLock = DriveConstants.getGateHeading();
+        } else {
+            drive.headingLock = -1;
         }
 
         if (gamepad1.touchpad && !lastGamepad1.touchpad && TransferConstants.isAllianceColorRed) {

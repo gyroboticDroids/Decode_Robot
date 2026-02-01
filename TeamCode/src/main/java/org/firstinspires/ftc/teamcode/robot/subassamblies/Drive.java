@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.subassamblies;
 
 import com.pedropathing.control.PIDFController;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
-import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robot.constants.DriveConstants;
@@ -32,9 +30,6 @@ public class Drive extends DriveConstants {
 
     private final PIDFController turnPIDF;
 
-    private int state = 0;
-    private int prevIdentifier = 0;
-
     public Drive(Hardware h, Gamepad g) {
         hardware = h;
         gamepad = g;
@@ -55,7 +50,6 @@ public class Drive extends DriveConstants {
             if (prevAutoDriveIsActive) {
                 hardware.follower.breakFollowing();
                 hardware.resetBrakeMode();
-                state = 0;
             }
 
             input();
@@ -91,8 +85,11 @@ public class Drive extends DriveConstants {
 
     public void offsetRobotPos(int x, int y) {
         Pose current = hardware.follower.getPose();
-        hardware.follower.poseTracker.setXOffset(current.getX() + x * (TransferConstants.isAllianceColorRed ? 1 : -1));
-        hardware.follower.poseTracker.setYOffset(current.getY() + y * (TransferConstants.isAllianceColorRed ? 1 : -1));
+
+        hardware.follower.poseTracker.setXOffset(x * (TransferConstants.isAllianceColorRed ? 1 : -1));
+        hardware.follower.poseTracker.setYOffset(y * (TransferConstants.isAllianceColorRed ? 1 : -1));
+
+        hardware.follower.poseTracker.applyOffset(current);
     }
 
     private void input() {
@@ -160,31 +157,8 @@ public class Drive extends DriveConstants {
         }
     }
 
-    public void driveToGate() {
-        if (prevIdentifier != 0) {
-            state = 0;
-            prevIdentifier = 0;
-        }
-
-        autoDriveIsActive = true;
-
-        switch (state) {
-            case 0:
-                Path gateBump = new Path(new BezierLine(hardware.follower.getPose(), new Pose(115, 63, Math.toRadians(0))));
-                gateBump.setLinearHeadingInterpolation(hardware.follower.getHeading(), 0);
-                hardware.follower.followPath(gateBump);
-                state++;
-                break;
-
-            case 1:
-                if(hardware.follower.getCurrentTValue() > 0.97){
-                    Path gateCollect = new Path(new BezierLine(new Pose(115, 63, Math.toRadians(0)), new Pose(130, 56, Math.toRadians(36))));
-                    gateCollect.setLinearHeadingInterpolation(0, Math.toRadians(36));
-                    hardware.follower.followPath(gateCollect);
-                    state++;
-                }
-                break;
-        }
+    public void setAutoDriveIsActive(boolean b) {
+        autoDriveIsActive = b;
     }
 
     public boolean isPark() {
