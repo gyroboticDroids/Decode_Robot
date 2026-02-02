@@ -49,7 +49,7 @@ public class Drive extends DriveConstants {
 
             if (prevAutoDriveIsActive) {
                 hardware.follower.breakFollowing();
-                hardware.resetBrakeMode();
+                hardware.follower.drivetrain.startTeleopDrive(true);
             }
 
             input();
@@ -137,10 +137,7 @@ public class Drive extends DriveConstants {
         double rightFrontPower = (rotY - rotX + rx) / denominator;
         double rightRearPower = (rotY + rotX + rx) / denominator;
 
-        hardware.leftFront.setPower(leftFrontPower);
-        hardware.leftRear.setPower(leftRearPower);
-        hardware.rightFront.setPower(rightFrontPower);
-        hardware.rightRear.setPower(rightRearPower);
+        hardware.follower.drivetrain.runDrive(new double[] {leftFrontPower, leftRearPower, rightFrontPower, rightRearPower});
     }
 
     private void updatePark() {
